@@ -19,7 +19,7 @@ that contains the following lines:
     import "github.com/alexgunkel/logbook"
     // ...
     logBook := logbook.Application()
-    logBook.Start()
+    logBook.Run()
 
 ## Logger API
 Loggers should only submit log events for clients with "logbook"-cookie. This cookie contains the identifier by which

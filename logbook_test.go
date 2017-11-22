@@ -17,7 +17,7 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router := SetUpRouter()
+	router := Application()
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
 
@@ -37,7 +37,7 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 
 // GET request to a specific display path without cookie results in a redirect to the start page
 func TestDisplayWithoutCookie(t *testing.T)  {
-	router := SetUpRouter()
+	router := Application()
 	recorder := httptest.NewRecorder()
 	request,_ := http.NewRequest("GET", "/logbook/1234/logs", nil)
 
@@ -54,14 +54,14 @@ func TestEmptyLogEventLogEvent(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	router := SetUpRouter()
+	router := Application()
 	router.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusBadRequest, recorder.Code)
 }
 
 func TestValidLogAccepted(t *testing.T)  {
-	router := SetUpRouter()
+	router := Application()
 	recorder := httptest.NewRecorder()
 	requestBody,_ := json.Marshal(logEvent{"Test"})
 	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(string(requestBody)))

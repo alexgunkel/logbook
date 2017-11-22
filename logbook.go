@@ -12,7 +12,8 @@ type logEvent struct {
 	m string
 }
 
-func SetUpRouter() *gin.Engine {
+// @API
+func Application() *gin.Engine {
 	engine := gin.Default()
 	engine.GET("/logbook", InitLogBookClientApplication)
 	engine.GET("/logbook/:client/logs", DisplayLogs)
