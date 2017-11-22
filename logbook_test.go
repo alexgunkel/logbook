@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"strings"
 	"github.com/stretchr/testify/assert"
+	"github.com/alexgunkel/logbook/entities"
 )
 
 // A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
@@ -73,7 +74,7 @@ func TestEmptyLogEventLogEvent(t *testing.T) {
 func TestValidLogAccepted(t *testing.T)  {
 	router := Application()
 	recorder := httptest.NewRecorder()
-	requestBody,_ := json.Marshal(logEvent{"Test"})
+	requestBody,_ := json.Marshal(entities.LogEvent{"Test"})
 	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(string(requestBody)))
 	if nil != err {
 		t.Fatal(err)
