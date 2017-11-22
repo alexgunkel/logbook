@@ -6,6 +6,7 @@ import (
 )
 
 const CONTENT_TYPE_JSON  = "application/json"
+const CONTENT_TYPE_HTML  = "text/html"
 
 type logEvent struct {
 	m string
@@ -13,18 +14,23 @@ type logEvent struct {
 
 func SetUpRouter() *gin.Engine {
 	engine := gin.Default()
-	engine.GET("/display", DisplayLogBook)
+	engine.GET("/logbook", InitLogBookClientApplication)
+	engine.GET("/logbook/:client/logs", DisplayLogs)
 	engine.POST("/logbook/:client/logs", Log)
 
 	return engine
 }
 
-func DisplayLogBook(c *gin.Context)  {
+func DisplayLogs(c *gin.Context)  {
+	_, err := c.Cookie("logbook")
+	if nil != err {
+		c.Redirect(http.StatusTemporaryRedirect, "../../logbook")
+	}
+}
+
+func InitLogBookClientApplication(c *gin.Context)  {
 	c.SetCookie("logbook", "asd", 0, "", "", false, false)
-	c.Header("Content-Type", CONTENT_TYPE_JSON)
-	c.JSON(http.StatusOK, gin.H{
-			"message": "ok",
-		})
+	c.Redirect(http.StatusTemporaryRedirect, "asd/logs")
 }
 
 func Log(c *gin.Context)  {

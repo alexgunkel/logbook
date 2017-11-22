@@ -9,9 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDisplayLogBook(t *testing.T) {
-	// Create a first request to log-display
-	request, err := http.NewRequest("GET", "/display", nil)
+// When start page is called without a cookie, then the cookie is set and the client is redirected
+// to the log-list page
+func TestInitLogBookWithoutCookie(t *testing.T) {
+	request, err := http.NewRequest("GET", "/logbook", nil)
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -20,9 +21,30 @@ func TestDisplayLogBook(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
 
-	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t,	"application/json", recorder.Header().Get("Content-type"))
-	assert.NotEqual(t, "", recorder.Header().Get("Set-Cookie"))
+
+	// Copy the Cookie over to a new Request
+	newRequest := &http.Request{Header: http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]}}
+
+	// Extract the dropped cookie from the request.
+	clientIdCookie, _ := newRequest.Cookie("logbook")
+	clientId := clientIdCookie.Value
+
+	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
+	assert.NotEqual(t, "", clientId)
+	path := "/" + clientId + "/logs"
+	assert.Equalf(t, path, recorder.Header().Get("Location"), "Expected path %v", path)
+}
+
+// GET request to a specific display path without cookie results in a redirect to the start page
+func TestDisplayWithoutCookie(t *testing.T)  {
+	router := SetUpRouter()
+	recorder := httptest.NewRecorder()
+	request,_ := http.NewRequest("GET", "/logbook/1234/logs", nil)
+
+	router.ServeHTTP(recorder, request)
+
+	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
+	assert.Equal(t, "/logbook", recorder.Header().Get("Location"))
 }
 
 func TestEmptyLogEventLogEvent(t *testing.T) {
