@@ -58,7 +58,7 @@ func TestDisplayWithoutCookie(t *testing.T)  {
 	assert.Equal(t, "/logbook", recorder.Header().Get("Location"))
 }
 
-func TestEmptyLogEventLogEvent(t *testing.T) {
+func TestEmptyLogEvent(t *testing.T) {
 	request, err := http.NewRequest("POST", "/logbook/1234/logs", nil)
 	if nil != err {
 		t.Fatal(err)

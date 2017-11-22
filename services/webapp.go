@@ -14,14 +14,14 @@ func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 	app.engine.ServeHTTP(w, req)
 }
 
-func Default() *Webapp {
+func Default() *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
 	app.engine.GET("/logbook", InitLogBookClientApplication)
 	app.engine.GET("/logbook/:client/logs", DisplayLogs)
 	app.engine.POST("/logbook/:client/logs", Log)
 
-	return app
+	return app.engine
 }
 
 func DisplayLogs(c *gin.Context)  {

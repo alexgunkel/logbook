@@ -2,13 +2,11 @@ package logbook
 
 import (
 	"github.com/alexgunkel/logbook/services"
+	"github.com/gin-gonic/gin"
 )
 
-const CONTENT_TYPE_JSON  = "application/json"
-const CONTENT_TYPE_HTML  = "text/html"
-
 // @API
-func Application() *services.Webapp {
+func Application() *gin.Engine {
 	return services.Default()
 }
 
