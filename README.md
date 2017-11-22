@@ -1,7 +1,14 @@
 # LogBook
 
-LogBook is a server-side application that lets you debug your web application by showing the log messages related
-to your web request.
+*LogBook* is a server-side application that lets you debug your web application by showing
+the log messages related to your web request. It stands in the tradition of FirePHP and
+ChromeLogger but extracts the core functionality into a server-side log-dispatcher.
+The reason is that for larger amounts of data, header fields are an inappropriate way to send
+all the logs from a web-application to the client. When you have a small application with
+few log events, it is quite easy to send those data with your HTTP-header. But their are hard
+limits that prevent you from sending as many log-data as a larger application will provide. *LogBook*
+collects all those data in a server-side application just to provide this information to the
+developer in an JavaScript-based frontend-application.
 
 A *logbook* is considered to be the whole information about a session. It's like keeping a book about
 a journey. Every session consists of the whole interaction between a client and an application.
@@ -24,7 +31,7 @@ part of your application is responsible for something. Therefore, some *applicat
 is required.
 
 ## Installation
-You can easily install LogBook via Go:
+You can easily install LogBook via Go CLI:
 
     go get github.com/alexgunkel/logbook
 
@@ -34,8 +41,9 @@ that contains the following lines:
 
     import "github.com/alexgunkel/logbook"
     // ...
-    logBook := logbook.Application()
-    logBook.Run()
+    LogApplication := logbook.Application()
+    LogApplication.Run()
+
 Then start your app and make sure that relevant services are able to reach you logbook on port 80.
 
 
@@ -43,7 +51,7 @@ Then start your app and make sure that relevant services are able to reach you l
 Loggers should only submit log events for clients with "logbook"-cookie. This cookie contains the identifier by which
 LogBook decides whom to send the log messages. Messages are sent as POST-requests in JSON to
 
-   <domain>/logbook/<logbook_id>/logs
+   <domain>/logbook/<LogBook_id>/logs
 
 Logs have to be sent as JSON-objects that contain:
 * the *time* (integer, required),
@@ -76,6 +84,6 @@ The web frontend is available under the url
 
 The frontend is responsible for redirecting the client to the log-messages-page
 
-    <domain>/logbook/<client_id>/logs
+    <domain>/logbook/<LogBook_id>/logs
 
 The EcmaScript application then establishes a websocket-connection and displays the log messages related to the client.
