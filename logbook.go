@@ -30,8 +30,15 @@ func DisplayLogs(c *gin.Context)  {
 }
 
 func InitLogBookClientApplication(c *gin.Context)  {
-	c.SetCookie("logbook", "asd", 0, "", "", false, false)
-	c.Redirect(http.StatusTemporaryRedirect, "asd/logs")
+	identifier, err := c.Cookie("logbook")
+	if nil != err {
+		c.SetCookie("logbook", "asd", 0, "", "", false, false)
+		identifier = "asd"
+	}
+
+	location := "logbook/" + identifier + "/logs"
+
+	c.Redirect(http.StatusTemporaryRedirect, location)
 }
 
 func Log(c *gin.Context)  {

@@ -9,8 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// When start page is called without a cookie, then the cookie is set and the client is redirected
-// to the log-list page
+// A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
+// set. Therefore, we generate a client-id, set a cookie, and redirect to the log-message-list-page.
+//
 func TestInitLogBookWithoutCookie(t *testing.T) {
 	request, err := http.NewRequest("GET", "/logbook", nil)
 	if nil != err {
@@ -22,17 +23,26 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 
-	// Copy the Cookie over to a new Request
-	newRequest := &http.Request{Header: http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]}}
-
-	// Extract the dropped cookie from the request.
-	clientIdCookie, _ := newRequest.Cookie("logbook")
-	clientId := clientIdCookie.Value
+	clientId := getRecorderCookie(recorder).Value
 
 	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
 	assert.NotEqual(t, "", clientId)
-	path := "/" + clientId + "/logs"
+	path := "/logbook/" + clientId + "/logs"
 	assert.Equalf(t, path, recorder.Header().Get("Location"), "Expected path %v", path)
+}
+
+// When receiving a GET-request to the root page and the client has logbook-cookie, then we redirect her to the
+// logs without setting a new cookie
+func TestInitLogBookWithCookie(t *testing.T) {
+	router := Application()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest("GET", "/logbook", nil)
+	cookie := &http.Cookie{Name: "logbook", Value:"1234"}
+	request.AddCookie(cookie)
+	router.ServeHTTP(recorder, request)
+
+	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
+	assert.Equal(t, "/logbook/1234/logs", recorder.Header().Get("Location"))
 }
 
 // GET request to a specific display path without cookie results in a redirect to the start page
@@ -71,4 +81,15 @@ func TestValidLogAccepted(t *testing.T)  {
 
 	router.ServeHTTP(recorder, request)
 	assert.Equal(t, http.StatusOK, recorder.Code)
+}
+
+func getRecorderCookie(r *httptest.ResponseRecorder) *http.Cookie {
+	newRequest := &http.Request{Header: http.Header{"Cookie": r.HeaderMap["Set-Cookie"]}}
+	clientIdCookie, err := newRequest.Cookie("logbook")
+
+	if nil != err {
+		panic(err)
+	}
+
+	return clientIdCookie
 }
