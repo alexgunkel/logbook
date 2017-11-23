@@ -1,37 +1,28 @@
 package services
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/alexgunkel/logbook/entities"
 )
 
-type Webapp struct {
-	engine *gin.Engine
+type webContext interface {
+	Cookie(name string) (string, error)
+	SetCookie(name, value string, maxAge int, path, domain string, secure, httpOnly bool)
+	Redirect(code int, location string)
 }
 
-func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
-	app.engine.ServeHTTP(w, req)
+type logContext interface {
+	Bind(obj interface{}) error
 }
 
-func Default() *gin.Engine {
-	app := new(Webapp)
-	app.engine = gin.Default()
-	app.engine.GET("/logbook", InitLogBookClientApplication)
-	app.engine.GET("/logbook/:client/logs", DisplayLogs)
-	app.engine.POST("/logbook/:client/logs", Log)
-
-	return app.engine
-}
-
-func DisplayLogs(c *gin.Context)  {
+func DisplayLogs(c webContext)  {
 	_, err := c.Cookie("logbook")
 	if nil != err {
 		c.Redirect(http.StatusTemporaryRedirect, "../../logbook")
 	}
 }
 
-func InitLogBookClientApplication(c *gin.Context)  {
+func InitLogBookClientApplication(c webContext)  {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
 		c.SetCookie("logbook", "asd", 0, "", "", false, false)
@@ -43,7 +34,7 @@ func InitLogBookClientApplication(c *gin.Context)  {
 	c.Redirect(http.StatusTemporaryRedirect, location)
 }
 
-func Log(c *gin.Context)  {
+func Log(c logContext)  {
 	e := &entities.LogEvent{}
 	err := c.Bind(e)
 	if nil != err {
