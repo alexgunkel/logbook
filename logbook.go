@@ -18,9 +18,10 @@ func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 func Default() *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
+	gen := &services.IdGenerator{}
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
-		services.InitLogBookClientApplication(context)
+		services.InitLogBookClientApplication(context, gen)
 	})
 
 	app.engine.GET("/logbook/:client/logs", func(context *gin.Context) {

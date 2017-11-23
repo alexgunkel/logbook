@@ -2,17 +2,17 @@ package services
 
 import (
 	"net/http"
-	"github.com/alexgunkel/logbook/entities"
+	"strconv"
 )
+
+type IdGenerator struct {
+	lastIdentifier int64
+}
 
 type webContext interface {
 	Cookie(name string) (string, error)
 	SetCookie(name, value string, maxAge int, path, domain string, secure, httpOnly bool)
 	Redirect(code int, location string)
-}
-
-type logContext interface {
-	Bind(obj interface{}) error
 }
 
 func DisplayLogs(c webContext)  {
@@ -22,11 +22,11 @@ func DisplayLogs(c webContext)  {
 	}
 }
 
-func InitLogBookClientApplication(c webContext)  {
+func InitLogBookClientApplication(c webContext, gen *IdGenerator)  {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
-		c.SetCookie("logbook", "asd", 0, "", "", false, false)
-		identifier = "asd"
+		identifier = gen.getNewIdentifier()
+		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
 	location := "logbook/" + identifier + "/logs"
@@ -34,10 +34,7 @@ func InitLogBookClientApplication(c webContext)  {
 	c.Redirect(http.StatusTemporaryRedirect, location)
 }
 
-func Log(c logContext)  {
-	e := &entities.LogEvent{}
-	err := c.Bind(e)
-	if nil != err {
-		return
-	}
+func (app *IdGenerator) getNewIdentifier() string {
+	app.lastIdentifier++
+	return strconv.FormatInt(app.lastIdentifier, 10)
 }
