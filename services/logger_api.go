@@ -1,15 +1,27 @@
 package services
 
-import "github.com/alexgunkel/logbook/entities"
+import (
+	"github.com/alexgunkel/logbook/entities"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
 
 type logContext interface {
-	Bind(obj interface{}) error
+	BindJSON(obj interface{}) error
 }
 
-func Log(c logContext)  {
+func Log(c *gin.Context, toDispatcher chan<- entities.LogEvent) (err error)  {
+	defer logEvent(c)
 	e := &entities.LogEvent{}
-	err := c.Bind(e)
-	if nil != err {
+	if err = c.BindJSON(e); nil != err {
 		return
 	}
+
+	toDispatcher <- *e
+	return
+}
+
+func logEvent(c *gin.Context)  {
+	recover()
+	c.Status(http.StatusBadRequest)
 }
