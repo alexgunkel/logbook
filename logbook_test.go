@@ -100,7 +100,8 @@ func TestInValidJsonRefused(t *testing.T) {
 	assert.NotEqual(t, http.StatusOK, recorder.Code)
 }
 
-func DontTestValidLogSentToDispatcher(t *testing.T) {
+func TestValidLogSentToDispatcher(t *testing.T) {
+	// setup
 	router := gin.Default()
 	incoming := make(chan entities.LogEvent, 20)
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
@@ -115,15 +116,22 @@ func DontTestValidLogSentToDispatcher(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	go router.ServeHTTP(recorder, request)
-
-	event := <-incoming
-
 	original := &entities.LogEvent{}
 	json.Unmarshal([]byte(getTestJson()), original)
+
+	// run
+	router.ServeHTTP(recorder, request)
+	event := <-incoming
+
+	// validate
+
 	assert.Equal(t, original.Message,   event.Message)
 	assert.Equal(t, original.Timestamp, event.Timestamp)
 	assert.Equal(t, original.Severity,  event.Severity)
+
+	assert.NotEqual(t, original.Message,   "")
+	assert.NotEqual(t, original.Timestamp, 0)
+	assert.NotEqual(t, original.Severity,  0)
 }
 
 // Helperfunctions to make testing easier.
