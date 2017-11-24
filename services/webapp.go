@@ -20,10 +20,12 @@ func (app *IdGenerator) getNewIdentifier() string {
 	return strconv.FormatInt(app.lastIdentifier, 10)
 }
 
-func DisplayLogs(c webContext)  {
+func DisplayLogs(c webContext, gen *IdGenerator)  {
 	_, err := c.Cookie("logbook")
 	if nil != err {
-		c.Redirect(http.StatusTemporaryRedirect, "../../logbook")
+		identifier := gen.getNewIdentifier()
+		c.SetCookie("logbook", identifier, 0, "", "", false, false)
+		c.Redirect(http.StatusTemporaryRedirect, "../../logbook/" + identifier + "/logs")
 	}
 }
 

@@ -25,11 +25,12 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
 
-	clientId := getRecorderCookie(recorder).Value
+	logBookId, _ := getRecorderCookie(recorder)
 
+	assert.Nil(t, err)
 	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
-	assert.NotEqual(t, "", clientId)
-	path := "/logbook/" + clientId + "/logs"
+	assert.NotEqual(t, "", logBookId)
+	path := "/logbook/" + logBookId + "/logs"
 	assert.Equalf(t, path, recorder.Header().Get("Location"), "Expected path %v", path)
 }
 
@@ -54,9 +55,12 @@ func TestDisplayWithoutCookie(t *testing.T) {
 	request, _ := http.NewRequest("GET", "/logbook/1234/logs", nil)
 
 	router.ServeHTTP(recorder, request)
+	logBookId, err := getRecorderCookie(recorder)
+	newPath := "/logbook/" + logBookId + "/logs"
 
+	assert.Nil(t, err)
 	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
-	assert.Equal(t, "/logbook", recorder.Header().Get("Location"))
+	assert.Equalf(t, newPath, recorder.Header().Get("Location"), "Expected path %v", newPath)
 }
 
 func TestEmptyLogEvent(t *testing.T) {
@@ -141,13 +145,15 @@ func getTestJson() string {
 }
 
 // Helper function to get cookie values out of response recorders
-func getRecorderCookie(r *httptest.ResponseRecorder) *http.Cookie {
+func getRecorderCookie(r *httptest.ResponseRecorder) (clientId string, err error) {
 	newRequest := &http.Request{Header: http.Header{"Cookie": r.HeaderMap["Set-Cookie"]}}
 	clientIdCookie, err := newRequest.Cookie("logbook")
 
-	if nil != err {
-		panic(err)
+	if nil == err {
+		clientId = clientIdCookie.Value
+	} else {
+		clientId = ""
 	}
 
-	return clientIdCookie
+	return clientId, err
 }

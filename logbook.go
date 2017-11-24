@@ -27,7 +27,7 @@ func Default() *gin.Engine {
 	})
 
 	app.engine.GET("/logbook/:client/logs", func(context *gin.Context) {
-		services.DisplayLogs(context)
+		services.DisplayLogs(context, gen)
 	})
 
 	app.engine.POST("/logbook/:client/logs", func(context *gin.Context) {
