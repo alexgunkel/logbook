@@ -64,7 +64,7 @@ func TestDisplayWithoutCookie(t *testing.T) {
 }
 
 func TestEmptyLogEvent(t *testing.T) {
-	request, err := http.NewRequest("POST", "/logbook/1234/logs", nil)
+	request, err := http.NewRequest("POST", "/logbook/1234/logs", strings.NewReader(""))
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -76,10 +76,10 @@ func TestEmptyLogEvent(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, recorder.Code)
 }
 
-func DontTestValidLogAccepted(t *testing.T) {
+func TestValidLogAccepted(t *testing.T) {
 	router := Application()
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(getTestJson()))
+	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
 	if nil != err {
 		t.Fatal(err)
 	}

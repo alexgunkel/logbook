@@ -11,17 +11,12 @@ type logContext interface {
 }
 
 func Log(c *gin.Context, toDispatcher chan<- entities.LogEvent) (err error)  {
-	defer logEvent(c)
 	e := &entities.LogEvent{}
 	if err = c.BindJSON(e); nil != err {
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
 	toDispatcher <- *e
 	return
-}
-
-func logEvent(c *gin.Context)  {
-	recover()
-	c.Status(http.StatusBadRequest)
 }
