@@ -20,7 +20,7 @@ func Default() *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
 	gen := &services.IdGenerator{}
-	incoming := make(chan entities.LogEvent, 20)
+	incoming := make(chan entities.PostMessage, 20)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
 		services.InitLogBookClientApplication(context, gen)

@@ -6,17 +6,15 @@ import (
 	"net/http"
 )
 
-type logContext interface {
-	BindJSON(obj interface{}) error
-}
-
-func Log(c *gin.Context, toDispatcher chan<- entities.LogEvent) (err error)  {
+func Log(c *gin.Context, toDispatcher chan<- entities.PostMessage) (err error)  {
+	m := &entities.PostMessage{}
 	e := &entities.LogEvent{}
 	if err = c.BindJSON(e); nil != err {
 		c.Status(http.StatusBadRequest)
 		return
 	}
+	m.Event = *e
 
-	toDispatcher <- *e
+	toDispatcher <- *m
 	return
 }

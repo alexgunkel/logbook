@@ -13,8 +13,13 @@ import (
 
 func TestValidLogSentToDispatcher(t *testing.T) {
 	// setup
+	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(getTestJson()))
+	if nil != err {
+		t.Fatal(err)
+	}
+
 	router := gin.Default()
-	incoming := make(chan entities.LogEvent, 20)
+	incoming := make(chan entities.PostMessage, 20)
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
 		err := Log(context, incoming)
 		if nil != err {
@@ -22,27 +27,51 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 		}
 	})
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(getTestJson()))
-	if nil != err {
-		t.Fatal(err)
-	}
 
 	original := &entities.LogEvent{}
 	json.Unmarshal([]byte(getTestJson()), original)
 
 	// run
 	router.ServeHTTP(recorder, request)
-	event := <-incoming
+	postMessage := <-incoming
 
 	// validate
 
-	assert.Equal(t, original.Message,   event.Message)
-	assert.Equal(t, original.Timestamp, event.Timestamp)
-	assert.Equal(t, original.Severity,  event.Severity)
+	assert.Equal(t, original.Message,   postMessage.Event.Message)
+	assert.Equal(t, original.Timestamp, postMessage.Event.Timestamp)
+	assert.Equal(t, original.Severity,  postMessage.Event.Severity)
 
-	assert.NotEqual(t, original.Message,   "")
-	assert.NotEqual(t, original.Timestamp, 0)
-	assert.NotEqual(t, original.Severity,  0)
+	assert.NotEqual(t, postMessage.Event.Message,   "")
+	assert.NotEqual(t, postMessage.Event.Timestamp, 0)
+	assert.NotEqual(t, postMessage.Event.Severity,  0)
+}
+
+func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
+	// setup
+	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(getTestJson()))
+	if nil != err {
+		t.Fatal(err)
+	}
+	request.Header.Set(entities.LogHeaderAppIdentifier,  "MyApp")
+	request.Header.Set(entities.LogHeaderLoggerName,  "MyLogger")
+	request.Header.Set(entities.LogHeaderRequestUri,  "https://www.logbook.io")
+
+	router := gin.Default()
+	incoming := make(chan entities.PostMessage, 20)
+	router.POST("/logbook/:client/logs", func(context *gin.Context) {
+		err := Log(context, incoming)
+		if nil != err {
+			t.Fatal(err)
+		}
+	})
+	recorder := httptest.NewRecorder()
+
+	// run
+	router.ServeHTTP(recorder, request)
+	postMessage := <-incoming
+
+	// validate
+	assert.NotNil(t, postMessage.Header)
 }
 
 // Helperfunctions to make testing easier.
