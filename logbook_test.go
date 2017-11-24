@@ -122,6 +122,10 @@ func DontTestValidLogSentToDispatcher(t *testing.T) {
 	assert.Equal(t, original.Severity,  event.Severity)
 }
 
+// Helperfunctions to make testing easier.
+// They are mainly thought of as dataproviders.
+
+// Helper to build a simple JSON string for testing
 func getTestJson() string {
 	res, _ := json.Marshal(struct {
 		Message   string
@@ -136,6 +140,7 @@ func getTestJson() string {
 	return string(res)
 }
 
+// Helper function to get cookie values out of response recorders
 func getRecorderCookie(r *httptest.ResponseRecorder) *http.Cookie {
 	newRequest := &http.Request{Header: http.Header{"Cookie": r.HeaderMap["Set-Cookie"]}}
 	clientIdCookie, err := newRequest.Cookie("logbook")
