@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/alexgunkel/logbook/entities"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
@@ -38,6 +39,7 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 
 
 	input := entities.PostMessage{}
+	input.Event = entities.LogEvent{123123123, "Test", 3}
 	channel<- input
 	message := &entities.PostMessage{}
 	err = c.ReadJSON(message)
@@ -45,6 +47,10 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	assert.Equal(t, "Test", message.Event.Message)
+	assert.Equal(t, 123123123, message.Event.Timestamp)
+	assert.Equal(t, 3, message.Event.Severity)
 }
 
 func createServer(c chan entities.PostMessage) (*websocket.Conn, *http.Response, error) {
