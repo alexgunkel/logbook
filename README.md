@@ -48,16 +48,19 @@ Then start your app and make sure that relevant services are able to reach you l
 
 
 ## Logger API
+### Path
 Loggers should only submit log events for clients with "logbook"-cookie. This cookie contains the identifier by which
 LogBook decides whom to send the log messages. Messages are sent as POST-requests in JSON to
 
-   <domain>/logbook/<LogBook_id>/logs
+    <domain>/logbook/<LogBook_id>/logs
 
+That is the same path as where the web frontend will request the logs.
+
+### Body
 Logs have to be sent as JSON-objects that contain:
 * the *time* (integer, required),
 * the *message* (string, required),
 * the *severity* (string or integer, required),
-* a *logger_name* (string, optional),
 * a *context* (array, optional).
 
 So, an example json might look like this:
@@ -69,16 +72,27 @@ So, an example json might look like this:
         "logger_name": "example-logger"
     }
 
+### Header
 Information about the *application* that is logging the event(s) should be put into the header
-information. The header key is _LogBook-App-Identifier_:
+information. The header keys have *LogBook* as prefix. At the moment there are three header
+fields:
 
     LogBook-App-Identifier: MyMicroService
+    LogBook-Logger-Name: MyLoggerInstance
+    LogBook-Request-URI: https://my.lovely.app
+
+These informations are not required but highly recommended. You should use them to make your
+logs more helpfull
+
+### Existing packages
 
 Logger packages are available for:
-* [PHP](https://github.com/axel-kummer/logbook-php)
+* *PHP*: [logbook-php](https://github.com/axel-kummer/logbook-php)
 
 ## Web Frontend
-The web frontend is available under the url
+To watch your LogBook you need to install the AngularJS-application
+[logbook-frontend](https://github.com/XenosEleatikos/logbook-frontend)
+The web frontend will available under the url
 
     <domain>/logbook
 
@@ -86,4 +100,7 @@ The frontend is responsible for redirecting the client to the log-messages-page
 
     <domain>/logbook/<LogBook_id>/logs
 
-The EcmaScript application then establishes a websocket-connection and displays the log messages related to the client.
+The *EcmaScript* application then establishes a websocket-connection and displays the log messages related to the client.
+
+## Orchestration
+We recommend orchestration via Nginx-Proxy.

@@ -10,7 +10,7 @@ const (
 	LogHeaderPrefix        string = "LogBook"
 	LogHeaderAppIdentifier string = LogHeaderPrefix + "-App-Identifier"
 	LogHeaderLoggerName    string = LogHeaderPrefix + "-Logger-Name"
-	LogHeaderRequestUri    string = LogHeaderPrefix + "-Request-Uri"
+	LogHeaderRequestUri    string = LogHeaderPrefix + "-Request-URI"
 )
 
 func Log(c *gin.Context, toDispatcher chan<- entities.PostMessage) (err error)  {
