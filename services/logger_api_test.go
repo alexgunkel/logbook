@@ -52,9 +52,9 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	if nil != err {
 		t.Fatal(err)
 	}
-	request.Header.Set(entities.LogHeaderAppIdentifier,  "MyApp")
-	request.Header.Set(entities.LogHeaderLoggerName,  "MyLogger")
-	request.Header.Set(entities.LogHeaderRequestUri,  "https://www.logbook.io")
+	request.Header.Set(LogHeaderAppIdentifier,  "MyApp")
+	request.Header.Set(LogHeaderLoggerName,  "MyLogger")
+	request.Header.Set(LogHeaderRequestUri,  "https://www.logbook.io")
 
 	router := gin.Default()
 	incoming := make(chan entities.PostMessage, 20)

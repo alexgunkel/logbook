@@ -6,6 +6,13 @@ import (
 	"net/http"
 )
 
+const (
+	LogHeaderPrefix        string = "LogBook"
+	LogHeaderAppIdentifier string = LogHeaderPrefix + "-App-Identifier"
+	LogHeaderLoggerName    string = LogHeaderPrefix + "-Logger-Name"
+	LogHeaderRequestUri    string = LogHeaderPrefix + "-Request-Uri"
+)
+
 func Log(c *gin.Context, toDispatcher chan<- entities.PostMessage) (err error)  {
 	m := &entities.PostMessage{}
 	e := &entities.LogEvent{}
@@ -16,9 +23,9 @@ func Log(c *gin.Context, toDispatcher chan<- entities.PostMessage) (err error)  
 	m.Event = *e
 
 	h := entities.LogHeader{}
-	h.Application = c.GetHeader(entities.LogHeaderAppIdentifier)
-	h.LoggerName = c.GetHeader(entities.LogHeaderLoggerName)
-	h.RequestUri = c.GetHeader(entities.LogHeaderRequestUri)
+	h.Application = c.GetHeader(LogHeaderAppIdentifier)
+	h.LoggerName = c.GetHeader(LogHeaderLoggerName)
+	h.RequestUri = c.GetHeader(LogHeaderRequestUri)
 
 	m.Header = h
 
