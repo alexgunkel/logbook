@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/alexgunkel/logbook/entities"
-	"github.com/alexgunkel/logbook/websocket"
+	"github.com/alexgunkel/logbook/lb-websocket"
 )
 
 
@@ -36,7 +36,7 @@ func Default() *gin.Engine {
 	})
 
 	app.engine.GET("logbook/:client/ws", func(context *gin.Context) {
-		websocket.WebsocketHandler(context.Writer, context.Request)
+		lb_websocket.WebsocketHandler(context.Writer, context.Request)
 	})
 
 	return app.engine
