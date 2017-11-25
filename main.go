@@ -1,5 +1,0 @@
-package logbook
-
-func main()  {
-	//
-}
