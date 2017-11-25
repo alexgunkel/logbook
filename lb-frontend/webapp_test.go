@@ -1,4 +1,4 @@
-package services
+package lb_frontend
 
 import (
 	"testing"

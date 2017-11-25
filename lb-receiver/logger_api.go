@@ -1,4 +1,4 @@
-package services
+package lb_receiver
 
 import (
 	"github.com/alexgunkel/logbook/entities"

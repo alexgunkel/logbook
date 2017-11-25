@@ -1,11 +1,12 @@
 package logbook
 
 import (
-	"github.com/alexgunkel/logbook/services"
+	"github.com/alexgunkel/logbook/lb-receiver"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/alexgunkel/logbook/entities"
 	"github.com/alexgunkel/logbook/lb-websocket"
+	"github.com/alexgunkel/logbook/lb-frontend"
 )
 
 
@@ -20,19 +21,19 @@ func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 func Default() *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
-	gen := &services.IdGenerator{}
+	gen := &lb_frontend.IdGenerator{}
 	incoming := make(chan entities.PostMessage, 20)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
-		services.InitLogBookClientApplication(context, gen)
+		lb_frontend.InitLogBookClientApplication(context, gen)
 	})
 
 	app.engine.GET("/logbook/:client/logs", func(context *gin.Context) {
-		services.DisplayLogs(context, gen)
+		lb_frontend.DisplayLogs(context, gen)
 	})
 
 	app.engine.POST("/logbook/:client/logs", func(context *gin.Context) {
-		services.Log(context, incoming)
+		lb_receiver.Log(context, incoming)
 	})
 
 	app.engine.GET("logbook/:client/ws", func(context *gin.Context) {

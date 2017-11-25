@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func TestHandler(t *testing.T) {
+func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
 	var err error
 
 	c, resp, err := createServer()

@@ -1,4 +1,4 @@
-package services
+package lb_receiver
 
 import (
 	"testing"
