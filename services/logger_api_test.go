@@ -72,6 +72,9 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 
 	// validate
 	assert.NotNil(t, postMessage.Header)
+	assert.Equal(t, "MyApp", postMessage.Header.Application)
+	assert.Equal(t, "MyLogger", postMessage.Header.LoggerName)
+	assert.Equal(t, "https://www.logbook.io", postMessage.Header.RequestUri)
 }
 
 // Helperfunctions to make testing easier.
