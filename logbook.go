@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/alexgunkel/logbook/entities"
-	"github.com/gorilla/websocket"
+	"github.com/alexgunkel/logbook/websocket"
 )
 
 
@@ -15,27 +15,6 @@ type Webapp struct {
 
 func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 	app.engine.ServeHTTP(w, req)
-}
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		panic(err)
-		return
-	}
-
-	for {
-		t, msg, err := conn.ReadMessage()
-		if err != nil {
-			break
-		}
-		conn.WriteMessage(t, msg)
-	}
 }
 
 func Default() *gin.Engine {
@@ -57,7 +36,7 @@ func Default() *gin.Engine {
 	})
 
 	app.engine.GET("logbook/:client/ws", func(context *gin.Context) {
-		handler(context.Writer, context.Request)
+		websocket.WebsocketHandler(context.Writer, context.Request)
 	})
 
 	return app.engine
