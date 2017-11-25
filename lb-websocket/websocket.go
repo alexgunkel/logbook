@@ -3,6 +3,7 @@ package lb_websocket
 import (
 	"github.com/gorilla/websocket"
 	"net/http"
+	"github.com/alexgunkel/logbook/entities"
 )
 
 var upgrader = websocket.Upgrader{
@@ -10,7 +11,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
+func WebsocketHandler(w http.ResponseWriter, r *http.Request, c chan entities.PostMessage) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		panic(err)
@@ -18,10 +19,8 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for {
-		t, msg, err := conn.ReadMessage()
-		if err != nil {
-			break
-		}
-		conn.WriteMessage(t, msg)
+		msg :=<- c
+
+		conn.WriteJSON(msg)
 	}
 }
