@@ -28,4 +28,5 @@ func TestInitLogBookClientApplication(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.Contains(t, recorder.Body.String(), "<body>")
+	assert.Contains(t, recorder.Body.String(), "1234")
 }

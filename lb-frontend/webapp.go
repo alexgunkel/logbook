@@ -15,6 +15,10 @@ func (app *IdGenerator) getNewIdentifier() string {
 	return strconv.FormatInt(app.lastIdentifier, 10)
 }
 
+type User struct {
+	Identifier string
+}
+
 func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
@@ -22,10 +26,12 @@ func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
+	user := User{identifier}
+
 	t := template.New("index.tmp")
 	t, err = t.ParseFiles( "./../resources/private/template/index.tmp" )
 	if err != nil {
 		panic(err)
 	}
-	err = t.ExecuteTemplate(c.Writer, "index.tmp", identifier)
+	err = t.ExecuteTemplate(c.Writer, "index.tmp", user)
 }
