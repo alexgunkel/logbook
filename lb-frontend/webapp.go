@@ -2,8 +2,8 @@ package lb_frontend
 
 import (
 	"strconv"
-	"net/http"
 	"github.com/gin-gonic/gin"
+	"html/template"
 )
 
 type IdGenerator struct {
@@ -22,9 +22,10 @@ func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
-	indexAction(c.Writer, c.Request)
-}
-
-func indexAction(w http.ResponseWriter, r *http.Request)  {
-	
+	t := template.New("index.tmp")
+	t, err = t.ParseFiles( "./../lb-logbook/index.tmp" )
+	if err != nil {
+		panic(err)
+	}
+	err = t.ExecuteTemplate(c.Writer, "index.tmp", identifier)
 }
