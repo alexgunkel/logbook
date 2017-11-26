@@ -23,7 +23,7 @@ func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 	}
 
 	t := template.New("index.tmp")
-	t, err = t.ParseFiles( "./../lb-logbook/index.tmp" )
+	t, err = t.ParseFiles( "./../resources/private/template/index.tmp" )
 	if err != nil {
 		panic(err)
 	}
