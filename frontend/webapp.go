@@ -6,6 +6,16 @@ import (
 	"html/template"
 )
 
+func AddFrontend(engine *gin.Engine, templateDir string) {
+	fe := &WebApplication{}
+	fe.SetTemplateDirPath(templateDir)
+	gen := &IdGenerator{}
+
+	engine.GET("/logbook", func(context *gin.Context) {
+		fe.InitLogBookClientApplication(context, gen)
+	})
+}
+
 type WebApplication struct {
 	templateFolder string
 }

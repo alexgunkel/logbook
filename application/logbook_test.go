@@ -7,42 +7,14 @@ import (
 	"strings"
 	"github.com/stretchr/testify/assert"
 	"github.com/posener/wstest"
+	"github.com/gin-gonic/gin"
 )
 
+func GetDispatcher() *gin.Engine {
+	engine := gin.Default()
+	AddDispatcher(engine)
 
-
-// A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
-// set. Therefore, we generate a client-id and set a cookie.
-//
-// There is no need to redirect. Instead we send a small application that shows the success.
-func TestInitLogBookWithoutCookie(t *testing.T) {
-	request, err := http.NewRequest("GET", "/logbook", nil)
-	if nil != err {
-		t.Fatal(err)
-	}
-
-	router := Application("../resources/private/template")
-	recorder := httptest.NewRecorder()
-	router.ServeHTTP(recorder, request)
-
-	logBookId, _ := getRecorderCookie(recorder)
-
-	assert.Nil(t, err)
-	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.NotEqual(t, "", logBookId)
-}
-
-// When receiving a GET-request to the root page and the client has logbook-cookie, then we
-// directly show the app.
-func TestInitLogBookWithCookie(t *testing.T) {
-	router := Application("../resources/private/template")
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook", nil)
-	cookie := &http.Cookie{Name: "logbook", Value: "1234"}
-	request.AddCookie(cookie)
-	router.ServeHTTP(recorder, request)
-
-	assert.Equal(t, http.StatusOK, recorder.Code)
+	return engine
 }
 
 // Test the log-message-receiver
@@ -53,14 +25,14 @@ func TestEmptyLogEvent(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	router := Application("")
+	router := GetDispatcher()
 	router.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusBadRequest, recorder.Code)
 }
 
 func TestValidLogAccepted(t *testing.T) {
-	router := Application("")
+	router := GetDispatcher()
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
 	if nil != err {
@@ -72,7 +44,7 @@ func TestValidLogAccepted(t *testing.T) {
 }
 
 func TestInValidJsonRefused(t *testing.T) {
-	router := Application("")
+	router := GetDispatcher()
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{asdasd}"))
 	if nil != err {
@@ -87,7 +59,7 @@ func TestInValidJsonRefused(t *testing.T) {
 func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 	var err error
 
-	h := Application("")
+	h := GetDispatcher()
 	d := wstest.NewDialer(h, nil)  // or t.Log instead of nil
 
 	c, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
@@ -108,7 +80,7 @@ func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 	var err  error
 
-	logBook := Application("")
+	logBook := GetDispatcher()
 	dialer := wstest.NewDialer(logBook, nil)
 	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
 	if err != nil {
@@ -136,18 +108,4 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 	assert.Equal(t, "MyMicroService", wsMessage.Header.Application)
 	assert.Equal(t, "MyLogger", wsMessage.Header.LoggerName)
 	assert.Equal(t, "http://my.web.app", wsMessage.Header.RequestUri)
-}
-
-// Helper function to get cookie values out of response recorders
-func getRecorderCookie(r *httptest.ResponseRecorder) (clientId string, err error) {
-	newRequest := &http.Request{Header: http.Header{"Cookie": r.HeaderMap["Set-Cookie"]}}
-	clientIdCookie, err := newRequest.Cookie("logbook")
-
-	if nil == err {
-		clientId = clientIdCookie.Value
-	} else {
-		clientId = ""
-	}
-
-	return clientId, err
 }
