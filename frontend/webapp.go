@@ -1,4 +1,4 @@
-package lb_frontend
+package frontend
 
 import (
 	"strconv"

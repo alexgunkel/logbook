@@ -3,7 +3,7 @@ package application
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/alexgunkel/logbook/lb-frontend"
+	"github.com/alexgunkel/logbook/frontend"
 )
 
 
@@ -18,14 +18,14 @@ func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 func Default(templateDir string) *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
-	frontend := &lb_frontend.WebApplication{}
-	frontend.SetTemplateDirPath(templateDir)
-	gen := &lb_frontend.IdGenerator{}
+	fe := &frontend.WebApplication{}
+	fe.SetTemplateDirPath(templateDir)
+	gen := &frontend.IdGenerator{}
 	incoming := make(chan PostMessage, 20)
 	//outbound := make(chan lb_entities.PostMessage, 10)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
-		frontend.InitLogBookClientApplication(context, gen)
+		fe.InitLogBookClientApplication(context, gen)
 	})
 
 	app.engine.POST("/logbook/:client/logs", func(context *gin.Context) {
