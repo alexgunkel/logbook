@@ -11,6 +11,8 @@ import (
 	"github.com/alexgunkel/logbook/lb-receiver"
 )
 
+
+
 // A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
 // set. Therefore, we generate a client-id and set a cookie.
 //
@@ -21,7 +23,7 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router := Application()
+	router := Application("../resources/private/template")
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
 
@@ -35,7 +37,7 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 // When receiving a GET-request to the root page and the client has logbook-cookie, then we
 // directly show the app.
 func TestInitLogBookWithCookie(t *testing.T) {
-	router := Application()
+	router := Application("../resources/private/template")
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/logbook", nil)
 	cookie := &http.Cookie{Name: "logbook", Value: "1234"}
@@ -53,14 +55,14 @@ func TestEmptyLogEvent(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	router := Application()
+	router := Application("")
 	router.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusBadRequest, recorder.Code)
 }
 
 func TestValidLogAccepted(t *testing.T) {
-	router := Application()
+	router := Application("")
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
 	if nil != err {
@@ -72,7 +74,7 @@ func TestValidLogAccepted(t *testing.T) {
 }
 
 func TestInValidJsonRefused(t *testing.T) {
-	router := Application()
+	router := Application("")
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{asdasd}"))
 	if nil != err {
@@ -87,7 +89,7 @@ func TestInValidJsonRefused(t *testing.T) {
 func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 	var err error
 
-	h := Application()
+	h := Application("")
 	d := wstest.NewDialer(h, nil)  // or t.Log instead of nil
 
 	c, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
@@ -108,7 +110,7 @@ func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 	var err  error
 
-	logBook := Application()
+	logBook := Application("")
 	dialer := wstest.NewDialer(logBook, nil)
 	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
 	if err != nil {

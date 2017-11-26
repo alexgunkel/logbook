@@ -16,9 +16,11 @@ func TestGetNewIdentifierSetsDifferentIdds(t *testing.T) {
 
 func TestInitLogBookClientApplication(t *testing.T) {
 	router := gin.Default()
+	app := &WebApplication{}
+	app.SetTemplateDirPath("../resources/private/template")
 	generator := &IdGenerator{}
 	router.GET("/logbook", func(context *gin.Context) {
-		InitLogBookClientApplication(context, generator)
+		app.InitLogBookClientApplication(context, generator)
 	})
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/logbook", nil)
@@ -30,5 +32,5 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "1234")
 	assert.Contains(t, recorder.Body.String(), "Hello World!")
-	assert.Contains(t, recorder.Body.String(), "ws:\\/\\/localhost\\/logbook\\/1234\\/logs")
+	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080/logbook/1234/logs")
 }

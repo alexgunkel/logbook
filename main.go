@@ -1,8 +1,12 @@
 package main
 
-import "github.com/alexgunkel/logbook/lb-logbook"
+import (
+	"github.com/alexgunkel/logbook/lb-logbook"
+	"path/filepath"
+)
 
 func main()  {
-	logBook := lb_logbook.Application()
+	path, _ := filepath.Abs("./resources/private/template")
+	logBook := lb_logbook.Application(path)
 	logBook.Run()
 }

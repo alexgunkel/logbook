@@ -6,6 +6,10 @@ import (
 	"html/template"
 )
 
+type WebApplication struct {
+	templateFolder string
+}
+
 type IdGenerator struct {
 	lastIdentifier int64
 }
@@ -20,7 +24,11 @@ type User struct {
 	Uri string
 }
 
-func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
+func (a *WebApplication) SetTemplateDirPath(path string)  {
+	a.templateFolder = path
+}
+
+func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
 		identifier = gen.getNewIdentifier()
@@ -29,10 +37,10 @@ func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 
 	user := User{}
 	user.Identifier = identifier
-	user.Uri = "ws://localhost/logbook/" + identifier + "/logs"
+	user.Uri = "ws://localhost:8080/logbook/" + identifier + "/logs"
 
 	t := template.New("Index.html")
-	t, err = t.ParseFiles( "./../resources/private/template/Index.html" )
+	t, err = t.ParseFiles( a.templateFolder + "/Index.html" )
 	if err != nil {
 		panic(err)
 	}

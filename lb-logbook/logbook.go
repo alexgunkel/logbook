@@ -18,15 +18,17 @@ func (app *Webapp) ServeHTTP(w http.ResponseWriter, req *http.Request)  {
 	app.engine.ServeHTTP(w, req)
 }
 
-func Default() *gin.Engine {
+func Default(templateDir string) *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
+	frontend := &lb_frontend.WebApplication{}
+	frontend.SetTemplateDirPath(templateDir)
 	gen := &lb_frontend.IdGenerator{}
 	incoming := make(chan lb_entities.PostMessage, 20)
 	//outbound := make(chan lb_entities.PostMessage, 10)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
-		lb_frontend.InitLogBookClientApplication(context, gen)
+		frontend.InitLogBookClientApplication(context, gen)
 	})
 
 	app.engine.POST("/logbook/:client/logs", func(context *gin.Context) {
@@ -42,7 +44,7 @@ func Default() *gin.Engine {
 }
 
 // @API
-func Application() *gin.Engine {
-	return Default()
+func Application(templateDir string) *gin.Engine {
+	return Default(templateDir)
 }
 
