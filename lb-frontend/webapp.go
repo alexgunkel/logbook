@@ -17,6 +17,7 @@ func (app *IdGenerator) getNewIdentifier() string {
 
 type User struct {
 	Identifier string
+	Uri string
 }
 
 func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
@@ -26,12 +27,14 @@ func InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
 		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
-	user := User{identifier}
+	user := User{}
+	user.Identifier = identifier
+	user.Uri = "ws://localhost/logbook/" + identifier + "/logs"
 
-	t := template.New("index.tmp")
-	t, err = t.ParseFiles( "./../resources/private/template/index.tmp" )
+	t := template.New("Index.html")
+	t, err = t.ParseFiles( "./../resources/private/template/Index.html" )
 	if err != nil {
 		panic(err)
 	}
-	err = t.ExecuteTemplate(c.Writer, "index.tmp", user)
+	err = t.ExecuteTemplate(c.Writer, "Index.html", user)
 }

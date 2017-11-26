@@ -29,4 +29,6 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "1234")
+	assert.Contains(t, recorder.Body.String(), "Hello World!")
+	assert.Contains(t, recorder.Body.String(), "ws:\\/\\/localhost\\/logbook\\/1234\\/logs")
 }
