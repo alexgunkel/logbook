@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/posener/wstest"
 	"github.com/alexgunkel/logbook/lb-entities"
+	"github.com/alexgunkel/logbook/lb-receiver"
 )
 
 // A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
@@ -132,10 +133,14 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 	}
 
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
+	body := "{ \"message\": \"Test\", \"severity\": 4, \"timestamp\": 123123123 }"
+	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(body))
 	if err != nil {
 		t.Fatal(err)
 	}
+	request.Header.Add(lb_receiver.LogHeaderLoggerName, "MyLogger")
+	request.Header.Add(lb_receiver.LogHeaderAppIdentifier, "MyMicroService")
+	request.Header.Add(lb_receiver.LogHeaderRequestUri, "http://my.web.app")
 
 	logBook.ServeHTTP(recorder, request)
 
@@ -143,6 +148,11 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 	conn.ReadJSON(wsMessage)
 
 	assert.Equal(t, "Test", wsMessage.Event.Message)
+	assert.Equal(t, 123123123, wsMessage.Event.Timestamp)
+	assert.Equal(t, 4, wsMessage.Event.Severity)
+	assert.Equal(t, "MyMicroService", wsMessage.Header.Application)
+	assert.Equal(t, "MyLogger", wsMessage.Header.LoggerName)
+	assert.Equal(t, "http://my.web.app", wsMessage.Header.RequestUri)
 }
 
 // Helper function to get cookie values out of response recorders
