@@ -19,8 +19,10 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 
 	router := gin.Default()
 	incoming := make(chan PostMessage, 20)
+	r := &receiver{}
+	r.cToDispatcher = incoming
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
-		err := Log(context, incoming)
+		err := r.Log(context, "12345")
 		if nil != err {
 			t.Fatal(err)
 		}
@@ -57,8 +59,10 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 
 	router := gin.Default()
 	incoming := make(chan PostMessage, 20)
+	r := &receiver{}
+	r.cToDispatcher = incoming
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
-		err := Log(context, incoming)
+		err := r.Log(context, "12345")
 		if nil != err {
 			t.Fatal(err)
 		}

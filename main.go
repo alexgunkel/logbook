@@ -11,7 +11,8 @@ func main()  {
 	engine := gin.Default()
 
 	// Orchestrate the dispatcher stuff
-	application.AddDispatcher(engine)
+	dispatcher := &application.LogBookApplication{}
+	dispatcher.AddApplicationToEngine(engine)
 
 	// Orchestrate the frontend stuff
 	path, _ := filepath.Abs("./resources/private/template")

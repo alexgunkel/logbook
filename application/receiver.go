@@ -12,7 +12,11 @@ const (
 	LogHeaderRequestUri    string = LogHeaderPrefix + "-Request-URI"
 )
 
-func Log(c *gin.Context, toDispatcher chan<- PostMessage) (err error)  {
+type receiver struct {
+	cToDispatcher chan PostMessage
+}
+
+func (r *receiver) Log(c *gin.Context, logBookId string) (err error)  {
 	m := &PostMessage{}
 	e := &LogEvent{}
 	if err = c.BindJSON(e); nil != err {
@@ -20,6 +24,7 @@ func Log(c *gin.Context, toDispatcher chan<- PostMessage) (err error)  {
 		return
 	}
 	m.Event = *e
+	m.logBookId = logBookId
 
 	h := LogHeader{}
 	h.Application = c.GetHeader(LogHeaderAppIdentifier)
@@ -28,6 +33,6 @@ func Log(c *gin.Context, toDispatcher chan<- PostMessage) (err error)  {
 
 	m.Header = h
 
-	toDispatcher <- *m
+	r.cToDispatcher <- *m
 	return
 }

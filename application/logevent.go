@@ -1,8 +1,9 @@
 package application
 
 type PostMessage struct {
-	Header LogHeader
-	Event  LogEvent
+	Header    LogHeader
+	Event     LogEvent
+	logBookId string
 }
 
 type LogEvent struct {
