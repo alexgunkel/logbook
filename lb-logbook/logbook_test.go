@@ -1,4 +1,4 @@
-package logbook
+package lb_logbook
 
 import (
 	"net/http"

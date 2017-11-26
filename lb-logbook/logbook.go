@@ -1,4 +1,4 @@
-package logbook
+package lb_logbook
 
 import (
 	"github.com/alexgunkel/logbook/lb-receiver"
