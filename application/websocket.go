@@ -1,9 +1,8 @@
-package lb_websocket
+package application
 
 import (
 	"github.com/gorilla/websocket"
 	"net/http"
-	"github.com/alexgunkel/logbook/lb-entities"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +11,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request, c <-chan lb_entities.PostMessage) {
+func WebsocketHandler(w http.ResponseWriter, r *http.Request, c <-chan PostMessage) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		panic(err)

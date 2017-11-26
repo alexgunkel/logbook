@@ -1,7 +1,6 @@
-package lb_receiver
+package application
 
 import (
-	"github.com/alexgunkel/logbook/lb-entities"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,16 +12,16 @@ const (
 	LogHeaderRequestUri    string = LogHeaderPrefix + "-Request-URI"
 )
 
-func Log(c *gin.Context, toDispatcher chan<- lb_entities.PostMessage) (err error)  {
-	m := &lb_entities.PostMessage{}
-	e := &lb_entities.LogEvent{}
+func Log(c *gin.Context, toDispatcher chan<- PostMessage) (err error)  {
+	m := &PostMessage{}
+	e := &LogEvent{}
 	if err = c.BindJSON(e); nil != err {
 		c.Status(http.StatusBadRequest)
 		return
 	}
 	m.Event = *e
 
-	h := lb_entities.LogHeader{}
+	h := LogHeader{}
 	h.Application = c.GetHeader(LogHeaderAppIdentifier)
 	h.LoggerName = c.GetHeader(LogHeaderLoggerName)
 	h.RequestUri = c.GetHeader(LogHeaderRequestUri)

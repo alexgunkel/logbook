@@ -1,4 +1,4 @@
-package lb_entities
+package application
 
 type PostMessage struct {
 	Header LogHeader

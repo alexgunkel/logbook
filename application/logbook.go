@@ -1,11 +1,8 @@
-package lb_logbook
+package application
 
 import (
-	"github.com/alexgunkel/logbook/lb-receiver"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/alexgunkel/logbook/lb-entities"
-	"github.com/alexgunkel/logbook/lb-websocket"
 	"github.com/alexgunkel/logbook/lb-frontend"
 )
 
@@ -24,7 +21,7 @@ func Default(templateDir string) *gin.Engine {
 	frontend := &lb_frontend.WebApplication{}
 	frontend.SetTemplateDirPath(templateDir)
 	gen := &lb_frontend.IdGenerator{}
-	incoming := make(chan lb_entities.PostMessage, 20)
+	incoming := make(chan PostMessage, 20)
 	//outbound := make(chan lb_entities.PostMessage, 10)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
@@ -32,12 +29,12 @@ func Default(templateDir string) *gin.Engine {
 	})
 
 	app.engine.POST("/logbook/:client/logs", func(context *gin.Context) {
-		lb_receiver.Log(context, incoming)
+		Log(context, incoming)
 	})
 
 	app.engine.GET("logbook/:client/logs", func(context *gin.Context) {
-		lb_websocket.ForceCookie(context)
-		lb_websocket.WebsocketHandler(context.Writer, context.Request, incoming)
+		ForceCookie(context)
+		WebsocketHandler(context.Writer, context.Request, incoming)
 	})
 
 	return app.engine

@@ -1,4 +1,4 @@
-package lb_logbook
+package application
 
 import (
 	"net/http"
@@ -7,8 +7,6 @@ import (
 	"strings"
 	"github.com/stretchr/testify/assert"
 	"github.com/posener/wstest"
-	"github.com/alexgunkel/logbook/lb-entities"
-	"github.com/alexgunkel/logbook/lb-receiver"
 )
 
 
@@ -123,13 +121,13 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 	if err != nil {
 		t.Fatal(err)
 	}
-	request.Header.Add(lb_receiver.LogHeaderLoggerName, "MyLogger")
-	request.Header.Add(lb_receiver.LogHeaderAppIdentifier, "MyMicroService")
-	request.Header.Add(lb_receiver.LogHeaderRequestUri, "http://my.web.app")
+	request.Header.Add(LogHeaderLoggerName, "MyLogger")
+	request.Header.Add(LogHeaderAppIdentifier, "MyMicroService")
+	request.Header.Add(LogHeaderRequestUri, "http://my.web.app")
 
 	logBook.ServeHTTP(recorder, request)
 
-	wsMessage := &lb_entities.PostMessage{}
+	wsMessage := &PostMessage{}
 	conn.ReadJSON(wsMessage)
 
 	assert.Equal(t, "Test", wsMessage.Event.Message)
