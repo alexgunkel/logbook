@@ -34,18 +34,15 @@ is required.
 You can easily install LogBook via Go CLI:
 
     go get github.com/alexgunkel/logbook
+    cd ${GOPATH}/src/github.com/alexgunkel/logbook
+    go install
 
 ## Usage
-To insert use it you just have to create a simple go project with a main package and a main function
-that contains the following lines:
+Start LogBook by typing
 
-    import "github.com/alexgunkel/logbook"
-    // ...
-    LogApplication := logbook.Application()
-    LogApplication.Run()
+    ./logbook
 
-Then start your app and make sure that relevant services are able to reach you logbook on port 80.
-
+*LogBook* by default listens on port 8080.
 
 ## Logger API
 ### Path
