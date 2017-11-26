@@ -12,8 +12,9 @@ import (
 )
 
 // A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
-// set. Therefore, we generate a client-id, set a cookie, and redirect to the log-message-list-page.
+// set. Therefore, we generate a client-id and set a cookie.
 //
+// There is no need to redirect. Instead we send a small application that shows the success.
 func TestInitLogBookWithoutCookie(t *testing.T) {
 	request, err := http.NewRequest("GET", "/logbook", nil)
 	if nil != err {
@@ -27,14 +28,12 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 	logBookId, _ := getRecorderCookie(recorder)
 
 	assert.Nil(t, err)
-	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
+	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.NotEqual(t, "", logBookId)
-	path := "/logbook/" + logBookId + "/logs"
-	assert.Equalf(t, path, recorder.Header().Get("Location"), "Expected path %v", path)
 }
 
-// When receiving a GET-request to the root page and the client has logbook-cookie, then we redirect her to the
-// logs without setting a new cookie
+// When receiving a GET-request to the root page and the client has logbook-cookie, then we
+// directly show the app.
 func TestInitLogBookWithCookie(t *testing.T) {
 	router := Application()
 	recorder := httptest.NewRecorder()
@@ -43,23 +42,7 @@ func TestInitLogBookWithCookie(t *testing.T) {
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
 
-	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
-	assert.Equal(t, "/logbook/1234/logs", recorder.Header().Get("Location"))
-}
-
-// GET request to a specific display path without cookie results in a redirect to the start page
-func TestDisplayWithoutCookie(t *testing.T) {
-	router := Application()
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook/1234/logs", nil)
-
-	router.ServeHTTP(recorder, request)
-	logBookId, err := getRecorderCookie(recorder)
-	newPath := "/logbook/" + logBookId + "/logs"
-
-	assert.Nil(t, err)
-	assert.Equal(t, http.StatusTemporaryRedirect, recorder.Code)
-	assert.Equalf(t, newPath, recorder.Header().Get("Location"), "Expected path %v", newPath)
+	assert.Equal(t, http.StatusOK, recorder.Code)
 }
 
 // Test the log-message-receiver
@@ -107,7 +90,7 @@ func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 	h := Application()
 	d := wstest.NewDialer(h, nil)  // or t.Log instead of nil
 
-	c, resp, err := d.Dial("ws://localhost/logbook/123/ws", nil)
+	c, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,7 +110,7 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 
 	logBook := Application()
 	dialer := wstest.NewDialer(logBook, nil)
-	conn, _, err := dialer.Dial("ws://localhost/logbook/123/ws", nil)
+	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

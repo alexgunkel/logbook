@@ -29,15 +29,12 @@ func Default() *gin.Engine {
 		lb_frontend.InitLogBookClientApplication(context, gen)
 	})
 
-	app.engine.GET("/logbook/:client/logs", func(context *gin.Context) {
-		lb_frontend.DisplayLogs(context, gen)
-	})
-
 	app.engine.POST("/logbook/:client/logs", func(context *gin.Context) {
 		lb_receiver.Log(context, incoming)
 	})
 
-	app.engine.GET("logbook/:client/ws", func(context *gin.Context) {
+	app.engine.GET("logbook/:client/logs", func(context *gin.Context) {
+		lb_websocket.ForceCookie(context)
 		lb_websocket.WebsocketHandler(context.Writer, context.Request, incoming)
 	})
 

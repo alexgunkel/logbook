@@ -1,7 +1,6 @@
 package lb_frontend
 
 import (
-	"net/http"
 	"strconv"
 )
 
@@ -20,15 +19,6 @@ func (app *IdGenerator) getNewIdentifier() string {
 	return strconv.FormatInt(app.lastIdentifier, 10)
 }
 
-func DisplayLogs(c webContext, gen *IdGenerator)  {
-	_, err := c.Cookie("logbook")
-	if nil != err {
-		identifier := gen.getNewIdentifier()
-		c.SetCookie("logbook", identifier, 0, "", "", false, false)
-		c.Redirect(http.StatusTemporaryRedirect, "../../logbook/" + identifier + "/logs")
-	}
-}
-
 func InitLogBookClientApplication(c webContext, gen *IdGenerator)  {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
@@ -36,7 +26,5 @@ func InitLogBookClientApplication(c webContext, gen *IdGenerator)  {
 		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
-	location := "logbook/" + identifier + "/logs"
-
-	c.Redirect(http.StatusTemporaryRedirect, location)
+	//location := "logbook/" + identifier + "/logs"
 }

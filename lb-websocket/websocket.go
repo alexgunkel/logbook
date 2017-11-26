@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"github.com/alexgunkel/logbook/lb-entities"
+	"github.com/gin-gonic/gin"
 )
 
 var upgrader = websocket.Upgrader{
@@ -22,5 +23,13 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request, c <-chan lb_entiti
 		msg :=<- c
 
 		conn.WriteJSON(msg)
+	}
+}
+
+func ForceCookie(c *gin.Context)  {
+	_, err := c.Cookie("logbook")
+	if nil != err {
+		identifier := c.Param("client")
+		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 }
