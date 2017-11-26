@@ -7,6 +7,7 @@ import (
 	"strings"
 	"github.com/stretchr/testify/assert"
 	"github.com/posener/wstest"
+	"github.com/alexgunkel/logbook/lb-entities"
 )
 
 // A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
@@ -60,6 +61,7 @@ func TestDisplayWithoutCookie(t *testing.T) {
 	assert.Equalf(t, newPath, recorder.Header().Get("Location"), "Expected path %v", newPath)
 }
 
+// Test the log-message-receiver
 func TestEmptyLogEvent(t *testing.T) {
 	request, err := http.NewRequest("POST", "/logbook/1234/logs", strings.NewReader(""))
 	if nil != err {
@@ -85,8 +87,20 @@ func TestValidLogAccepted(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 }
 
+func TestInValidJsonRefused(t *testing.T) {
+	router := Application()
+	recorder := httptest.NewRecorder()
+	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{asdasd}"))
+	if nil != err {
+		t.Fatal(err)
+	}
 
-func TestHandler(t *testing.T) {
+	router.ServeHTTP(recorder, request)
+	assert.NotEqual(t, http.StatusOK, recorder.Code)
+}
+
+// Test the websocket functionality
+func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 	var err error
 
 	h := Application()
@@ -107,16 +121,28 @@ func TestHandler(t *testing.T) {
 	}
 }
 
-func TestInValidJsonRefused(t *testing.T) {
-	router := Application()
-	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{asdasd}"))
-	if nil != err {
+func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
+	var err  error
+
+	logBook := Application()
+	dialer := wstest.NewDialer(logBook, nil)
+	conn, _, err := dialer.Dial("ws://localhost/logbook/123/ws", nil)
+	if err != nil {
 		t.Fatal(err)
 	}
 
-	router.ServeHTTP(recorder, request)
-	assert.NotEqual(t, http.StatusOK, recorder.Code)
+	recorder := httptest.NewRecorder()
+	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	logBook.ServeHTTP(recorder, request)
+
+	wsMessage := &lb_entities.PostMessage{}
+	conn.ReadJSON(wsMessage)
+
+	assert.Equal(t, "Test", wsMessage.Event.Message)
 }
 
 // Helper function to get cookie values out of response recorders

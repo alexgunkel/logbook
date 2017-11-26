@@ -11,7 +11,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request, c chan lb_entities.PostMessage) {
+func WebsocketHandler(w http.ResponseWriter, r *http.Request, c <-chan lb_entities.PostMessage) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		panic(err)

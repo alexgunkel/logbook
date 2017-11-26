@@ -23,7 +23,7 @@ func Default() *gin.Engine {
 	app.engine = gin.Default()
 	gen := &lb_frontend.IdGenerator{}
 	incoming := make(chan lb_entities.PostMessage, 20)
-	outbound := make(chan lb_entities.PostMessage, 10)
+	//outbound := make(chan lb_entities.PostMessage, 10)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
 		lb_frontend.InitLogBookClientApplication(context, gen)
@@ -38,7 +38,7 @@ func Default() *gin.Engine {
 	})
 
 	app.engine.GET("logbook/:client/ws", func(context *gin.Context) {
-		lb_websocket.WebsocketHandler(context.Writer, context.Request, outbound)
+		lb_websocket.WebsocketHandler(context.Writer, context.Request, incoming)
 	})
 
 	return app.engine
