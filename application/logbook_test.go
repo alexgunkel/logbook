@@ -1,77 +1,19 @@
 package application
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"strings"
-	"github.com/stretchr/testify/assert"
 	"github.com/posener/wstest"
+	"testing"
+	"net/http"
 	"github.com/gin-gonic/gin"
-	"time"
+	"github.com/gorilla/websocket"
+	"github.com/stretchr/testify/assert"
 )
 
-func GetDispatcher() *gin.Engine {
-	engine := gin.Default()
-	app := LogBookApplication{}
-	app.AddApplicationToEngine(engine)
-
-	return engine
-}
-
-// Test the log-message-receiver
-func TestEmptyLogEvent(t *testing.T) {
-	request, err := http.NewRequest("POST", "/logbook/1234/logs", strings.NewReader(""))
-	if nil != err {
-		t.Fatal(err)
-	}
-
-	recorder := httptest.NewRecorder()
-	router := GetDispatcher()
-	router.ServeHTTP(recorder, request)
-
-	assert.Equal(t, http.StatusBadRequest, recorder.Code)
-}
-
-func TestValidLogAccepted(t *testing.T) {
+func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
 	var err error
 
-	h := GetDispatcher()
-	d := wstest.NewDialer(h, nil)  // or t.Log instead of nil
-
-	d.Dial("ws://localhost/logbook/12345/logs", nil)
-
-	router := GetDispatcher()
-	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
-	if nil != err {
-		t.Fatal(err)
-	}
-
-	router.ServeHTTP(recorder, request)
-	assert.Equal(t, http.StatusOK, recorder.Code)
-}
-
-func TestInValidJsonRefused(t *testing.T) {
-	router := GetDispatcher()
-	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{asdasd}"))
-	if nil != err {
-		t.Fatal(err)
-	}
-
-	router.ServeHTTP(recorder, request)
-	assert.NotEqual(t, http.StatusOK, recorder.Code)
-}
-
-// Test the websocket functionality
-func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
-	var err error
-
-	h := GetDispatcher()
-	d := wstest.NewDialer(h, nil)  // or t.Log instead of nil
-
-	c, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
+	channel := make(chan LogMessage, 10)
+	_, resp, err := createServer(channel)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -79,90 +21,35 @@ func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 	if got, want := resp.StatusCode, http.StatusSwitchingProtocols; got != want {
 		t.Errorf("resp.StatusCode = %q, want %q", got, want)
 	}
-
-	err = c.WriteJSON("test")
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
-func TestWebsocketHandlerCreatesChannel(t *testing.T) {
-	var err  error
-	engine := gin.Default()
-	app := LogBookApplication{}
-	app.AddApplicationToEngine(engine)
-
-	if _, ok := app.d.channels["123"]; ok {
-		t.Error("Map entry for 123 should not exist yet.")
-	}
-
-	dialer := wstest.NewDialer(engine, nil)
-	_, _, err = dialer.Dial("ws://localhost/logbook/123/logs", nil)
+func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
+	var err error
+	channel := make(chan LogMessage, 10)
+	c, _, err := createServer(channel)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if _, ok := app.d.channels["123"]; !ok {
-		t.Error("Map entry for 123 should exist now.")
-	}
+	input := LogMessage{}
+	input.Event = LogEvent{123123123, "Test", 3, nil}
+	channel<- input
+	message := &LogMessage{}
+	err = c.ReadJSON(message)
+
+	assert.Equal(t, "Test", message.Event.Message)
+	assert.Equal(t, 123123123, message.Event.Timestamp)
+	assert.Equal(t, 3, message.Event.Severity)
 }
 
-func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
-	var err  error
-
-	logBook := GetDispatcher()
-	dialer := wstest.NewDialer(logBook, nil)
-	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	recorder := httptest.NewRecorder()
-	body := "{ \"message\": \"Test\", \"severity\": 4, \"timestamp\": 123123123 }"
-	request, err := http.NewRequest("POST", "/logbook/123/logs", strings.NewReader(body))
-	if err != nil {
-		t.Fatal(err)
-	}
-	request.Header.Add(LogHeaderLoggerName, "MyLogger")
-	request.Header.Add(LogHeaderAppIdentifier, "MyMicroService")
-	request.Header.Add(LogHeaderRequestUri, "http://my.web.app")
-
-	logBook.ServeHTTP(recorder, request)
-
-	wsMessage := &PostMessage{}
-	conn.ReadJSON(wsMessage)
-
-	assert.Equal(t, "Test", wsMessage.Event.Message)
-	assert.Equal(t, 123123123, wsMessage.Event.Timestamp)
-	assert.Equal(t, 4, wsMessage.Event.Severity)
-	assert.Equal(t, "MyMicroService", wsMessage.Header.Application)
-	assert.Equal(t, "MyLogger", wsMessage.Header.LoggerName)
-	assert.Equal(t, "http://my.web.app", wsMessage.Header.RequestUri)
-}
-
-func TestWebsocketReceivesOnlyMessagesWithSameLogBookId(t *testing.T) {
-	var err  error
-
-	logBook := GetDispatcher()
-	dialer := wstest.NewDialer(logBook, nil)
-	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	recorder := httptest.NewRecorder()
-	body := "{ \"message\": \"Test\", \"severity\": 4, \"timestamp\": 123123123 }"
-	request, err := http.NewRequest("POST", "/logbook/321/logs", strings.NewReader(body))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	logBook.ServeHTTP(recorder, request)
-
-	wsMessage := &PostMessage{}
-	go conn.ReadJSON(wsMessage)
-
-	time.Sleep(time.Second * 1)
-
-	assert.Equal(t, "", wsMessage.Event.Message)
+func createServer(c chan LogMessage) (*websocket.Conn, *http.Response, error) {
+	h := gin.Default()
+	h.GET("/logbook/123/logs", func(context *gin.Context) {
+		lb, _ := createLogBook(context.Writer, context.Request, c)
+		lb.listen()
+	})
+	d := wstest.NewDialer(h, nil)
+	// or t.submit instead of nil
+	conn, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
+	return conn, resp, err
 }

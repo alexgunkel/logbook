@@ -18,11 +18,11 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	}
 
 	router := gin.Default()
-	incoming := make(chan PostMessage, 20)
-	r := &receiver{}
-	r.cToDispatcher = incoming
+	incoming := make(chan LogMessage, 20)
+	r := &inbox{}
+	r.chanelToMessageDispatcher = incoming
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
-		err := r.Log(context, "12345")
+		err := r.submit(context, "12345")
 		if nil != err {
 			t.Fatal(err)
 		}
@@ -58,11 +58,11 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	request.Header.Set(LogHeaderRequestUri,  "https://www.logbook.io")
 
 	router := gin.Default()
-	incoming := make(chan PostMessage, 20)
-	r := &receiver{}
-	r.cToDispatcher = incoming
+	incoming := make(chan LogMessage, 20)
+	r := &inbox{}
+	r.chanelToMessageDispatcher = incoming
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
-		err := r.Log(context, "12345")
+		err := r.submit(context, "12345")
 		if nil != err {
 			t.Fatal(err)
 		}
@@ -74,10 +74,10 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	postMessage := <-incoming
 
 	// validate
-	assert.NotNil(t, postMessage.Header)
-	assert.Equal(t, "MyApp", postMessage.Header.Application)
-	assert.Equal(t, "MyLogger", postMessage.Header.LoggerName)
-	assert.Equal(t, "https://www.logbook.io", postMessage.Header.RequestUri)
+	assert.NotNil(t, postMessage.Origin)
+	assert.Equal(t, "MyApp", postMessage.Origin.Application)
+	assert.Equal(t, "MyLogger", postMessage.Origin.LoggerName)
+	assert.Equal(t, "https://www.logbook.io", postMessage.Origin.RequestUri)
 }
 
 // Helperfunctions to make testing easier.

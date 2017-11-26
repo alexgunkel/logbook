@@ -1,37 +1,42 @@
 package application
 
 import (
+	"github.com/gorilla/websocket"
+	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
-type LogBookApplication struct {
-	r *receiver
-	d *dispatcher
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
-func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
-	app.r = &receiver{}
-	app.d = &dispatcher{}
+type logBook struct {
+	conn    *websocket.Conn
+	mailbox <-chan LogMessage
+}
 
-	// Create channel between receiver and dispatcher
-	receiverToDispatcher := make(chan PostMessage, 20)
-	app.r.cToDispatcher = receiverToDispatcher
-	app.d.incoming = receiverToDispatcher
+func createLogBook(w http.ResponseWriter, r *http.Request, c <-chan LogMessage) (lb logBook, err error) {
+	lb.conn, err = upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		return
+	}
 
-	// create dispatcher channel list
-	app.d.channels = make(map[string]chan PostMessage)
-	go app.d.dispatch()
+	lb.mailbox = c
 
-	engine.POST("/logbook/:client/logs", func(context *gin.Context) {
-		logBookId := context.Param("client")
-		app.r.Log(context, logBookId)
-	})
+	return
+}
 
-	engine.GET("/logbook/:client/logs", func(context *gin.Context) {
-		logBookId := context.Param("client")
-		outbound := make(chan PostMessage, 20)
-		app.d.channels[logBookId] = outbound
-		//ForceCookie(context)
-		WebsocketHandler(context.Writer, context.Request, outbound)
-	})
+func (lb *logBook) listen() {
+	for {
+		msg := <-lb.mailbox
+		lb.conn.WriteJSON(msg)
+	}
+}
+
+func ForceCookie(c *gin.Context, id string) {
+	_, err := c.Cookie("logbook")
+	if nil != err {
+		c.SetCookie("logbook", id, 0, "", "", false, false)
+	}
 }
