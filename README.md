@@ -87,11 +87,14 @@ Logger packages are available for:
 * *PHP*: [logbook-php](https://github.com/axel-kummer/logbook-php)
 
 ## Web Frontend
-To watch your LogBook you need to install the AngularJS-application
-[logbook-frontend](https://github.com/XenosEleatikos/logbook-frontend)
-The web frontend will available under the url
+This package is already shipped with a small and simple log viewer.
+This web frontend will available under the url
 
     <domain>/logbook
+
+For a more comfortable presentation of your LogBook you might want to
+install the AngularJS-application
+[logbook-frontend](https://github.com/XenosEleatikos/logbook-frontend)
 
 The frontend is responsible for redirecting the client to the log-messages-page
 
