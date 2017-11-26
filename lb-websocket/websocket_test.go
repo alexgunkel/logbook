@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/alexgunkel/logbook/entities"
+	"github.com/alexgunkel/logbook/lb-entities"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
 	var err error
 
-	channel := make(chan entities.PostMessage, 10)
+	channel := make(chan lb_entities.PostMessage, 10)
 	c, resp, err := createServer(channel)
 	if err != nil {
 		t.Fatal(err)
@@ -31,17 +31,17 @@ func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
 
 func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	var err error
-	channel := make(chan entities.PostMessage, 10)
+	channel := make(chan lb_entities.PostMessage, 10)
 	c, _, err := createServer(channel)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 
-	input := entities.PostMessage{}
-	input.Event = entities.LogEvent{123123123, "Test", 3}
+	input := lb_entities.PostMessage{}
+	input.Event = lb_entities.LogEvent{123123123, "Test", 3}
 	channel<- input
-	message := &entities.PostMessage{}
+	message := &lb_entities.PostMessage{}
 	err = c.ReadJSON(message)
 
 	if err != nil {
@@ -53,7 +53,7 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	assert.Equal(t, 3, message.Event.Severity)
 }
 
-func createServer(c chan entities.PostMessage) (*websocket.Conn, *http.Response, error) {
+func createServer(c chan lb_entities.PostMessage) (*websocket.Conn, *http.Response, error) {
 	h := gin.Default()
 	h.GET("/logbook", func(context *gin.Context) {
 		WebsocketHandler(context.Writer, context.Request, c)

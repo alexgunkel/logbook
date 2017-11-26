@@ -4,7 +4,7 @@ import (
 	"github.com/alexgunkel/logbook/lb-receiver"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/alexgunkel/logbook/entities"
+	"github.com/alexgunkel/logbook/lb-entities"
 	"github.com/alexgunkel/logbook/lb-websocket"
 	"github.com/alexgunkel/logbook/lb-frontend"
 )
@@ -22,8 +22,8 @@ func Default() *gin.Engine {
 	app := new(Webapp)
 	app.engine = gin.Default()
 	gen := &lb_frontend.IdGenerator{}
-	incoming := make(chan entities.PostMessage, 20)
-	outbound := make(chan entities.PostMessage, 10)
+	incoming := make(chan lb_entities.PostMessage, 20)
+	outbound := make(chan lb_entities.PostMessage, 10)
 
 	app.engine.GET("/logbook", func(context *gin.Context) {
 		lb_frontend.InitLogBookClientApplication(context, gen)

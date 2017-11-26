@@ -3,7 +3,7 @@ package lb_receiver
 import (
 	"testing"
 	"github.com/gin-gonic/gin"
-	"github.com/alexgunkel/logbook/entities"
+	"github.com/alexgunkel/logbook/lb-entities"
 	"net/http/httptest"
 	"strings"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	}
 
 	router := gin.Default()
-	incoming := make(chan entities.PostMessage, 20)
+	incoming := make(chan lb_entities.PostMessage, 20)
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
 		err := Log(context, incoming)
 		if nil != err {
@@ -28,7 +28,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	})
 	recorder := httptest.NewRecorder()
 
-	original := &entities.LogEvent{}
+	original := &lb_entities.LogEvent{}
 	json.Unmarshal([]byte(getTestJson()), original)
 
 	// run
@@ -57,7 +57,7 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	request.Header.Set(LogHeaderRequestUri,  "https://www.logbook.io")
 
 	router := gin.Default()
-	incoming := make(chan entities.PostMessage, 20)
+	incoming := make(chan lb_entities.PostMessage, 20)
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
 		err := Log(context, incoming)
 		if nil != err {
