@@ -40,7 +40,7 @@ You can easily install LogBook via Go CLI:
 ## Usage
 Start LogBook by typing
 
-    ./logbook
+    logbook
 
 *LogBook* by default listens on port 8080.
 
