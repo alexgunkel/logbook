@@ -13,10 +13,10 @@ var upgrader = websocket.Upgrader{
 
 type logBook struct {
 	conn    *websocket.Conn
-	mailbox <-chan LogMessage
+	mailbox <-chan Message
 }
 
-func createLogBook(w http.ResponseWriter, r *http.Request, c <-chan LogMessage) (lb logBook, err error) {
+func createLogBook(w http.ResponseWriter, r *http.Request, c <-chan Message) (lb logBook, err error) {
 	lb.conn, err = upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return

@@ -10,8 +10,8 @@ func TestUnMarshallSeverity(t *testing.T)  {
 	t.SkipNow()
 	origJson := "{\"severity\": 12}"
 	origJson2 := "{\"severity\": \"error\"}"
-	logEv := &LogEvent{}
-	logEv2 := &LogEvent{}
+	logEv := &Event{}
+	logEv2 := &Event{}
 	json.Unmarshal([]byte(origJson), logEv)
 	json.Unmarshal([]byte(origJson2), logEv2)
 

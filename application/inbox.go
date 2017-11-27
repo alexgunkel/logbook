@@ -13,12 +13,12 @@ const (
 )
 
 type inbox struct {
-	chanelToMessageDispatcher chan LogMessage
+	chanelToMessageDispatcher chan Message
 }
 
 func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	m := createNewLogMessage(logBookId)
-	e := &LogEvent{}
+	e := &Event{}
 	if err = c.BindJSON(e); nil != err {
 		c.Status(http.StatusBadRequest)
 		return
@@ -33,8 +33,8 @@ func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	return
 }
 
-func createOriginObjectFromHeaderData(c *gin.Context) (h LogMessageOrigin) {
-	h = LogMessageOrigin{}
+func createOriginObjectFromHeaderData(c *gin.Context) (h Origin) {
+	h = Origin{}
 	h.Application = c.GetHeader(LogHeaderAppIdentifier)
 	h.LoggerName = c.GetHeader(LogHeaderLoggerName)
 	h.RequestUri = c.GetHeader(LogHeaderRequestUri)

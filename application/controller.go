@@ -14,12 +14,12 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 	app.d = &messageDispatcher{}
 
 	// Create channel between inbox and messageDispatcher
-	receiverToDispatcher := make(chan LogMessage, 20)
+	receiverToDispatcher := make(chan Message, 20)
 	app.r.chanelToMessageDispatcher = receiverToDispatcher
 	app.d.incoming = receiverToDispatcher
 
 	// create messageDispatcher channel list
-	app.d.channels = make(map[string]chan LogMessage)
+	app.d.channels = make(map[string]chan Message)
 	go app.d.dispatch()
 
 	engine.POST("/logbook/:client/logs", func(context *gin.Context) {
@@ -31,7 +31,7 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 		logBookId := context.Param("client")
 		ForceCookie(context, logBookId)
 
-		outbound := make(chan LogMessage, 20)
+		outbound := make(chan Message, 20)
 		app.d.channels[logBookId] = outbound
 		defer func() {
 			delete(app.d.channels, logBookId)

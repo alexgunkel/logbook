@@ -12,7 +12,7 @@ import (
 func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
 	var err error
 
-	channel := make(chan LogMessage, 10)
+	channel := make(chan Message, 10)
 	_, resp, err := createServer(channel)
 	if err != nil {
 		t.Fatal(err)
@@ -25,16 +25,16 @@ func TestWebsocketHandlerEstablishesConnection(t *testing.T) {
 
 func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	var err error
-	channel := make(chan LogMessage, 10)
+	channel := make(chan Message, 10)
 	c, _, err := createServer(channel)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	input := LogMessage{}
-	input.Event = LogEvent{123123123, "Test", 3, nil}
+	input := Message{}
+	input.Event = Event{123123123, "Test", 3, nil}
 	channel<- input
-	message := &LogMessage{}
+	message := &Message{}
 	err = c.ReadJSON(message)
 
 	assert.Equal(t, "Test", message.Event.Message)
@@ -42,7 +42,7 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	assert.Equal(t, 3, message.Event.Severity)
 }
 
-func createServer(c chan LogMessage) (*websocket.Conn, *http.Response, error) {
+func createServer(c chan Message) (*websocket.Conn, *http.Response, error) {
 	h := gin.Default()
 	h.GET("/logbook/123/logs", func(context *gin.Context) {
 		lb, _ := createLogBook(context.Writer, context.Request, c)

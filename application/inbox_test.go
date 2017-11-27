@@ -18,7 +18,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	}
 
 	router := gin.Default()
-	incoming := make(chan LogMessage, 20)
+	incoming := make(chan Message, 20)
 	r := &inbox{}
 	r.chanelToMessageDispatcher = incoming
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {
@@ -29,7 +29,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	})
 	recorder := httptest.NewRecorder()
 
-	original := &LogEvent{}
+	original := &Event{}
 	json.Unmarshal([]byte(getTestJson()), original)
 
 	// run
@@ -58,7 +58,7 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	request.Header.Set(LogHeaderRequestUri,  "https://www.logbook.io")
 
 	router := gin.Default()
-	incoming := make(chan LogMessage, 20)
+	incoming := make(chan Message, 20)
 	r := &inbox{}
 	r.chanelToMessageDispatcher = incoming
 	router.POST("/logbook/:client/logs", func(context *gin.Context) {

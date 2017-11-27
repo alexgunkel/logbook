@@ -1,8 +1,8 @@
 package application
 
 type messageDispatcher struct {
-	channels map[string]chan LogMessage
-	incoming chan LogMessage
+	channels map[string]chan Message
+	incoming chan Message
 }
 
 func (d *messageDispatcher) dispatch()  {

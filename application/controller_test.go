@@ -129,7 +129,7 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 
 	logBook.ServeHTTP(recorder, request)
 
-	wsMessage := &LogMessage{}
+	wsMessage := &Message{}
 	conn.ReadJSON(wsMessage)
 
 	assert.Equal(t, "Test", wsMessage.Event.Message)
@@ -159,7 +159,7 @@ func TestWebsocketReceivesOnlyMessagesWithSameLogBookId(t *testing.T) {
 
 	logBook.ServeHTTP(recorder, request)
 
-	wsMessage := &LogMessage{}
+	wsMessage := &Message{}
 	go conn.ReadJSON(wsMessage)
 
 	time.Sleep(time.Second * 1)
