@@ -19,11 +19,37 @@ func TestUnMarshallSeverity(t *testing.T)  {
 }
 
 func TestNormalize(t *testing.T)  {
+	inc := Incoming{Timestamp: 123123123, Message: "This is my new message", Context: "this still has to be filled…"}
 	for input, output := range dataProviderForNormalization() {
-		inc := Incoming{Severity: input}
+		inc.Severity = input
 		out := inc.normalize()
 		assert.Equal(t, output, out.Severity, "Expected transformed value to be %v, got %v from %v", output, out.Severity, input)
+		assert.Equal(t, 123123123, out.Timestamp)
+		assert.Equal(t, "This is my new message", out.Message)
+		assert.Equal(t, "this still has to be filled…", out.Context)
 	}
+}
+
+var result Event
+
+func BenchmarkNormalizeString(b *testing.B) {
+	var res Event
+	inc := Incoming{Severity: "debug"}
+	for n:= 0; n < b.N; n++ {
+		res = inc.normalize()
+	}
+
+	result = res
+}
+
+func BenchmarkNormalizeFloat(b *testing.B) {
+	var res Event
+	inc := Incoming{Severity: float64(3)}
+	for n:= 0; n < b.N; n++ {
+		res = inc.normalize()
+	}
+
+	result = res
 }
 
 // According to RFC 5424 we have the following associations between numbers

@@ -33,29 +33,41 @@ func createNewLogMessage(logBookId string) (m *Message) {
 	return
 }
 
+var severityValues = map[string]int{"debug": 7,
+	"informational": 6,
+	"notice": 5,
+	"warning": 4,
+	"error": 3,
+	"critical": 2,
+	"alert": 1,
+	"emergency": 0}
+
 func (i Incoming) normalize() (e Event) {
 	if level, ok := i.Severity.(string); ok {
-		severityValues := map[string]int{"debug": 7,
-			"informational": 6,
-			"notice": 5,
-			"warning": 4,
-			"error": 3,
-			"critical": 2,
-			"alert": 1,
-			"emergency": 0}
-		e = Event{Severity: severityValues[level]}
+		e = copyEvent(&i)
+		e.Severity = severityValues[level]
 		return
 	}
 
 	if level, ok := i.Severity.(float64); ok {
-		e = Event{Severity: int(level)}
+		e = copyEvent(&i)
+		e.Severity = int(level)
 		return
 	}
 
 	if level, ok := i.Severity.(int); ok {
-		e = Event{Severity: level}
+		e = copyEvent(&i)
+		e.Severity = level
 		return
 	}
+
+	return
+}
+
+func copyEvent(i *Incoming) (e Event) {
+	e.Timestamp = i.Timestamp
+	e.Message = i.Message
+	e.Context = i.Context
 
 	return
 }
