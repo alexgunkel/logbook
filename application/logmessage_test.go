@@ -35,28 +35,6 @@ func TestNormalize(t *testing.T)  {
 	}
 }
 
-var result Event
-
-func BenchmarkNormalizeString(b *testing.B) {
-	var res Event
-	inc := Incoming{Severity: "debug"}
-	for n:= 0; n < b.N; n++ {
-		res = inc.normalize()
-	}
-
-	result = res
-}
-
-func BenchmarkNormalizeFloat(b *testing.B) {
-	var res Event
-	inc := Incoming{Severity: float64(3)}
-	for n:= 0; n < b.N; n++ {
-		res = inc.normalize()
-	}
-
-	result = res
-}
-
 // According to RFC 5424 we have the following associations between numbers
 // and log devels:
 //
@@ -86,4 +64,41 @@ func dataProviderForNormalization() (m map[interface{}]interface{}) {
 	m[int(1)] = 1
 
 	return
+}
+
+var result Event
+
+func BenchmarkNormalizeString(b *testing.B) {
+	var res Event
+	inc := Incoming{Severity: "debug"}
+	for n:= 0; n < b.N; n++ {
+		res = inc.normalize()
+	}
+
+	result = res
+}
+
+func BenchmarkNormalizeFloat(b *testing.B) {
+	var res Event
+	inc := Incoming{Severity: float64(3)}
+	for n:= 0; n < b.N; n++ {
+		res = inc.normalize()
+	}
+
+	result = res
+}
+
+var resultMsg Message
+
+func BenchmarkProcessMessage(b *testing.B) {
+	var out Message
+	in := NewMessage{logBookId: "123",
+	Event:Incoming{Timestamp: 123123123, Message: "Message", Severity: "debug"},
+	Origin:Origin{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
+
+	for i:=0; i < b.N; i++ {
+		out = processMessage(in)
+	}
+
+	resultMsg = out
 }

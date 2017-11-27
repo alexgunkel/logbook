@@ -7,7 +7,8 @@ type messageDispatcher struct {
 
 func (d *messageDispatcher) dispatch()  {
 	for {
-		postMsg := processMessage(<-d.incoming)
+		inMsg :=<-d.incoming
+		postMsg := processMessage(inMsg)
 
 		if c, err := d.channels[postMsg.logBookId]; err {
 			c <- postMsg
