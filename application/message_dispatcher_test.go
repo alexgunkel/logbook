@@ -22,7 +22,10 @@ func TestDispatch(t *testing.T) {
 	assert.Equal(t, 123, res.Event.Timestamp)
 }
 
-func TestDispatchConvertsEventType(t *testing.T) {
+var resultingMessage Message
+
+func BenchmarkDispatch(b *testing.B) {
+	var res Message
 	d := &messageDispatcher{}
 	d.incoming = make(chan NewMessage, 20)
 	d.channels = make(map[string]chan Message)
@@ -31,9 +34,14 @@ func TestDispatchConvertsEventType(t *testing.T) {
 	go d.dispatch()
 
 	m := NewMessage{logBookId: "1", Event: Incoming{Severity: "debug"}}
-	d.incoming<- m
 
-	res :=<- d.channels["1"]
+	b.ResetTimer()
 
-	assert.Equal(t, 7, res.Event.Severity)
+	for i := 0; i < b.N; i++ {
+		d.incoming<- m
+
+		res =<- d.channels["1"]
+	}
+
+	resultingMessage = res
 }
