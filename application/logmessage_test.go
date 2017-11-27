@@ -22,7 +22,7 @@ func TestNormalize(t *testing.T)  {
 	for input, output := range dataProviderForNormalization() {
 		inc := Incoming{Severity: input}
 		out := inc.normalize()
-		assert.Equal(t, output, out.Severity)
+		assert.Equal(t, output, out.Severity, "Expected transformed value to be %v, got %v from %v", output, out.Severity, input)
 	}
 }
 
@@ -50,6 +50,9 @@ func dataProviderForNormalization() (m map[interface{}]interface{}) {
 	m["alert"] = 1
 	m["emergency"] = 0
 	m[float64(1)] = 1
+	m[float64(0)] = 0
+	m[float64(5)] = 5
+	m[int(1)] = 1
 
 	return
 }

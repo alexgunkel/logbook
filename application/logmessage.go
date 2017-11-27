@@ -52,5 +52,10 @@ func (i Incoming) normalize() (e Event) {
 		return
 	}
 
+	if level, ok := i.Severity.(int); ok {
+		e = Event{Severity: level}
+		return
+	}
+
 	return
 }
