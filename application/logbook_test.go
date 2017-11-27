@@ -34,12 +34,12 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	input := Message{}
 	input.Event = Event{123123123, "Test", 3, nil}
 	channel<- input
-	message := &Message{}
+	message := &NewMessage{}
 	err = c.ReadJSON(message)
 
 	assert.Equal(t, "Test", message.Event.Message)
 	assert.Equal(t, 123123123, message.Event.Timestamp)
-	assert.Equal(t, 3, message.Event.Severity)
+	assert.Equal(t, float64(3), message.Event.Severity)
 }
 
 func createServer(c chan Message) (*websocket.Conn, *http.Response, error) {

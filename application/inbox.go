@@ -13,12 +13,12 @@ const (
 )
 
 type inbox struct {
-	chanelToMessageDispatcher chan Message
+	chanelToMessageDispatcher chan NewMessage
 }
 
 func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	m := createNewLogMessage(logBookId)
-	e := &Event{}
+	e := &Incoming{}
 	if err = c.BindJSON(e); nil != err {
 		c.Status(http.StatusBadRequest)
 		return

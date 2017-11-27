@@ -20,6 +20,11 @@ func TestUnMarshallSeverity(t *testing.T)  {
 
 func TestNormalize(t *testing.T)  {
 	inc := Incoming{Timestamp: 123123123, Message: "This is my new message", Context: "this still has to be filled…"}
+	out := inc.normalize()
+	assert.Equal(t, 123123123, out.Timestamp)
+	assert.Equal(t, "This is my new message", out.Message)
+	assert.Equal(t, "this still has to be filled…", out.Context)
+
 	for input, output := range dataProviderForNormalization() {
 		inc.Severity = input
 		out := inc.normalize()

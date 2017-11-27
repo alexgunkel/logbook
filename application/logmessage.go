@@ -1,5 +1,11 @@
 package application
 
+type NewMessage struct {
+	logBookId string
+	Event     Incoming
+	Origin    Origin
+}
+
 type Message struct {
 	logBookId string
 	Event     Event
@@ -26,8 +32,8 @@ type Origin struct {
 	RequestUri  string `json:"request_uri"`
 }
 
-func createNewLogMessage(logBookId string) (m *Message) {
-	m = &Message{}
+func createNewLogMessage(logBookId string) (m *NewMessage) {
+	m = &NewMessage{}
 	m.logBookId = logBookId
 
 	return
@@ -43,23 +49,29 @@ var severityValues = map[string]int{"debug": 7,
 	"emergency": 0}
 
 func (i Incoming) normalize() (e Event) {
+	e = copyEvent(&i)
 	if level, ok := i.Severity.(string); ok {
-		e = copyEvent(&i)
 		e.Severity = severityValues[level]
 		return
 	}
 
 	if level, ok := i.Severity.(float64); ok {
-		e = copyEvent(&i)
 		e.Severity = int(level)
 		return
 	}
 
 	if level, ok := i.Severity.(int); ok {
-		e = copyEvent(&i)
 		e.Severity = level
 		return
 	}
+
+	return
+}
+
+func processMessage(inbound NewMessage) (outbound Message) {
+	outbound.logBookId = inbound.logBookId
+	outbound.Origin = inbound.Origin
+	outbound.Event = inbound.Event.normalize()
 
 	return
 }
