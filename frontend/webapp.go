@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"github.com/gin-gonic/gin"
 	"html/template"
+	"os"
 )
 
 func AddFrontend(engine *gin.Engine, templateDir string) {
@@ -47,7 +48,7 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 
 	user := User{}
 	user.Identifier = identifier
-	user.Uri = "ws://localhost:8080/logbook/" + identifier + "/logs"
+	user.Uri = "ws://localhost:" + getPort() + "/logbook/" + identifier + "/logs"
 
 	t := template.New("Index.html")
 	t, err = t.ParseFiles( a.templateFolder + "/Index.html" )
@@ -55,4 +56,12 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 		panic(err)
 	}
 	err = t.ExecuteTemplate(c.Writer, "Index.html", user)
+}
+
+func getPort() string {
+	if port := os.Getenv("PORT"); port != "" {
+		return port
+	}
+
+	return "8080"
 }
