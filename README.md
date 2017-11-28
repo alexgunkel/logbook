@@ -81,6 +81,27 @@ So, an example json might look like this:
         "logger_name": "example-logger"
     }
 
+The severity has to be a string or a number in accordance to
+[RFC 5424](https://tools.ietf.org/html/rfc5424).
+As a number, it must be one of the
+values between *0* (highest severity, "*emergeny*") and *7* (lowest severity,
+"debug"). The relqtionship between numbers and strings is as follows:
+
+
+| number | string        | explanation                      |
+|--------|---------------|----------------------------------|
+| 0      | emergency     | system is unusable               |
+| 1      | alert         | action must be taken immediately |
+| 2      | critical      | critical conditions              |
+| 3      | error         | error conditions                 |
+| 4      | warning       | warning conditions               |
+| 5      | notice        | normal but significant condition |
+| 6      | informational | informational messages           |
+| 7      | debug         | debug-level messages             |
+
+At the moment, string recognition is case-sensitive and only lower case
+strings are recognized.
+
 ### Header
 Information about the *application* that is logging the event(s) should
 be put into the header information. The header keys have *LogBook*
