@@ -1,22 +1,31 @@
 # LogBook
 
-*LogBook* is a server-side application that lets you debug your web application by showing
-the log messages related to your web request. It stands in the tradition of FirePHP and
-ChromeLogger but extracts the core functionality into a server-side log-dispatcher.
-The reason is that for larger amounts of data, header fields are an inappropriate way to send
-all the logs from a web-application to the client. When you have a small application with
-few log events, it is quite easy to send those data with your HTTP-header. But their are hard
-limits that prevent you from sending as many log-data as a larger application will provide. *LogBook*
-collects all those data in a server-side application just to provide this information to the
-developer in an JavaScript-based frontend-application.
+*LogBook* is a server-side application that lets you debug your web
+application by showing the log messages related to your web request.
+It stands in the tradition of
+[FirePHP](https://addons.mozilla.org/de/firefox/addon/firephp/) and
+[ChromeLogger](https://craig.is/writing/chrome-logger)
+but extracts the core functionality into a server-side log-dispatcher.
+The reason is that for larger amounts of data, header fields are an
+inappropriate way to send all the logs from a web-application to the client.
+When you have a small application with few log events, it is quite easy
+to send those data with your HTTP-header. But their are hard limits
+that prevent you from sending as many log-data as a larger application
+will provide. *LogBook* collects all those data in a server-side
+application just to provide this information to the developer in an
+JavaScript-based frontend-application.
 
-A *logbook* is considered to be the whole information about a session. It's like keeping a book about
-a journey. Every session consists of the whole interaction between a client and an application.
-The logbook collects the information that is considered relevant from a developer's prospective.
+A *logbook* is considered to be the whole information about a session.
+It's like keeping a book about a journey. Every session consists of the
+whole interaction between a client and an application. The logbook
+collects the information that is considered relevant from a developer's
+prospective.
 
-The LogBook listens for log messages that are sent via POST-requests. The default format is JSON. Messages are
-identified by an identifier that is created by the web frontend application and stored in a cookie named "logbook".
-When a client has a logbook-cookie then the logger should send messages to the logbook-server.
+The LogBook listens for log messages that are sent via POST-requests.
+The default format is JSON. Messages are identified by an identifier
+that is created by the web frontend application and stored in a cookie
+named "logbook". When a client has a logbook-cookie then the logger
+should send messages to the logbook-server.
 
 The logging requires the following information:
 * The *logbook-identifier* identifies the client session.
@@ -102,6 +111,11 @@ values between *0* (highest severity, "*emergeny*") and *7* (lowest severity,
 At the moment, string recognition is case-sensitive and only lower case
 strings are recognized.
 
+*LogBook* will accept your logs and send back a *200 Status OK* response
+as soon as it can recognize the body of the request as valid JSON. That
+does *not* mean that it can interpret it. Your message might still be
+invalid.
+
 ### Header
 Information about the *application* that is logging the event(s) should
 be put into the header information. The header keys have *LogBook*
@@ -111,8 +125,8 @@ as prefix. At the moment there are three header fields:
     LogBook-Logger-Name: MyLoggerInstance
     LogBook-Request-URI: https://my.lovely.app
 
-These informations are not required but highly recommended. You should use them to make your
-logs more helpfull
+These informations are not required but highly recommended. You should
+use them to make your logs more helpful.
 
 ### Existing packages
 
@@ -129,11 +143,10 @@ For a more comfortable presentation of your LogBook you might want to
 install the AngularJS-application
 [logbook-frontend](https://github.com/XenosEleatikos/logbook-frontend)
 
-The frontend is responsible for redirecting the client to the log-messages-page
+The frontend receives its information from a websocket that is established
+under the URL
 
     <domain>/logbook/<LogBook_id>/logs
-
-The *EcmaScript* application then establishes a websocket-connection and displays the log messages related to the client.
 
 ## Docker and Orchestration
 There will be a Docker image available which you can get with
