@@ -21,13 +21,14 @@ When a client has a logbook-cookie then the logger should send messages to the l
 The logging requires the following information:
 * The *logbook-identifier* identifies the client session.
 * A *timestamp* which indicates the exact time when the event was created.
-* The *severity-level* indiciates the kind of event, e.g. whether it's a fatal error, an information
-or just a debug-message.
+* The *severity-level* indiciates the kind of event, e.g. whether it's a
+fatal error, an information or just a debug-message.
 * A *log message* which contains the basic information of the event.
 * A *context* might contain some further information about the logged event.
-* information about the part of the application that created the log event. This is especially
-relevant when it comes to micro-services, where it might be of great intereset to know which
-part of your application is responsible for something. Therefore, some *application-identifier"
+* information about the part of the application that created the log event.
+This is especially relevant when it comes to micro-services, where it
+might be of great intereset to know which part of your application is
+responsible for something. Therefore, some *application-identifier"
 is required.
 
 ## Installation
@@ -37,17 +38,28 @@ You can easily install LogBook via Go CLI:
     cd ${GOPATH}/src/github.com/alexgunkel/logbook
     go install
 
+## Requirements
+This program requires Golang at least in version 1.6 (the least version
+that's tested by me. For the tests to run you need at least version 1.7.
+
 ## Usage
 Start LogBook by typing
 
     logbook
 
-*LogBook* by default listens on port 8080.
+*LogBook* by default listens on port 8080. To change this just set the
+environmental variable PORT to any other value. Likewise you can configure
+the hostname:
+
+    PORT=80 HOST=127.0.0.1 logbook
+
+will change the port to 80 and the hostname to 127.0.0.1.
 
 ## Logger API
 ### Path
-Loggers should only submit log events for clients with "logbook"-cookie. This cookie contains the identifier by which
-LogBook decides whom to send the log messages. Messages are sent as POST-requests in JSON to
+Loggers should only submit log events for clients with "logbook"-cookie.
+This cookie contains the identifier by which LogBook decides whom to
+send the log messages. Messages are sent as POST-requests in JSON to
 
     <domain>/logbook/<LogBook_id>/logs
 
@@ -70,9 +82,9 @@ So, an example json might look like this:
     }
 
 ### Header
-Information about the *application* that is logging the event(s) should be put into the header
-information. The header keys have *LogBook* as prefix. At the moment there are three header
-fields:
+Information about the *application* that is logging the event(s) should
+be put into the header information. The header keys have *LogBook*
+as prefix. At the moment there are three header fields:
 
     LogBook-App-Identifier: MyMicroService
     LogBook-Logger-Name: MyLoggerInstance
@@ -102,5 +114,11 @@ The frontend is responsible for redirecting the client to the log-messages-page
 
 The *EcmaScript* application then establishes a websocket-connection and displays the log messages related to the client.
 
-## Orchestration
-We recommend orchestration via Nginx-Proxy.
+## Docker and Orchestration
+There will be a Docker image available which you can get with
+
+    docker pull alexandergunkel/logbook
+
+For further information visit the
+[public repository](https://hub.docker.com/r/alexandergunkel/logbook/)
+at [Docker Hub](https://hub.docker.com)
