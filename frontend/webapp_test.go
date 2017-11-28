@@ -80,6 +80,7 @@ func TestInitLogBookClientApplication(t *testing.T) {
 
 func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) {
 	os.Setenv("PORT", "1234")
+	os.Setenv("HOST", "127.0.0.1")
 	router := gin.Default()
 	app := &WebApplication{}
 	app.SetTemplateDirPath("../resources/private/template")
@@ -93,7 +94,7 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
 
-	assert.Contains(t, recorder.Body.String(), "ws://localhost:1234/logbook/1234/logs")
+	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234/logbook/1234/logs")
 }
 
 // Helper function to get cookie values out of response recorders

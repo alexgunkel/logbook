@@ -48,7 +48,7 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 
 	user := User{}
 	user.Identifier = identifier
-	user.Uri = "ws://localhost:" + getPort() + "/logbook/" + identifier + "/logs"
+	user.Uri = "ws://" + getHost() + ":" + getPort() + "/logbook/" + identifier + "/logs"
 
 	t := template.New("Index.html")
 	t, err = t.ParseFiles( a.templateFolder + "/Index.html" )
@@ -64,4 +64,12 @@ func getPort() string {
 	}
 
 	return "8080"
+}
+
+func getHost() string {
+	if host := os.Getenv("HOST"); host != "" {
+		return host
+	}
+
+	return "localhost"
 }
