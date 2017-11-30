@@ -44,12 +44,12 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 
 func createServer(c chan Message) (*websocket.Conn, *http.Response, error) {
 	h := gin.Default()
-	h.GET("/logbook/123/logs", func(context *gin.Context) {
+	h.GET(API_ROOT_PATH + "/123/logs", func(context *gin.Context) {
 		lb, _ := createLogBook(context.Writer, context.Request, c)
 		lb.listen()
 	})
 	d := wstest.NewDialer(h, nil)
 	// or t.submit instead of nil
-	conn, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
+	conn, resp, err := d.Dial("ws://localhost" + API_ROOT_PATH + "/123/logs", nil)
 	return conn, resp, err
 }

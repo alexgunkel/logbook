@@ -9,6 +9,8 @@ type LogBookApplication struct {
 	d *messageDispatcher
 }
 
+const API_ROOT_PATH = "/logbook/api"
+
 func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 	app.r = &inbox{}
 	app.d = &messageDispatcher{}
@@ -22,12 +24,12 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 	app.d.channels = make(map[string]chan Message)
 	go app.d.dispatch()
 
-	engine.POST("/logbook/:client/logs", func(context *gin.Context) {
+	engine.POST(API_ROOT_PATH + "/:client/logs", func(context *gin.Context) {
 		logBookId := context.Param("client")
 		app.r.submit(context, logBookId)
 	})
 
-	engine.GET("/logbook/:client/logs", func(context *gin.Context) {
+	engine.GET(API_ROOT_PATH + "/:client/logs", func(context *gin.Context) {
 		logBookId := context.Param("client")
 		ForceCookie(context, logBookId)
 

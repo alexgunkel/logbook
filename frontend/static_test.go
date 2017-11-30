@@ -20,7 +20,7 @@ func TestServeStaticFiles(t *testing.T) {
 	engine := gin.Default()
 	SetStaticApp(engine)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
@@ -37,7 +37,7 @@ func TestServeStaticFilesWithEndSlash(t *testing.T) {
 	engine := gin.Default()
 	SetStaticApp(engine)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
@@ -54,7 +54,7 @@ func TestServeStaticJs(t *testing.T) {
 	engine := gin.Default()
 	SetStaticApp(engine)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook/app.js", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH + "/app.js", nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)

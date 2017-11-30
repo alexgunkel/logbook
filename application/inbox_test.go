@@ -12,7 +12,7 @@ import (
 
 func TestValidLogSentToDispatcher(t *testing.T) {
 	// setup
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(getTestJson()))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/12345/logs", strings.NewReader(getTestJson()))
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -21,7 +21,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	incoming := make(chan NewMessage, 20)
 	r := &inbox{}
 	r.chanelToMessageDispatcher = incoming
-	router.POST("/logbook/:client/logs", func(context *gin.Context) {
+	router.POST(API_ROOT_PATH + "/:client/logs", func(context *gin.Context) {
 		err := r.submit(context, "12345")
 		if nil != err {
 			t.Fatal(err)
@@ -49,7 +49,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 
 func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	// setup
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader(getTestJson()))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/12345/logs", strings.NewReader(getTestJson()))
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	incoming := make(chan NewMessage, 20)
 	r := &inbox{}
 	r.chanelToMessageDispatcher = incoming
-	router.POST("/logbook/:client/logs", func(context *gin.Context) {
+	router.POST(API_ROOT_PATH + "/:client/logs", func(context *gin.Context) {
 		err := r.submit(context, "12345")
 		if nil != err {
 			t.Fatal(err)

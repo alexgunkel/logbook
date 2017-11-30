@@ -21,7 +21,7 @@ func GetDispatcher() *gin.Engine {
 
 // Test the log-message-inbox
 func TestEmptyLogEvent(t *testing.T) {
-	request, err := http.NewRequest("POST", "/logbook/1234/logs", strings.NewReader(""))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/1234/logs", strings.NewReader(""))
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -39,11 +39,11 @@ func TestValidLogAccepted(t *testing.T) {
 	h := GetDispatcher()
 	d := wstest.NewDialer(h, nil)  // or t.submit instead of nil
 
-	d.Dial("ws://localhost/logbook/12345/logs", nil)
+	d.Dial("ws://localhost" + API_ROOT_PATH + "/logbook/12345/logs", nil)
 
 	router := GetDispatcher()
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -55,7 +55,7 @@ func TestValidLogAccepted(t *testing.T) {
 func TestInValidJsonRefused(t *testing.T) {
 	router := GetDispatcher()
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest("POST", "/logbook/12345/logs", strings.NewReader("{asdasd}"))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/12345/logs", strings.NewReader("{asdasd}"))
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -71,7 +71,7 @@ func TestWebsocketHandlerSwitchesProtocol(t *testing.T) {
 	h := GetDispatcher()
 	d := wstest.NewDialer(h, nil)  // or t.submit instead of nil
 
-	c, resp, err := d.Dial("ws://localhost/logbook/123/logs", nil)
+	c, resp, err := d.Dial("ws://localhost" + API_ROOT_PATH + "/123/logs", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,7 +97,7 @@ func TestWebsocketHandlerCreatesChannel(t *testing.T) {
 	}
 
 	dialer := wstest.NewDialer(engine, nil)
-	_, _, err = dialer.Dial("ws://localhost/logbook/123/logs", nil)
+	_, _, err = dialer.Dial("ws://localhost" + API_ROOT_PATH + "/123/logs", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,14 +112,14 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T)  {
 
 	logBook := GetDispatcher()
 	dialer := wstest.NewDialer(logBook, nil)
-	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
+	conn, _, err := dialer.Dial("ws://localhost" + API_ROOT_PATH + "/123/logs", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	recorder := httptest.NewRecorder()
 	body := "{ \"message\": \"Test\", \"severity\": 4, \"timestamp\": 123123123 }"
-	request, err := http.NewRequest("POST", "/logbook/123/logs", strings.NewReader(body))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/123/logs", strings.NewReader(body))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -146,14 +146,14 @@ func TestWebsocketReceivesOnlyMessagesWithSameLogBookId(t *testing.T) {
 
 	logBook := GetDispatcher()
 	dialer := wstest.NewDialer(logBook, nil)
-	conn, _, err := dialer.Dial("ws://localhost/logbook/123/logs", nil)
+	conn, _, err := dialer.Dial("ws://localhost" + API_ROOT_PATH + "/123/logs", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	recorder := httptest.NewRecorder()
 	body := "{ \"message\": \"Test\", \"severity\": 4, \"timestamp\": 123123123 }"
-	request, err := http.NewRequest("POST", "/logbook/321/logs", strings.NewReader(body))
+	request, err := http.NewRequest("POST", API_ROOT_PATH + "/321/logs", strings.NewReader(body))
 	if err != nil {
 		t.Fatal(err)
 	}
