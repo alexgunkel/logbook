@@ -27,7 +27,7 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 	}
 
 	router := GetDispatcher()
-	AddFrontend(router, "../resources/private/template")
+	AddFrontend(router, "../public")
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
 
@@ -42,7 +42,7 @@ func TestInitLogBookWithoutCookie(t *testing.T) {
 // directly show the app.
 func TestInitLogBookWithCookie(t *testing.T) {
 	router := GetDispatcher()
-	AddFrontend(router, "../resources/private/template")
+	AddFrontend(router, "../public")
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/logbook", nil)
 	cookie := &http.Cookie{Name: "logbook", Value: "1234"}
@@ -61,7 +61,7 @@ func TestGetNewIdentifierSetsDifferentIdds(t *testing.T) {
 func TestInitLogBookClientApplication(t *testing.T) {
 	router := gin.Default()
 	app := &WebApplication{}
-	app.SetTemplateDirPath("../resources/private/template")
+	app.SetTemplateDirPath("../public")
 	generator := &IdGenerator{}
 	router.GET("/logbook", func(context *gin.Context) {
 		app.InitLogBookClientApplication(context, generator)
@@ -84,7 +84,7 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	os.Setenv("HOST", "127.0.0.1")
 	router := gin.Default()
 	app := &WebApplication{}
-	app.SetTemplateDirPath("../resources/private/template")
+	app.SetTemplateDirPath("../public")
 	generator := &IdGenerator{}
 	router.GET("/logbook", func(context *gin.Context) {
 		app.InitLogBookClientApplication(context, generator)

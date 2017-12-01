@@ -20,7 +20,7 @@ func main()  {
 	if "" != os.Getenv(frontend.STATIC_APP_DIR_ENV) {
 		path, _ = filepath.Abs(os.Getenv(frontend.STATIC_APP_DIR_ENV))
 	} else {
-		path, _ = filepath.Abs("./resources/private/template")
+		path, _ = filepath.Abs("./public")
 	}
 	frontend.AddFrontend(engine, path)
 
