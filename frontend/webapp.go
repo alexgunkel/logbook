@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"os"
+	"github.com/alexgunkel/logbook/application"
 )
 
 func AddFrontend(engine *gin.Engine, templateDir string) {
@@ -32,14 +33,15 @@ func (app *IdGenerator) getNewIdentifier() string {
 
 type User struct {
 	Identifier string
-	Uri string
+	Uri        string
+	BaseHref   string
 }
 
-func (a *WebApplication) SetTemplateDirPath(path string)  {
+func (a *WebApplication) SetTemplateDirPath(path string) {
 	a.templateFolder = path
 }
 
-func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGenerator)  {
+func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGenerator) {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
 		identifier = gen.getNewIdentifier()
@@ -48,10 +50,11 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 
 	user := User{}
 	user.Identifier = identifier
-	user.Uri = "ws://" + getHost() + ":" + getPort() + "/logbook/" + identifier + "/logs"
+	user.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
+	user.BaseHref = "/logbook"
 
 	t := template.New("Index.html")
-	t, err = t.ParseFiles( a.templateFolder + "/Index.html" )
+	t, err = t.ParseFiles(a.templateFolder + "/Index.html")
 	if err != nil {
 		panic(err)
 	}

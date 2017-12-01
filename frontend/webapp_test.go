@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"github.com/alexgunkel/logbook/application"
 )
 
 func GetDispatcher() *gin.Engine {
@@ -75,7 +76,7 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "1234")
 	assert.Contains(t, recorder.Body.String(), "Hello World!")
-	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080/logbook/1234/logs")
+	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080" + application.API_ROOT_PATH + "/1234/logs")
 }
 
 func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) {
@@ -94,7 +95,8 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
 
-	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234/logbook/1234/logs")
+	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234" + application.API_ROOT_PATH + "/1234/logs")
+	assert.Contains(t, recorder.Body.String(), "<base href=\"/logbook\">")
 }
 
 // Helper function to get cookie values out of response recorders

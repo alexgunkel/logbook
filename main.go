@@ -9,6 +9,7 @@ import (
 )
 
 func main()  {
+	var path string
 	engine := gin.Default()
 
 	// Orchestrate the dispatcher stuff
@@ -17,11 +18,11 @@ func main()  {
 
 	// Orchestrate the frontend stuff
 	if "" != os.Getenv(frontend.STATIC_APP_DIR_ENV) {
-		frontend.SetStaticApp(engine)
+		path, _ = filepath.Abs(os.Getenv(frontend.STATIC_APP_DIR_ENV))
 	} else {
-		path, _ := filepath.Abs("./resources/private/template")
-		frontend.AddFrontend(engine, path)
+		path, _ = filepath.Abs("./resources/private/template")
 	}
+	frontend.AddFrontend(engine, path)
 
 	// Start the engine
 	engine.Run()
