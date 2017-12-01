@@ -54,11 +54,22 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 	user.BaseHref = "/logbook"
 
 	t := template.New("Index.html")
-	t, err = t.ParseFiles(a.templateFolder + "/Index.html")
+	t, err = t.ParseFiles(a.getEntryPoint())
 	if err != nil {
 		panic(err)
 	}
 	err = t.ExecuteTemplate(c.Writer, "Index.html", user)
+}
+
+func (a *WebApplication) getEntryPoint() string {
+	if _, err := os.Stat(a.templateFolder + "/Index.html"); nil == err {
+		return a.templateFolder + "/Index.html"
+	}
+
+	if _, err := os.Stat(a.templateFolder + "/index.html"); nil == err {
+		return a.templateFolder + "/index.html"
+	}
+	panic("Entry point template not found in " + a.templateFolder)
 }
 
 func getPort() string {
