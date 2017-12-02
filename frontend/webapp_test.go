@@ -1,13 +1,15 @@
 package frontend
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
-	"net/http/httptest"
-	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"os"
+	"testing"
+
 	"github.com/alexgunkel/logbook/application"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 func GetDispatcher() *gin.Engine {
@@ -16,12 +18,64 @@ func GetDispatcher() *gin.Engine {
 	return engine
 }
 
+func TestServeIndexHtml(t *testing.T) {
+	tmp, _ := ioutil.TempDir("", "")
+	content := "<html><head>{{.BaseHref}}</head> <body>{{.Uri}} {{.Identifier}}</body></html>"
+	ioutil.WriteFile(tmp+"/Index.html", []byte(content), os.ModePerm)
+
+	os.Setenv(STATIC_APP_DIR_ENV, tmp)
+	contents := make(map[string]string)
+	contents["{{.BaseHref}}"] = STATIC_RELATIVE_PATH
+	contents["{{.Uri}}"] = "ws://localhost:8080/logbook"
+
+	for in, out := range contents {
+		t.Run(in, func(t *testing.T) {
+			engine := gin.Default()
+			SetApplication(engine, tmp)
+			recorder := httptest.NewRecorder()
+			request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
+			engine.ServeHTTP(recorder, request)
+
+			assert.Equal(t, http.StatusOK, recorder.Code)
+			assert.Contains(t, recorder.Body.String(), out)
+		})
+	}
+
+	t.Run("identifier", func(t *testing.T) {
+		engine := gin.Default()
+		SetApplication(engine, tmp)
+		recorder := httptest.NewRecorder()
+		request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
+		engine.ServeHTTP(recorder, request)
+
+		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.NotEqual(t, "", recorder.Body.String())
+	})
+}
+
+func TestServeIndexHtmlWithEndSlash(t *testing.T) {
+	tmp, _ := ioutil.TempDir("", "")
+	content := "html"
+	ioutil.WriteFile(tmp+"/Index.html", []byte(content), os.ModePerm)
+
+	os.Setenv(STATIC_APP_DIR_ENV, tmp+"/")
+
+	engine := gin.Default()
+	SetApplication(engine, tmp)
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
+	engine.ServeHTTP(recorder, request)
+
+	assert.Equal(t, http.StatusOK, recorder.Code)
+	assert.Equal(t, content, recorder.Body.String())
+}
+
 // A normal session starts by a HTTP GET-request at <domain>/logbook. We assume that no cookie is
 // set. Therefore, we generate a client-id and set a cookie.
 //
 // There is no need to redirect. Instead we send a small application that shows the success.
 func TestInitLogBookWithoutCookie(t *testing.T) {
-	request, err := http.NewRequest("GET", "/logbook", nil)
+	request, err := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
 	if nil != err {
 		t.Fatal(err)
 	}
@@ -44,7 +98,7 @@ func TestInitLogBookWithCookie(t *testing.T) {
 	router := GetDispatcher()
 	AddFrontend(router, "../public")
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
 	cookie := &http.Cookie{Name: "logbook", Value: "1234"}
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
@@ -72,11 +126,11 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	app := &WebApplication{}
 	app.SetTemplateDirPath("../public")
 	generator := &IdGenerator{}
-	router.GET("/logbook", func(context *gin.Context) {
+	router.GET(STATIC_RELATIVE_PATH, func(context *gin.Context) {
 		app.InitLogBookClientApplication(context, generator)
 	})
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
 	cookie := &http.Cookie{Name: "logbook", Value: "1234"}
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
@@ -85,7 +139,7 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "1234")
 	assert.Contains(t, recorder.Body.String(), "LogBook")
-	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080" + application.API_ROOT_PATH + "/1234/logs")
+	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080"+application.API_ROOT_PATH+"/1234/logs")
 }
 
 func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) {
@@ -95,17 +149,17 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	app := &WebApplication{}
 	app.SetTemplateDirPath("../public")
 	generator := &IdGenerator{}
-	router.GET("/logbook", func(context *gin.Context) {
+	router.GET(STATIC_RELATIVE_PATH, func(context *gin.Context) {
 		app.InitLogBookClientApplication(context, generator)
 	})
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/logbook", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
 	cookie := &http.Cookie{Name: "logbook", Value: "1234"}
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
 
-	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234" + application.API_ROOT_PATH + "/1234/logs")
-	assert.Contains(t, recorder.Body.String(), "<base href=\"/logbook\">")
+	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234"+application.API_ROOT_PATH+"/1234/logs")
+	assert.Contains(t, recorder.Body.String(), "<base href=\"/logbook")
 }
 
 // Helper function to get cookie values out of response recorders

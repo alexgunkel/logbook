@@ -1,60 +1,27 @@
 package frontend
 
 import (
-	"testing"
-	"os"
 	"io/ioutil"
-	"github.com/gin-gonic/gin"
-	"net/http/httptest"
 	"net/http"
+	"net/http/httptest"
+	"os"
+	"testing"
+
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestServeStaticFiles(t *testing.T) {
-	tmp, _ := ioutil.TempDir("", "")
-	content := "html"
-	ioutil.WriteFile(tmp + "/index.html", []byte(content), os.ModePerm)
-
-	os.Setenv(STATIC_APP_DIR_ENV, tmp)
-
-	engine := gin.Default()
-	SetStaticApp(engine)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
-	engine.ServeHTTP(recorder, request)
-
-	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t, content, recorder.Body.String())
-}
-
-func TestServeStaticFilesWithEndSlash(t *testing.T) {
-	tmp, _ := ioutil.TempDir("", "")
-	content := "html"
-	ioutil.WriteFile(tmp + "/index.html", []byte(content), os.ModePerm)
-
-	os.Setenv(STATIC_APP_DIR_ENV, tmp + "/")
-
-	engine := gin.Default()
-	SetStaticApp(engine)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
-	engine.ServeHTTP(recorder, request)
-
-	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t, content, recorder.Body.String())
-}
 
 func TestServeStaticJs(t *testing.T) {
 	tmp, _ := ioutil.TempDir("", "")
 	content := "test"
-	ioutil.WriteFile(tmp + "/app.js", []byte(content), os.ModePerm)
+	ioutil.WriteFile(tmp+"/app.js", []byte(content), os.ModePerm)
 
 	os.Setenv(STATIC_APP_DIR_ENV, tmp)
 
 	engine := gin.Default()
 	SetStaticApp(engine)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH + "/app.js", nil)
+	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH+"public/app.js", nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)

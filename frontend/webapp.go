@@ -1,10 +1,11 @@
 package frontend
 
 import (
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"os"
+
 	"github.com/alexgunkel/logbook/application"
+	"github.com/gin-gonic/gin"
 )
 
 type User struct {
@@ -15,6 +16,16 @@ type User struct {
 
 type WebApplication struct {
 	templateFolder string
+}
+
+func SetApplication(engine *gin.Engine, templateDir string) {
+	fe := &WebApplication{}
+	fe.SetTemplateDirPath(templateDir)
+	gen := &IdGenerator{}
+
+	engine.GET(STATIC_RELATIVE_PATH, func(context *gin.Context) {
+		fe.InitLogBookClientApplication(context, gen)
+	})
 }
 
 func (a *WebApplication) SetTemplateDirPath(path string) {
@@ -31,7 +42,7 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 	user := User{}
 	user.Identifier = identifier
 	user.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
-	user.BaseHref = "/logbook"
+	user.BaseHref = STATIC_RELATIVE_PATH
 
 	t := template.New("Index.html")
 	t, err = t.ParseFiles(a.getEntryPoint())
@@ -39,6 +50,9 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 		panic(err)
 	}
 	err = t.ExecuteTemplate(c.Writer, "Index.html", user)
+	if nil != err {
+		panic(err)
+	}
 }
 
 func (a *WebApplication) getEntryPoint() string {
