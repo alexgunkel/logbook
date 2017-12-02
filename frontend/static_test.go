@@ -21,7 +21,7 @@ func TestServeStaticJs(t *testing.T) {
 	engine := gin.Default()
 	SetStaticApp(engine)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH+"public/app.js", nil)
+	request, _ := http.NewRequest("GET", STATIC_BASE_HREF+"app.js", nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)

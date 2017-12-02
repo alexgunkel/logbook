@@ -42,7 +42,7 @@ func TestServeTemplateWithStaticAppConfigured(t *testing.T) {
 	}
 	var contents []contentObj
 	contents = append(contents, contentObj{"html", "Index.html", "", "html"})
-	contents = append(contents, contentObj{"{{.BaseHref}}", "Index.html", "", STATIC_RELATIVE_PATH})
+	contents = append(contents, contentObj{"{{.BaseHref}}", "Index.html", "", STATIC_BASE_HREF})
 	contents = append(contents, contentObj{"test-js", "test.js", "public/test.js", "test-js"})
 
 	for _, content := range contents {
@@ -74,7 +74,7 @@ func TestServeStaticFilesWithStaticAppConfigured(t *testing.T) {
 	engine := gin.Default()
 	AddFrontend(engine, tmp)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH+"public/test.js", nil)
+	request, _ := http.NewRequest("GET", STATIC_BASE_HREF+"test.js", nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)

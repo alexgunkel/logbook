@@ -42,7 +42,7 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 	user := User{}
 	user.Identifier = identifier
 	user.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
-	user.BaseHref = STATIC_RELATIVE_PATH
+	user.BaseHref = STATIC_BASE_HREF
 
 	t := template.New("Index.html")
 	t, err = t.ParseFiles(a.getEntryPoint())
