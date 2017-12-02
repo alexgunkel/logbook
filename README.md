@@ -152,7 +152,7 @@ install the AngularJS-application
 The frontend receives its information from a websocket that is established
 under the URL
 
-    <domain>/logbook/<LogBook_id>/logs
+    <domain>/logbook/api/<LogBook_id>/logs
 
 ## Docker and Orchestration
 There will be a Docker image available which you can get with
