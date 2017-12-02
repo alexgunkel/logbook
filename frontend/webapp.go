@@ -1,40 +1,20 @@
 package frontend
 
 import (
-	"strconv"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"os"
 	"github.com/alexgunkel/logbook/application"
 )
 
-func AddFrontend(engine *gin.Engine, templateDir string) {
-	fe := &WebApplication{}
-	fe.SetTemplateDirPath(templateDir)
-	gen := &IdGenerator{}
-
-	engine.GET("/logbook", func(context *gin.Context) {
-		fe.InitLogBookClientApplication(context, gen)
-	})
-}
-
-type WebApplication struct {
-	templateFolder string
-}
-
-type IdGenerator struct {
-	lastIdentifier int64
-}
-
-func (app *IdGenerator) getNewIdentifier() string {
-	app.lastIdentifier++
-	return strconv.FormatInt(app.lastIdentifier, 10)
-}
-
 type User struct {
 	Identifier string
 	Uri        string
 	BaseHref   string
+}
+
+type WebApplication struct {
+	templateFolder string
 }
 
 func (a *WebApplication) SetTemplateDirPath(path string) {

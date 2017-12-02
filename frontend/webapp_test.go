@@ -52,12 +52,21 @@ func TestInitLogBookWithCookie(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 }
 
-func TestGetNewIdentifierSetsDifferentIdds(t *testing.T) {
+// Two different sessions should receive different identifiers
+// otherwise we would mix up logs
+func TestGetNewIdentifierSetsDifferentIds(t *testing.T) {
 	generator := &IdGenerator{}
 
 	assert.NotEqual(t, generator.getNewIdentifier(), generator.getNewIdentifier())
 }
 
+// Test the standard logbook frontend-application
+// this should be reached at the logbook root path
+// and contain:
+// * html-body,
+// * the given id,
+// * the name of the application, and
+// * a link to the websocket-service
 func TestInitLogBookClientApplication(t *testing.T) {
 	router := gin.Default()
 	app := &WebApplication{}
@@ -75,7 +84,7 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "1234")
-	assert.Contains(t, recorder.Body.String(), "Hello World!")
+	assert.Contains(t, recorder.Body.String(), "LogBook")
 	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080" + application.API_ROOT_PATH + "/1234/logs")
 }
 
