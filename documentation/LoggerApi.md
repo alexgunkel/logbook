@@ -29,7 +29,7 @@ Loggers should only submit log events for clients with "logbook"-cookie.
 This cookie contains the identifier by which LogBook decides whom to
 send the log messages. Messages are sent as POST-requests in JSON to
 
-    <domain>/logbook/<LogBook_id>/logs
+    <domain>/api/v1/logbooks/<LogBook_id>/logs
 
 That is the same path as where the web frontend will request the logs.
 
