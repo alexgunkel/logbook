@@ -26,7 +26,7 @@ func TestServeIndexHtml(t *testing.T) {
 	os.Setenv(STATIC_APP_DIR_ENV, tmp)
 	contents := make(map[string]string)
 	contents["{{.PathToStatic}}"] = STATIC_RELATIVE_PATH
-	contents["{{.Uri}}"] = "ws://localhost:8080/logbook"
+	contents["{{.Uri}}"] = "ws://localhost:8080" + application.API_ROOT_PATH
 
 	for in, out := range contents {
 		t.Run(in, func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	router.ServeHTTP(recorder, request)
 
 	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234"+application.API_ROOT_PATH+"/1234/logs")
-	assert.Contains(t, recorder.Body.String(), "<base href=\"/logbook")
+	assert.Contains(t, recorder.Body.String(), "<base href=\""+STATIC_RELATIVE_PATH)
 }
 
 // Helper function to get cookie values out of response recorders
