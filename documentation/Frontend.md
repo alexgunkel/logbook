@@ -7,7 +7,7 @@ application.
 
 ## Built-in Frontend-Application
 This package is already shipped with a small and simple log viewer.
-This web frontend will available over port `8080` by default. It is important,
+This web frontend listens on port `:8080` by default. It is important,
 that *LogBook* has the same domain as the application you are
 monitoring. Otherwise your browser won't handle the cookie correctly.
 
@@ -38,11 +38,10 @@ directory path set as environmental variable `STATIC_APP`, e.g.:
     export STATIC_APP=$(pwd)/html
     logbook
 
-
 The frontend receives its information from a websocket that is established
 under the URL
 
-    <domain>/logbook/api/<LogBook_id>/logs
+    <domain>/api/<api_version>/logbooks/<LogBook_id>/logs
 	
 The path is available in your `Index.html`file with the template variable `{{.Uri}}`.
 
