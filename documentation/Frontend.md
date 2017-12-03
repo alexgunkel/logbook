@@ -26,8 +26,8 @@ Those variables are:
 
 | variable name     | content |
 |-------------------|---------|
-| `{{.BaseHref}}`   | is substituted by the relative path from where static files can be downloaded. |
-| `{{.Uri}}`        |contains the link to the websocket |
+| `{{.PathToStatic}}`   | is substituted by the relative path from where static files can be downloaded. |
+| `{{.Uri}}`        | contains the link to the websocket |
 | `{{.Identifier}}` | contains the logbook-id |
 
     

@@ -11,7 +11,7 @@ import (
 type User struct {
 	Identifier string
 	Uri        string
-	BaseHref   string
+	PathToStatic   string
 }
 
 type WebApplication struct {
@@ -42,7 +42,7 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 	user := User{}
 	user.Identifier = identifier
 	user.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
-	user.BaseHref = STATIC_BASE_HREF
+	user.PathToStatic = STATIC_BASE_HREF
 
 	t := template.New("Index.html")
 	t, err = t.ParseFiles(a.getEntryPoint())

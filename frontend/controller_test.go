@@ -42,7 +42,7 @@ func TestServeTemplateWithStaticAppConfigured(t *testing.T) {
 	}
 	var contents []contentObj
 	contents = append(contents, contentObj{"html", "Index.html", "", "html"})
-	contents = append(contents, contentObj{"{{.BaseHref}}", "Index.html", "", STATIC_BASE_HREF})
+	contents = append(contents, contentObj{"{{.PathToStatic}}", "Index.html", "", STATIC_BASE_HREF})
 	contents = append(contents, contentObj{"test-js", "test.js", "public/test.js", "test-js"})
 
 	for _, content := range contents {
