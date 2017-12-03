@@ -14,7 +14,9 @@ Start LogBook by typing
 
     logbook
 
-*LogBook* by default listens on port 8080. To change this just set the
+*LogBook* by default listens on port 8080. Therefore, you can call your
+*LogBook* at `http://localhost:8080`. It will communicate with the
+log-message server via the same address and port. To change this just set the
 environmental variable PORT to any other value. Likewise you can configure
 the hostname:
 

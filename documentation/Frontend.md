@@ -7,9 +7,9 @@ application.
 
 ## Built-in Frontend-Application
 This package is already shipped with a small and simple log viewer.
-This web frontend will available under the url
-
-    <domain>/logbook/app
+This web frontend will available over port `8080` by default. It is important,
+that *LogBook* has the same domain as the application you are
+monitoring. Otherwise your browser won't handle the cookie correctly.
 
 ## LogBook-Frontend
 For a more comfortable presentation of your LogBook you might want to
