@@ -1,6 +1,8 @@
 package application
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,6 +29,7 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 	engine.POST(API_ROOT_PATH+"/:client/logs", func(context *gin.Context) {
 		logBookId := context.Param("client")
 		app.r.submit(context, logBookId)
+		context.Status(http.StatusAccepted)
 	})
 
 	engine.GET(API_ROOT_PATH+"/:client/logs", func(context *gin.Context) {
