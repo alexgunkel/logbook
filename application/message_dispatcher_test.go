@@ -8,8 +8,8 @@ import (
 func TestDispatch(t *testing.T) {
 	d := &messageDispatcher{}
 	d.incoming = make(chan NewMessage, 20)
-	d.channels = make(map[string]chan Message)
-	d.channels["1"] = make(chan Message, 20)
+	d.channels = make(map[string]chan LogBookEntry)
+	d.channels["1"] = make(chan LogBookEntry, 20)
 
 	go d.dispatch()
 
@@ -22,14 +22,14 @@ func TestDispatch(t *testing.T) {
 	assert.Equal(t, 123, res.Event.Timestamp)
 }
 
-var resultingMessage Message
+var resultingMessage LogBookEntry
 
 func BenchmarkDispatch(b *testing.B) {
-	var res Message
+	var res LogBookEntry
 	d := &messageDispatcher{}
 	d.incoming = make(chan NewMessage, 20)
-	d.channels = make(map[string]chan Message)
-	d.channels["1"] = make(chan Message, 20)
+	d.channels = make(map[string]chan LogBookEntry)
+	d.channels["1"] = make(chan LogBookEntry, 20)
 
 	go d.dispatch()
 

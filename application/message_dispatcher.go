@@ -1,7 +1,7 @@
 package application
 
 type messageDispatcher struct {
-	channels map[string]chan Message
+	channels map[string]chan LogBookEntry
 	incoming chan NewMessage
 }
 

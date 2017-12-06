@@ -6,7 +6,7 @@ type NewMessage struct {
 	Origin    HeaderData
 }
 
-type Message struct {
+type LogBookEntry struct {
 	logBookId string
 	Event     Event
 	Origin    HeaderData
@@ -68,7 +68,7 @@ func (i LogMessageBody) normalize() (e Event) {
 	return
 }
 
-func processMessage(inbound NewMessage) (outbound Message) {
+func processMessage(inbound NewMessage) (outbound LogBookEntry) {
 	outbound.logBookId = inbound.logBookId
 	outbound.Origin = inbound.Origin
 	outbound.Event = inbound.Event.normalize()

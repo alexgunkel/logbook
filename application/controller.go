@@ -23,7 +23,7 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 	app.d.incoming = receiverToDispatcher
 
 	// create messageDispatcher channel list
-	app.d.channels = make(map[string]chan Message)
+	app.d.channels = make(map[string]chan LogBookEntry)
 	go app.d.dispatch()
 
 	engine.POST(API_ROOT_PATH+"/:client/logs", func(context *gin.Context) {
@@ -36,7 +36,7 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 		logBookId := context.Param("client")
 		ForceCookie(context, logBookId)
 
-		outbound := make(chan Message, 20)
+		outbound := make(chan LogBookEntry, 20)
 		app.d.channels[logBookId] = outbound
 		defer func() {
 			delete(app.d.channels, logBookId)

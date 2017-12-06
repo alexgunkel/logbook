@@ -88,10 +88,10 @@ func BenchmarkNormalizeFloat(b *testing.B) {
 	result = res
 }
 
-var resultMsg Message
+var resultMsg LogBookEntry
 
 func BenchmarkProcessMessage(b *testing.B) {
-	var out Message
+	var out LogBookEntry
 	in := NewMessage{logBookId: "123",
 	Event:LogMessageBody{Timestamp: 123123123, Message: "Message", Severity: "debug"},
 	Origin:HeaderData{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
