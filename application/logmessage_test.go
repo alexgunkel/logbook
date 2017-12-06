@@ -21,10 +21,24 @@ func TestUnMarshallSeverity(t *testing.T) {
 	assert.Equal(t, "error", logEv2.Severity)
 }
 
+// Test normalizing function
 func TestNormalize(t *testing.T) {
 	for input, output := range dataProviderForNormalization() {
-		out, _ := normalize(input)
+		out, outText := normalize(input)
 		assert.Equal(t, output, out, "Expected transformed value to be %v, got %v from %v", output, out, input)
+		assert.Equal(t, output, severityValues[outText], "Expected transformed value to be %v, got %v from %v", output, out, input)
+	}
+}
+
+func TestMessageToLogbookEntryCorrectsLogLevel(t *testing.T) {
+	for input, _ := range dataProviderForNormalization() {
+		i := IncomingMessage{}
+		i.Body.Severity = input
+
+		res := processMessage(i)
+
+		assert.NotNil(t, res.Severity)
+		assert.NotNil(t, res.SeverityText)
 	}
 }
 

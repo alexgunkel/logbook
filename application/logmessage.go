@@ -35,17 +35,15 @@ type HeaderData struct {
 //
 // Here we use the genuine LogBook-ontology
 type LogBookEntry struct {
-	logBookId   string
-	Application string
-	LoggerName  string
-	RequestUri  string
-	Timestamp   int         `json:"time"`
-	Message     string      `json:"message"`
-	Severity    int         `json:"severity"`
-	Context     interface{} `json:"context"`
-}
-
-type Event struct {
+	logBookId    string      `json:"log_book_id"`
+	Application  string      `json:"application"`
+	LoggerName   string      `json:"logger"`
+	RequestUri   string      `json:"request_uri"`
+	Timestamp    int         `json:"time"`
+	Message      string      `json:"message"`
+	Severity     int         `json:"severity"`
+	SeverityText string      `json:"severity_text"`
+	Context      interface{} `json:"context"`
 }
 
 func createNewLogMessage(logBookId string) (m *IncomingMessage) {
@@ -68,21 +66,27 @@ var severityValues = map[string]int{"debug": 7,
 	"critical":      2,
 	"alert":         1,
 	"emergency":     0}
+var severityValuesIntString = map[int]string{7: "debug",
+	6: "informational",
+	5: "notice",
+	4: "warning",
+	3: "error",
+	2: "critical",
+	1: "alert",
+	0: "emergency"}
 
 func normalize(input interface{}) (digit int, textual string) {
 	if level, ok := input.(string); ok {
-		digit = severityValues[level]
-		return
+		return severityValues[level], level
 	}
 
 	if level, ok := input.(float64); ok {
 		digit = int(level)
-		return
+		return digit, severityValuesIntString[digit]
 	}
 
 	if level, ok := input.(int); ok {
-		digit = level
-		return
+		return level, severityValuesIntString[level]
 	}
 
 	return
