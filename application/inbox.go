@@ -23,7 +23,7 @@ func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	m.Event = *e
+	m.Body = *e
 
 	h := createOriginObjectFromHeaderData(c)
 

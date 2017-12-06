@@ -1,12 +1,15 @@
 package application
 
 import (
-	"testing"
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUnMarshallSeverity(t *testing.T)  {
+// a test for our expectations concerning the
+// standard behavior of json unmarshaling
+func TestUnMarshallSeverity(t *testing.T) {
 	origJson := "{\"severity\": 12}"
 	origJson2 := "{\"severity\": \"error\"}"
 	logEv := &LogMessageBody{}
@@ -18,7 +21,7 @@ func TestUnMarshallSeverity(t *testing.T)  {
 	assert.Equal(t, "error", logEv2.Severity)
 }
 
-func TestNormalize(t *testing.T)  {
+func TestNormalize(t *testing.T) {
 	inc := LogMessageBody{Timestamp: 123123123, Message: "This is my new message", Context: "this still has to be filled…"}
 	out := inc.normalize()
 	assert.Equal(t, 123123123, out.Timestamp)
@@ -71,7 +74,7 @@ var result Event
 func BenchmarkNormalizeString(b *testing.B) {
 	var res Event
 	inc := LogMessageBody{Severity: "debug"}
-	for n:= 0; n < b.N; n++ {
+	for n := 0; n < b.N; n++ {
 		res = inc.normalize()
 	}
 
@@ -81,7 +84,7 @@ func BenchmarkNormalizeString(b *testing.B) {
 func BenchmarkNormalizeFloat(b *testing.B) {
 	var res Event
 	inc := LogMessageBody{Severity: float64(3)}
-	for n:= 0; n < b.N; n++ {
+	for n := 0; n < b.N; n++ {
 		res = inc.normalize()
 	}
 
@@ -93,10 +96,10 @@ var resultMsg LogBookEntry
 func BenchmarkProcessMessage(b *testing.B) {
 	var out LogBookEntry
 	in := IncomingMessage{logBookId: "123",
-	Event:LogMessageBody{Timestamp: 123123123, Message: "Message", Severity: "debug"},
-	Origin:HeaderData{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
+		Body:  LogMessageBody{Timestamp: 123123123, Message: "Message", Severity: "debug"},
+		Origin: HeaderData{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
 
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		out = processMessage(in)
 	}
 

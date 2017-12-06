@@ -1,11 +1,19 @@
 package application
 
+// This the data structure for incoming messages.
+// It consists of header data and the information
+// in the http body.
+//
+// Here our ontology is oriented at the technical
+// prospective of http-requests
 type IncomingMessage struct {
 	logBookId string
-	Event     LogMessageBody
+	Body     LogMessageBody
 	Origin    HeaderData
 }
 
+// The body of the message is sent as a json
+// object
 type LogMessageBody struct {
 	Timestamp int         `json:"timestamp"`
 	Message   string      `json:"message"`
@@ -13,12 +21,19 @@ type LogMessageBody struct {
 	Context   interface{} `json:"context"`
 }
 
+// Header data contain information about
+// the origin of the message, like app and
+// logger or the request uri
 type HeaderData struct {
-	Application string `json:"application"`
-	LoggerName  string `json:"logger_name"`
-	RequestUri  string `json:"request_uri"`
+	Application string
+	LoggerName  string
+	RequestUri  string
 }
 
+// The LogBook-entry is the transformed data object
+// which contains data for the LogBook frontend.
+//
+// Here we use the genuine LogBook-ontology
 type LogBookEntry struct {
 	logBookId string
 	Event     Event
@@ -39,6 +54,11 @@ func createNewLogMessage(logBookId string) (m *IncomingMessage) {
 	return
 }
 
+// Mapping of digital and textual versions of
+// our loglevels. This map follows the recommendations
+// in RFC 5424
+//
+// see https://tools.ietf.org/html/rfc5424
 var severityValues = map[string]int{"debug": 7,
 	"informational": 6,
 	"notice":        5,
@@ -68,10 +88,12 @@ func (i LogMessageBody) normalize() (e Event) {
 	return
 }
 
+// This function is responsible for the transition
+// from technical terminology to LogBook-ontology
 func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
 	outbound.logBookId = inbound.logBookId
 	outbound.Origin = inbound.Origin
-	outbound.Event = inbound.Event.normalize()
+	outbound.Event = inbound.Body.normalize()
 
 	return
 }

@@ -13,7 +13,7 @@ func TestDispatch(t *testing.T) {
 
 	go d.dispatch()
 
-	m := IncomingMessage{logBookId: "1", Event: LogMessageBody{Message: "test", Timestamp: 123, Severity: "debug"}}
+	m := IncomingMessage{logBookId: "1", Body: LogMessageBody{Message: "test", Timestamp: 123, Severity: "debug"}}
 	d.incoming<- m
 
 	res :=<- d.channels["1"]
@@ -33,7 +33,7 @@ func BenchmarkDispatch(b *testing.B) {
 
 	go d.dispatch()
 
-	m := IncomingMessage{logBookId: "1", Event: LogMessageBody{Severity: "debug"}}
+	m := IncomingMessage{logBookId: "1", Body: LogMessageBody{Severity: "debug"}}
 
 	b.ResetTimer()
 

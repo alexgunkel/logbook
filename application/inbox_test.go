@@ -38,13 +38,13 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 
 	// validate
 
-	assert.Equal(t, original.Message,   postMessage.Event.Message)
-	assert.Equal(t, original.Timestamp, postMessage.Event.Timestamp)
-	assert.Equal(t, original.Severity,  postMessage.Event.Severity)
+	assert.Equal(t, original.Message,   postMessage.Body.Message)
+	assert.Equal(t, original.Timestamp, postMessage.Body.Timestamp)
+	assert.Equal(t, original.Severity,  postMessage.Body.Severity)
 
-	assert.NotEqual(t, postMessage.Event.Message,   "")
-	assert.NotEqual(t, postMessage.Event.Timestamp, 0)
-	assert.NotEqual(t, postMessage.Event.Severity,  0)
+	assert.NotEqual(t, postMessage.Body.Message,   "")
+	assert.NotEqual(t, postMessage.Body.Timestamp, 0)
+	assert.NotEqual(t, postMessage.Body.Severity,  0)
 }
 
 func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
