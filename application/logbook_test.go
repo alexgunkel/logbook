@@ -34,7 +34,7 @@ func TestWebsocketHandlerSendsMessagesWhenReceiving(t *testing.T) {
 	input := LogBookEntry{}
 	input.Event = Event{123123123, "Test", 3, nil}
 	channel<- input
-	message := &NewMessage{}
+	message := &IncomingMessage{}
 	err = c.ReadJSON(message)
 
 	assert.Equal(t, "Test", message.Event.Message)

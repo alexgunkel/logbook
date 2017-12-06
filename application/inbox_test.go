@@ -18,7 +18,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	}
 
 	router := gin.Default()
-	incoming := make(chan NewMessage, 20)
+	incoming := make(chan IncomingMessage, 20)
 	r := &inbox{}
 	r.chanelToMessageDispatcher = incoming
 	router.POST(API_ROOT_PATH + "/:client/logs", func(context *gin.Context) {
@@ -58,7 +58,7 @@ func TestLogStoresHeaderDataInLogInfo(t *testing.T)  {
 	request.Header.Set(LogHeaderRequestUri,  "https://www.logbook.io")
 
 	router := gin.Default()
-	incoming := make(chan NewMessage, 20)
+	incoming := make(chan IncomingMessage, 20)
 	r := &inbox{}
 	r.chanelToMessageDispatcher = incoming
 	router.POST(API_ROOT_PATH + "/:client/logs", func(context *gin.Context) {

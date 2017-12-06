@@ -18,7 +18,7 @@ func (app *LogBookApplication) AddApplicationToEngine(engine *gin.Engine) {
 	app.d = &messageDispatcher{}
 
 	// Create channel between inbox and messageDispatcher
-	receiverToDispatcher := make(chan NewMessage, 20)
+	receiverToDispatcher := make(chan IncomingMessage, 20)
 	app.r.chanelToMessageDispatcher = receiverToDispatcher
 	app.d.incoming = receiverToDispatcher
 

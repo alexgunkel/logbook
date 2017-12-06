@@ -13,7 +13,7 @@ const (
 )
 
 type inbox struct {
-	chanelToMessageDispatcher chan NewMessage
+	chanelToMessageDispatcher chan IncomingMessage
 }
 
 func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {

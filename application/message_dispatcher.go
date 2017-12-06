@@ -2,7 +2,7 @@ package application
 
 type messageDispatcher struct {
 	channels map[string]chan LogBookEntry
-	incoming chan NewMessage
+	incoming chan IncomingMessage
 }
 
 func (d *messageDispatcher) dispatch()  {

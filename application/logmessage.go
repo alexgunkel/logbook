@@ -1,14 +1,8 @@
 package application
 
-type NewMessage struct {
+type IncomingMessage struct {
 	logBookId string
 	Event     LogMessageBody
-	Origin    HeaderData
-}
-
-type LogBookEntry struct {
-	logBookId string
-	Event     Event
 	Origin    HeaderData
 }
 
@@ -19,6 +13,18 @@ type LogMessageBody struct {
 	Context   interface{} `json:"context"`
 }
 
+type HeaderData struct {
+	Application string `json:"application"`
+	LoggerName  string `json:"logger_name"`
+	RequestUri  string `json:"request_uri"`
+}
+
+type LogBookEntry struct {
+	logBookId string
+	Event     Event
+	Origin    HeaderData
+}
+
 type Event struct {
 	Timestamp int         `json:"timestamp"`
 	Message   string      `json:"message"`
@@ -26,14 +32,8 @@ type Event struct {
 	Context   interface{} `json:"context"`
 }
 
-type HeaderData struct {
-	Application string `json:"application"`
-	LoggerName  string `json:"logger_name"`
-	RequestUri  string `json:"request_uri"`
-}
-
-func createNewLogMessage(logBookId string) (m *NewMessage) {
-	m = &NewMessage{}
+func createNewLogMessage(logBookId string) (m *IncomingMessage) {
+	m = &IncomingMessage{}
 	m.logBookId = logBookId
 
 	return
@@ -41,12 +41,12 @@ func createNewLogMessage(logBookId string) (m *NewMessage) {
 
 var severityValues = map[string]int{"debug": 7,
 	"informational": 6,
-	"notice": 5,
-	"warning": 4,
-	"error": 3,
-	"critical": 2,
-	"alert": 1,
-	"emergency": 0}
+	"notice":        5,
+	"warning":       4,
+	"error":         3,
+	"critical":      2,
+	"alert":         1,
+	"emergency":     0}
 
 func (i LogMessageBody) normalize() (e Event) {
 	e = copyEvent(&i)
@@ -68,7 +68,7 @@ func (i LogMessageBody) normalize() (e Event) {
 	return
 }
 
-func processMessage(inbound NewMessage) (outbound LogBookEntry) {
+func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
 	outbound.logBookId = inbound.logBookId
 	outbound.Origin = inbound.Origin
 	outbound.Event = inbound.Event.normalize()
