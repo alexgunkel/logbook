@@ -25,7 +25,7 @@ func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	}
 	m.Body = *e
 
-	h := createOriginObjectFromHeaderData(c)
+	h := createHeaderDataObjectFromHeaderData(c)
 
 	m.Origin = h
 
@@ -33,7 +33,7 @@ func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	return
 }
 
-func createOriginObjectFromHeaderData(c *gin.Context) (h HeaderData) {
+func createHeaderDataObjectFromHeaderData(c *gin.Context) (h HeaderData) {
 	h = HeaderData{}
 	h.Application = c.GetHeader(LogHeaderAppIdentifier)
 	h.LoggerName = c.GetHeader(LogHeaderLoggerName)
