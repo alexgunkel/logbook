@@ -137,9 +137,9 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T) {
 	assert.Equal(t, "Test", wsMessage.Event.Message)
 	assert.Equal(t, 123123123, wsMessage.Event.Timestamp)
 	assert.Equal(t, 4, wsMessage.Event.Severity)
-	assert.Equal(t, "MyMicroService", wsMessage.Origin.Application)
-	assert.Equal(t, "MyLogger", wsMessage.Origin.LoggerName)
-	assert.Equal(t, "http://my.web.app", wsMessage.Origin.RequestUri)
+	assert.Equal(t, "MyMicroService", wsMessage.Application)
+	assert.Equal(t, "MyLogger", wsMessage.LoggerName)
+	assert.Equal(t, "http://my.web.app", wsMessage.RequestUri)
 }
 
 func TestWebsocketReceivesOnlyMessagesWithSameLogBookId(t *testing.T) {

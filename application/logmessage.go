@@ -8,7 +8,7 @@ package application
 // prospective of http-requests
 type IncomingMessage struct {
 	logBookId string
-	Body     LogMessageBody
+	Body      LogMessageBody
 	Origin    HeaderData
 }
 
@@ -35,9 +35,12 @@ type HeaderData struct {
 //
 // Here we use the genuine LogBook-ontology
 type LogBookEntry struct {
-	logBookId string
-	Event     Event
-	Origin    HeaderData
+	logBookId   string
+	Event       Event
+	Origin      HeaderData
+	Application string
+	LoggerName  string
+	RequestUri  string
 }
 
 type Event struct {
@@ -93,6 +96,9 @@ func (i LogMessageBody) normalize() (e Event) {
 func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
 	outbound.logBookId = inbound.logBookId
 	outbound.Origin = inbound.Origin
+	outbound.Application = inbound.Origin.Application
+	outbound.LoggerName = inbound.Origin.LoggerName
+	outbound.RequestUri = inbound.Origin.RequestUri
 	outbound.Event = inbound.Body.normalize()
 
 	return
