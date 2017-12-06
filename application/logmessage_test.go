@@ -22,19 +22,9 @@ func TestUnMarshallSeverity(t *testing.T) {
 }
 
 func TestNormalize(t *testing.T) {
-	inc := LogMessageBody{Timestamp: 123123123, Message: "This is my new message", Context: "this still has to be filled…"}
-	out := inc.normalize()
-	assert.Equal(t, 123123123, out.Timestamp)
-	assert.Equal(t, "This is my new message", out.Message)
-	assert.Equal(t, "this still has to be filled…", out.Context)
-
 	for input, output := range dataProviderForNormalization() {
-		inc.Severity = input
-		out := inc.normalize()
-		assert.Equal(t, output, out.Severity, "Expected transformed value to be %v, got %v from %v", output, out.Severity, input)
-		assert.Equal(t, 123123123, out.Timestamp)
-		assert.Equal(t, "This is my new message", out.Message)
-		assert.Equal(t, "this still has to be filled…", out.Context)
+		out, _ := normalize(input)
+		assert.Equal(t, output, out, "Expected transformed value to be %v, got %v from %v", output, out, input)
 	}
 }
 
@@ -69,23 +59,23 @@ func dataProviderForNormalization() (m map[interface{}]interface{}) {
 	return
 }
 
-var result Event
+var result int
 
 func BenchmarkNormalizeString(b *testing.B) {
-	var res Event
-	inc := LogMessageBody{Severity: "debug"}
+	var res int
+	inc := "debug"
 	for n := 0; n < b.N; n++ {
-		res = inc.normalize()
+		res, _ = normalize(inc)
 	}
 
 	result = res
 }
 
 func BenchmarkNormalizeFloat(b *testing.B) {
-	var res Event
-	inc := LogMessageBody{Severity: float64(3)}
+	var res int
+	inc := float64(3)
 	for n := 0; n < b.N; n++ {
-		res = inc.normalize()
+		res, _ = normalize(inc)
 	}
 
 	result = res
@@ -96,7 +86,7 @@ var resultMsg LogBookEntry
 func BenchmarkProcessMessage(b *testing.B) {
 	var out LogBookEntry
 	in := IncomingMessage{logBookId: "123",
-		Body:  LogMessageBody{Timestamp: 123123123, Message: "Message", Severity: "debug"},
+		Body:   LogMessageBody{Timestamp: 123123123, Message: "Message", Severity: "debug"},
 		Origin: HeaderData{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
 
 	for i := 0; i < b.N; i++ {

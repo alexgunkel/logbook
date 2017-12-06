@@ -134,9 +134,9 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T) {
 	go conn.ReadJSON(wsMessage)
 	time.Sleep(time.Millisecond * 10)
 
-	assert.Equal(t, "Test", wsMessage.Event.Message)
-	assert.Equal(t, 123123123, wsMessage.Event.Timestamp)
-	assert.Equal(t, 4, wsMessage.Event.Severity)
+	assert.Equal(t, "Test", wsMessage.Message)
+	assert.Equal(t, 123123123, wsMessage.Timestamp)
+	assert.Equal(t, 4, wsMessage.Severity)
 	assert.Equal(t, "MyMicroService", wsMessage.Application)
 	assert.Equal(t, "MyLogger", wsMessage.LoggerName)
 	assert.Equal(t, "http://my.web.app", wsMessage.RequestUri)

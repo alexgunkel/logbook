@@ -36,18 +36,16 @@ type HeaderData struct {
 // Here we use the genuine LogBook-ontology
 type LogBookEntry struct {
 	logBookId   string
-	Event       Event
-	Origin      HeaderData
 	Application string
 	LoggerName  string
 	RequestUri  string
+	Timestamp   int         `json:"time"`
+	Message     string      `json:"message"`
+	Severity    int         `json:"severity"`
+	Context     interface{} `json:"context"`
 }
 
 type Event struct {
-	Timestamp int         `json:"timestamp"`
-	Message   string      `json:"message"`
-	Severity  int         `json:"severity"`
-	Context   interface{} `json:"context"`
 }
 
 func createNewLogMessage(logBookId string) (m *IncomingMessage) {
@@ -71,20 +69,19 @@ var severityValues = map[string]int{"debug": 7,
 	"alert":         1,
 	"emergency":     0}
 
-func (i LogMessageBody) normalize() (e Event) {
-	e = copyEvent(&i)
-	if level, ok := i.Severity.(string); ok {
-		e.Severity = severityValues[level]
+func normalize(input interface{}) (digit int, textual string) {
+	if level, ok := input.(string); ok {
+		digit = severityValues[level]
 		return
 	}
 
-	if level, ok := i.Severity.(float64); ok {
-		e.Severity = int(level)
+	if level, ok := input.(float64); ok {
+		digit = int(level)
 		return
 	}
 
-	if level, ok := i.Severity.(int); ok {
-		e.Severity = level
+	if level, ok := input.(int); ok {
+		digit = level
 		return
 	}
 
@@ -94,20 +91,14 @@ func (i LogMessageBody) normalize() (e Event) {
 // This function is responsible for the transition
 // from technical terminology to LogBook-ontology
 func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
-	outbound.logBookId = inbound.logBookId
-	outbound.Origin = inbound.Origin
+	outbound.Timestamp = inbound.Body.Timestamp
+	outbound.Severity, _ = normalize(inbound.Body.Severity)
+	outbound.Message = inbound.Body.Message
+	outbound.Context = inbound.Body.Context
 	outbound.Application = inbound.Origin.Application
 	outbound.LoggerName = inbound.Origin.LoggerName
 	outbound.RequestUri = inbound.Origin.RequestUri
-	outbound.Event = inbound.Body.normalize()
-
-	return
-}
-
-func copyEvent(i *LogMessageBody) (e Event) {
-	e.Timestamp = i.Timestamp
-	e.Message = i.Message
-	e.Context = i.Context
+	outbound.logBookId = inbound.logBookId
 
 	return
 }
