@@ -33,8 +33,8 @@ func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	return
 }
 
-func createOriginObjectFromHeaderData(c *gin.Context) (h Origin) {
-	h = Origin{}
+func createOriginObjectFromHeaderData(c *gin.Context) (h HeaderData) {
+	h = HeaderData{}
 	h.Application = c.GetHeader(LogHeaderAppIdentifier)
 	h.LoggerName = c.GetHeader(LogHeaderLoggerName)
 	h.RequestUri = c.GetHeader(LogHeaderRequestUri)

@@ -94,7 +94,7 @@ func BenchmarkProcessMessage(b *testing.B) {
 	var out Message
 	in := NewMessage{logBookId: "123",
 	Event:Incoming{Timestamp: 123123123, Message: "Message", Severity: "debug"},
-	Origin:Origin{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
+	Origin:HeaderData{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
 
 	for i:=0; i < b.N; i++ {
 		out = processMessage(in)

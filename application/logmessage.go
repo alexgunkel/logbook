@@ -3,13 +3,13 @@ package application
 type NewMessage struct {
 	logBookId string
 	Event     Incoming
-	Origin    Origin
+	Origin    HeaderData
 }
 
 type Message struct {
 	logBookId string
 	Event     Event
-	Origin    Origin
+	Origin    HeaderData
 }
 
 type Incoming struct {
@@ -26,7 +26,7 @@ type Event struct {
 	Context   interface{} `json:"context"`
 }
 
-type Origin struct {
+type HeaderData struct {
 	Application string `json:"application"`
 	LoggerName  string `json:"logger_name"`
 	RequestUri  string `json:"request_uri"`
