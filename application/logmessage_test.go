@@ -24,7 +24,7 @@ func TestUnMarshallSeverity(t *testing.T) {
 // Test normalizing function
 func TestNormalize(t *testing.T) {
 	for input, output := range dataProviderForNormalization() {
-		out, outText := normalize(input)
+		out, outText := analyzeLogLevel(input)
 		assert.Equal(t, output, out, "Expected transformed value to be %v, got %v from %v", output, out, input)
 		assert.Equal(t, output, severityValues[outText], "Expected transformed value to be %v, got %v from %v", output, out, input)
 	}
@@ -79,7 +79,7 @@ func BenchmarkNormalizeString(b *testing.B) {
 	var res int
 	inc := "debug"
 	for n := 0; n < b.N; n++ {
-		res, _ = normalize(inc)
+		res, _ = analyzeLogLevel(inc)
 	}
 
 	result = res
@@ -89,7 +89,7 @@ func BenchmarkNormalizeFloat(b *testing.B) {
 	var res int
 	inc := float64(3)
 	for n := 0; n < b.N; n++ {
-		res, _ = normalize(inc)
+		res, _ = analyzeLogLevel(inc)
 	}
 
 	result = res

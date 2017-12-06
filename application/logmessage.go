@@ -15,7 +15,7 @@ type IncomingMessage struct {
 // The body of the message is sent as a json
 // object
 type LogMessageBody struct {
-	Timestamp int         `json:"timestamp"`
+	Timestamp int         `json:"time"`
 	Message   string      `json:"message"`
 	Severity  interface{} `json:"severity"`
 	Context   interface{} `json:"context"`
@@ -75,13 +75,16 @@ var severityValuesIntString = map[int]string{7: "debug",
 	1: "alert",
 	0: "emergency"}
 
-func normalize(input interface{}) (digit int, textual string) {
+// Function to normalize severity levels
+// Takes an input in int, float or string
+// returns loglevel as int and string
+func analyzeLogLevel(input interface{}) (int, string) {
 	if level, ok := input.(string); ok {
 		return severityValues[level], level
 	}
 
 	if level, ok := input.(float64); ok {
-		digit = int(level)
+		digit := int(level)
 		return digit, severityValuesIntString[digit]
 	}
 
@@ -89,14 +92,14 @@ func normalize(input interface{}) (digit int, textual string) {
 		return level, severityValuesIntString[level]
 	}
 
-	return
+	return -1, ""
 }
 
 // This function is responsible for the transition
 // from technical terminology to LogBook-ontology
 func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
 	outbound.Timestamp = inbound.Body.Timestamp
-	outbound.Severity, _ = normalize(inbound.Body.Severity)
+	outbound.Severity, _ = analyzeLogLevel(inbound.Body.Severity)
 	outbound.Message = inbound.Body.Message
 	outbound.Context = inbound.Body.Context
 	outbound.Application = inbound.Origin.Application

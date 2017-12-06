@@ -119,7 +119,7 @@ func TestWebsocketRecievesMessagesThatAreSentToTheReceiver(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	body := "{ \"message\": \"Test\", \"severity\": 4, \"timestamp\": 123123123 }"
+	body := "{ \"message\": \"Test\", \"severity\": 4, \"time\": 123123123 }"
 	request, err := http.NewRequest("POST", API_ROOT_PATH+"/123/logs", strings.NewReader(body))
 	if err != nil {
 		t.Fatal(err)
