@@ -18,7 +18,7 @@ type inbox struct {
 
 func (r *inbox) submit(c *gin.Context, logBookId string) (err error)  {
 	m := createNewLogMessage(logBookId)
-	e := &Incoming{}
+	e := &LogMessageBody{}
 	if err = c.BindJSON(e); nil != err {
 		c.Status(http.StatusBadRequest)
 		return

@@ -29,7 +29,7 @@ func TestValidLogSentToDispatcher(t *testing.T) {
 	})
 	recorder := httptest.NewRecorder()
 
-	original := &Incoming{}
+	original := &LogMessageBody{}
 	json.Unmarshal([]byte(getTestJson()), original)
 
 	// run

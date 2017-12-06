@@ -9,8 +9,8 @@ import (
 func TestUnMarshallSeverity(t *testing.T)  {
 	origJson := "{\"severity\": 12}"
 	origJson2 := "{\"severity\": \"error\"}"
-	logEv := &Incoming{}
-	logEv2 := &Incoming{}
+	logEv := &LogMessageBody{}
+	logEv2 := &LogMessageBody{}
 	json.Unmarshal([]byte(origJson), logEv)
 	json.Unmarshal([]byte(origJson2), logEv2)
 
@@ -19,7 +19,7 @@ func TestUnMarshallSeverity(t *testing.T)  {
 }
 
 func TestNormalize(t *testing.T)  {
-	inc := Incoming{Timestamp: 123123123, Message: "This is my new message", Context: "this still has to be filled…"}
+	inc := LogMessageBody{Timestamp: 123123123, Message: "This is my new message", Context: "this still has to be filled…"}
 	out := inc.normalize()
 	assert.Equal(t, 123123123, out.Timestamp)
 	assert.Equal(t, "This is my new message", out.Message)
@@ -70,7 +70,7 @@ var result Event
 
 func BenchmarkNormalizeString(b *testing.B) {
 	var res Event
-	inc := Incoming{Severity: "debug"}
+	inc := LogMessageBody{Severity: "debug"}
 	for n:= 0; n < b.N; n++ {
 		res = inc.normalize()
 	}
@@ -80,7 +80,7 @@ func BenchmarkNormalizeString(b *testing.B) {
 
 func BenchmarkNormalizeFloat(b *testing.B) {
 	var res Event
-	inc := Incoming{Severity: float64(3)}
+	inc := LogMessageBody{Severity: float64(3)}
 	for n:= 0; n < b.N; n++ {
 		res = inc.normalize()
 	}
@@ -93,7 +93,7 @@ var resultMsg Message
 func BenchmarkProcessMessage(b *testing.B) {
 	var out Message
 	in := NewMessage{logBookId: "123",
-	Event:Incoming{Timestamp: 123123123, Message: "Message", Severity: "debug"},
+	Event:LogMessageBody{Timestamp: 123123123, Message: "Message", Severity: "debug"},
 	Origin:HeaderData{Application: "myApp", LoggerName: "Logger", RequestUri: "http://www.google.de"}}
 
 	for i:=0; i < b.N; i++ {

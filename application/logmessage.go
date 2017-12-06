@@ -2,7 +2,7 @@ package application
 
 type NewMessage struct {
 	logBookId string
-	Event     Incoming
+	Event     LogMessageBody
 	Origin    HeaderData
 }
 
@@ -12,7 +12,7 @@ type Message struct {
 	Origin    HeaderData
 }
 
-type Incoming struct {
+type LogMessageBody struct {
 	Timestamp int         `json:"timestamp"`
 	Message   string      `json:"message"`
 	Severity  interface{} `json:"severity"`
@@ -48,7 +48,7 @@ var severityValues = map[string]int{"debug": 7,
 	"alert": 1,
 	"emergency": 0}
 
-func (i Incoming) normalize() (e Event) {
+func (i LogMessageBody) normalize() (e Event) {
 	e = copyEvent(&i)
 	if level, ok := i.Severity.(string); ok {
 		e.Severity = severityValues[level]
@@ -76,7 +76,7 @@ func processMessage(inbound NewMessage) (outbound Message) {
 	return
 }
 
-func copyEvent(i *Incoming) (e Event) {
+func copyEvent(i *LogMessageBody) (e Event) {
 	e.Timestamp = i.Timestamp
 	e.Message = i.Message
 	e.Context = i.Context
