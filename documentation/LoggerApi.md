@@ -64,7 +64,7 @@ values between *0* (highest severity, "*emergeny*") and *7* (lowest severity,
 | 3      | error         | error conditions                 |
 | 4      | warning       | warning conditions               |
 | 5      | notice        | normal but significant condition |
-| 6      | informational | informational messages           |
+| 6      | info          | informational messages           |
 | 7      | debug         | debug-level messages             |
 
 At the moment, string recognition is case-sensitive and only lower case
