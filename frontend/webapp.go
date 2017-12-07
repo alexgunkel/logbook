@@ -10,8 +10,10 @@ import (
 
 type User struct {
 	Identifier string
-	Uri        string
-	PathToStatic   string
+	Uri string
+	PathToStatic string
+	Port string
+	EndPoint string
 }
 
 type WebApplication struct {
@@ -42,6 +44,8 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 	user := User{}
 	user.Identifier = identifier
 	user.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
+	user.Port = getPort()
+	user.EndPoint = application.API_ROOT_PATH + "/" + identifier + "/logs"
 	user.PathToStatic = STATIC_BASE_HREF
 
 	t := template.New("Index.html")

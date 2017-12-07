@@ -3,49 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <base href="{{.PathToStatic}}">
-    <title>Hello World!</title>
-
-
-
+    <title>LogBook</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <style type="text/css">
+        body {
+            padding-top: 56px;
+        }
+        * {
+            line-height: 120%;
+        }
+        .td {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .card {
+            padding: 0px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+        .card-body {
+            padding: 5px;
+        }
+        h5.card-title {
+            font-size: 16px;
+            margin: 0;
+            padding: 0;
+        }
+        h6.card-subtitle {
+            font-size: 13px;
+            margin: 0;
+            padding: 0;
+        }
+        div.card-text {
+            display: none;
+            font-size: 12px;
+            margin: 5px 0 0;
+            padding: 6px;
+            border: 1px solid lightgray;
+            background: white;
+        }
+        .card:active .card-text,
+        .card:focus .card-text {
+            display: block;
+        }
+        .card-text:target {
+            display: block;
+        }
+        div.card-text * {
+            font-size: 12px;
+        }
+        div.card-text .context {
+            margin-top: 4px;
+        }
+    </style>
     <script>
-        window.addEventListener("load", function(evt) {
-            var output = document.getElementById("output");
-            var ws;
-            var print = function(message) {
-                var d = document.createElement("div");
-                d.innerHTML = message;
-                output.appendChild(d);
-            };
+        var utility = {};
+        var elementCount = 0;
 
-            ws = new WebSocket({{.Uri}});
+        showElement = function (id) {
+            var el = document.getElementById('element-' + id);
+            el.style.display = 'block';
+        };
+
+        utility.print = function(message, severity) {
+            var d = document.createElement("div");
+            d.innerHTML = message;
+            d.className = (severity) ? 'severity-' + severity : 'severity-7';
+            output.appendChild(d);
+        };
+
+        utility.printLog = function(data) {
+            elementCount++;
+            var row = '<div class="card">' +
+                    '<div class="card-body">' +
+                        '<h5 class="card-title">' + data.message.slice(1,130) + ' <a style="float: right" href="#element-' + elementCount + '" onclick="document.getElementById(\'element-' + elementCount + '\').style.display=\'block\'; return false;">show</a> </h5>' +
+                        '<h6 class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + data.logger + ' - ' + data.request_uri + '</h6>' +
+                        '<div class="card-text" id="element-' + elementCount + '">' +
+                            '<div class="full-message">' + data.message + '</div>' +
+                            '<div class="context">' + JSON.stringify(data.context) + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+
+
+
+            utility.print(row, data.severity);
+        };
+
+        window.addEventListener("load", function(evt) {
+            var output = document.getElementById("output"),
+                ws,
+                host = window.location.hostname,
+                port = {{.Port}},
+                endPoint = {{.EndPoint}};
+
+
+            ws = new WebSocket('ws://' + host + ':' + port + endPoint);
             ws.onopen = function(evt) {
-                print("OPEN");
-            }
+                var data = {
+                    "message" : "Ready to read",
+                    "severity" : 7
+                };
+
+                utility.printLog(data);
+            };
             ws.onclose = function(evt) {
-                print("CLOSE");
+                var data = {
+                    "message" : "Connection closed",
+                    "severity" : 7
+                };
+
+                utility.printLog(data);
                 ws = null;
-            }
+            };
             ws.onmessage = function(evt) {
-                print("RESPONSE: " + evt.data);
-            }
+                var data = JSON.parse(evt.data);
+                utility.printLog(data);
+            };
             ws.onerror = function(evt) {
-                print("ERROR: " + evt.data);
+                var data = {
+                    "message" : "ERROR: " + evt.data,
+                    "severity" : 2
+                };
+
+                utility.printLog(data);
             }
         });
     </script>
 
 </head>
 <body>
-<h1>Welcome! Your LogBook-ID is {{.Identifier}}</h1>
-
-
-<table>
-    <tr>
-        <td valign="top" width="50%">
-            <div id="output"></div>
-        </td>
-    </tr>
-</table>
-
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <span class="navbar-brand"> LogBook #{{.Identifier}}</span>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Reload</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main role="main" class="container" id="output">
+</main>
 </body>
 </html>

@@ -20,7 +20,7 @@ func GetDispatcher() *gin.Engine {
 
 func TestServeIndexHtml(t *testing.T) {
 	tmp, _ := ioutil.TempDir("", "")
-	content := "<html><head>{{.PathToStatic}}</head> <body>{{.Uri}} {{.Identifier}}</body></html>"
+	content := "<html><head>{{.PathToStatic}}</head> <body>{{.Uri}} {{.Identifier}} {{.Port}} {{.EndPoint}}</body></html>"
 	ioutil.WriteFile(tmp+"/Index.html", []byte(content), os.ModePerm)
 
 	os.Setenv(STATIC_APP_DIR_ENV, tmp)
