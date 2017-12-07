@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type User struct {
+type IndexTemplateData struct {
 	Identifier string
 	Uri string
 	PathToStatic string
@@ -41,19 +41,19 @@ func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGen
 		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
-	user := User{}
-	user.Identifier = identifier
-	user.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
-	user.Port = getPort()
-	user.EndPoint = application.API_ROOT_PATH + "/" + identifier + "/logs"
-	user.PathToStatic = STATIC_BASE_HREF
+	templateData := IndexTemplateData{}
+	templateData.Identifier = identifier
+	templateData.Uri = "ws://" + getHost() + ":" + getPort() + application.API_ROOT_PATH + "/" + identifier + "/logs"
+	templateData.Port = getPort()
+	templateData.EndPoint = application.API_ROOT_PATH + "/" + identifier + "/logs"
+	templateData.PathToStatic = STATIC_BASE_HREF
 
 	t := template.New("Index.html")
 	t, err = t.ParseFiles(a.getEntryPoint())
 	if err != nil {
 		panic(err)
 	}
-	err = t.ExecuteTemplate(c.Writer, "Index.html", user)
+	err = t.ExecuteTemplate(c.Writer, "Index.html", templateData)
 	if nil != err {
 		panic(err)
 	}
