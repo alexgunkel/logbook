@@ -27,6 +27,8 @@ func TestServeIndexHtml(t *testing.T) {
 	contents := make(map[string]string)
 	contents["{{.PathToStatic}}"] = STATIC_RELATIVE_PATH
 	contents["{{.Uri}}"] = "ws://localhost:8080" + application.API_ROOT_PATH
+	contents["{{.Port}}"] = "8080"
+	contents["{{.EndPoint}}"] = application.API_ROOT_PATH
 
 	for in, out := range contents {
 		t.Run(in, func(t *testing.T) {
@@ -139,7 +141,7 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "1234")
 	assert.Contains(t, recorder.Body.String(), "LogBook")
-	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080"+application.API_ROOT_PATH+"/1234/logs")
+	assert.Contains(t, recorder.Body.String(), application.API_ROOT_PATH+"/1234/logs")
 }
 
 func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) {
@@ -158,7 +160,7 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	request.AddCookie(cookie)
 	router.ServeHTTP(recorder, request)
 
-	assert.Contains(t, recorder.Body.String(), "ws://127.0.0.1:1234"+application.API_ROOT_PATH+"/1234/logs")
+	assert.Contains(t, recorder.Body.String(), application.API_ROOT_PATH+"/1234/logs")
 	assert.Contains(t, recorder.Body.String(), "<base href=\""+STATIC_RELATIVE_PATH)
 }
 

@@ -25,7 +25,7 @@ func TestLogBookRequestWithoutEnvSet(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.Contains(t, recorder.Body.String(), "<body>")
 	assert.Contains(t, recorder.Body.String(), "LogBook")
-	assert.Contains(t, recorder.Body.String(), "ws://localhost:8080"+application.API_ROOT_PATH)
+	assert.Contains(t, recorder.Body.String(), application.API_ROOT_PATH)
 }
 
 // if STATIC APP is set, a request to /logbook should be handled
@@ -104,7 +104,7 @@ func TestEnvVariables(t *testing.T) {
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.Contains(t, recorder.Body.String(), "<body>")
 			assert.Contains(t, recorder.Body.String(), "LogBook")
-			assert.Contains(t, recorder.Body.String(), eVar.result+application.API_ROOT_PATH)
+			assert.Contains(t, recorder.Body.String(), eVar.result)
 
 		})
 	}
@@ -117,9 +117,9 @@ type envVariables struct {
 }
 
 func provideEnvVariables() (data []envVariables) {
-	data = append(data, envVariables{"localhost", "80", "ws://localhost:80"})
-	data = append(data, envVariables{"", "", "ws://localhost:8080"})
-	data = append(data, envVariables{"127.0.0.1", "80", "ws://127.0.0.1:80"})
-	data = append(data, envVariables{"www.homepage.io", "123", "ws://www.homepage.io:123"})
+	data = append(data, envVariables{"localhost", "80", "port = \"80\","})
+	data = append(data, envVariables{"", "", "port = \"8080\","})
+	data = append(data, envVariables{"127.0.0.1", "80", "port = \"80\","})
+	data = append(data, envVariables{"www.homepage.io", "123", "port = \"123\","})
 	return
 }
