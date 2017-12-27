@@ -76,7 +76,7 @@
             elementCount++;
             var row = '<div class="card">' +
                     '<div class="card-body">' +
-                        '<h5 class="card-title">' + data.message.slice(1,130) + ' <a style="float: right" href="#element-' + elementCount + '" onclick="document.getElementById(\'element-' + elementCount + '\').style.display=\'block\'; return false;">show</a> </h5>' +
+                        '<h5 class="card-title">' + data.message.slice(0,130) + ' <a style="float: right" href="#element-' + elementCount + '" onclick="document.getElementById(\'element-' + elementCount + '\').style.display=\'block\'; return false;">show</a> </h5>' +
                         '<h6 class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + data.logger + ' - ' + data.request_uri + '</h6>' +
                         '<div class="card-text" id="element-' + elementCount + '">' +
                             '<div class="full-message">' + data.message + '</div>' +
