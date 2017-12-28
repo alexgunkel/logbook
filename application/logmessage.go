@@ -20,7 +20,7 @@ type LogMessageBody struct {
 	Timestamp int         `json:"time"`
 	Message   string      `json:"message"`
 	Severity  interface{} `json:"severity"`
-	Context   interface{} `json:"context"`
+	Context   string      `json:"context"`
 }
 
 // Header data contain information about
@@ -37,15 +37,15 @@ type HeaderData struct {
 //
 // Here we use the genuine LogBook-ontology
 type LogBookEntry struct {
-	logBookId    string      `json:"log_book_id"`
-	Application  string      `json:"application"`
-	LoggerName   string      `json:"logger"`
-	RequestUri   string      `json:"request_uri"`
-	Timestamp    int         `json:"time"`
-	Message      string      `json:"message"`
-	Severity     int         `json:"severity"`
-	SeverityText string      `json:"severity_text"`
-	Context      interface{} `json:"context"`
+	logBookId    string `json:"log_book_id"`
+	Application  string `json:"application"`
+	LoggerName   string `json:"logger"`
+	RequestUri   string `json:"request_uri"`
+	Timestamp    int    `json:"time"`
+	Message      string `json:"message"`
+	Severity     int    `json:"severity"`
+	SeverityText string `json:"severity_text"`
+	Context      string `json:"context"`
 }
 
 func createNewLogMessage(logBookId string) (m *IncomingMessage) {
@@ -108,7 +108,9 @@ func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
 	// The message must be escaped in order to show xml content
 	outbound.Message = html.EscapeString(inbound.Body.Message)
 
-	outbound.Context = inbound.Body.Context
+	// At the moment we simply escape the context
+	outbound.Context = html.EscapeString(inbound.Body.Context)
+
 	outbound.Application = inbound.Origin.Application
 	outbound.LoggerName = inbound.Origin.LoggerName
 	outbound.RequestUri = inbound.Origin.RequestUri
