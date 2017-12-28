@@ -20,7 +20,12 @@ type LogMessageBody struct {
 	Timestamp int         `json:"time"`
 	Message   string      `json:"message"`
 	Severity  interface{} `json:"severity"`
-	Context   interface{} `json:"context"`
+
+	// The context is not a natural part of
+	// a log message in general, but only for
+	// psr-loggers in PHP. This should therefore
+	// be eliminated in the future
+	Context interface{} `json:"context"`
 }
 
 // Header data contain information about
@@ -37,15 +42,19 @@ type HeaderData struct {
 //
 // Here we use the genuine LogBook-ontology
 type LogBookEntry struct {
-	logBookId    string      `json:"log_book_id"`
-	Application  string      `json:"application"`
-	LoggerName   string      `json:"logger"`
-	RequestUri   string      `json:"request_uri"`
-	Timestamp    int         `json:"time"`
-	Message      string      `json:"message"`
-	Severity     int         `json:"severity"`
-	SeverityText string      `json:"severity_text"`
-	Context      interface{} `json:"context"`
+	logBookId    string `json:"log_book_id"`
+	Application  string `json:"application"`
+	LoggerName   string `json:"logger"`
+	RequestUri   string `json:"request_uri"`
+	Timestamp    int    `json:"time"`
+	Message      string `json:"message"`
+	Severity     int    `json:"severity"`
+	SeverityText string `json:"severity_text"`
+
+	// The Context will be eliminated in a future version
+	// because it only affects the working of psr-compatible
+	// loggers in PHP
+	Context interface{} `json:"context"`
 }
 
 func createNewLogMessage(logBookId string) (m *IncomingMessage) {
