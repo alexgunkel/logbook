@@ -73,6 +73,20 @@ func dataProviderForNormalization() (m map[interface{}]interface{}) {
 	return
 }
 
+// We must escape the message because it may contain xml or even html that
+// should be shown as plain text in our frontend
+func TestMessageInOutgoingMessageWillBeEscaped(t *testing.T) {
+	incoming := IncomingMessage{}
+	incoming.Body.Message = "<?xml version=\"1.0\" ?><content>blablabla</content>"
+
+	outgoing := processMessage(incoming)
+
+	assert.Equal(t, "&lt;?xml version=&#34;1.0&#34; ?&gt;&lt;content&gt;blablabla&lt;/content&gt;", outgoing.Message)
+}
+
+//
+// Benchmarking
+//
 var result int
 
 func BenchmarkNormalizeString(b *testing.B) {
