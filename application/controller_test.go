@@ -93,7 +93,7 @@ func TestWebsocketHandlerCreatesChannel(t *testing.T) {
 	app := LogBookApplication{}
 	app.AddApplicationToEngine(engine)
 
-	if _, ok := app.d.channels["123"]; ok {
+	if _, ok := app.dispatcher.channels["123"]; ok {
 		t.Error("Map entry for 123 should not exist yet.")
 	}
 
@@ -103,7 +103,7 @@ func TestWebsocketHandlerCreatesChannel(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, ok := app.d.channels["123"]; !ok {
+	if _, ok := app.dispatcher.channels["123"]; !ok {
 		t.Error("Map entry for 123 should exist now.")
 	}
 }
