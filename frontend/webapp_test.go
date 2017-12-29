@@ -111,9 +111,7 @@ func TestInitLogBookWithCookie(t *testing.T) {
 // Two different sessions should receive different identifiers
 // otherwise we would mix up logs
 func TestGetNewIdentifierSetsDifferentIds(t *testing.T) {
-	generator := &IdGenerator{}
-
-	assert.NotEqual(t, generator.getNewIdentifier(), generator.getNewIdentifier())
+	assert.NotEqual(t, getNewIdentifier(), getNewIdentifier())
 }
 
 // Test the standard logbook frontend-application
@@ -127,9 +125,8 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	router := gin.Default()
 	app := &WebApplication{}
 	app.SetTemplateDirPath("../public")
-	generator := &IdGenerator{}
 	router.GET(STATIC_RELATIVE_PATH, func(context *gin.Context) {
-		app.InitLogBookClientApplication(context, generator)
+		app.InitLogBookClientApplication(context)
 	})
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)
@@ -150,9 +147,8 @@ func TestWebApplication_InitLogBookClientApplication_RespectsPort(t *testing.T) 
 	router := gin.Default()
 	app := &WebApplication{}
 	app.SetTemplateDirPath("../public")
-	generator := &IdGenerator{}
 	router.GET(STATIC_RELATIVE_PATH, func(context *gin.Context) {
-		app.InitLogBookClientApplication(context, generator)
+		app.InitLogBookClientApplication(context)
 	})
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", STATIC_RELATIVE_PATH, nil)

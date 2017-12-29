@@ -14,10 +14,6 @@ func AddFrontend(engine *gin.Engine, defaultTemplateDir string) {
 	SetStaticApp(engine)
 }
 
-// Generate new IDs to serve websocket requests
-type IdGenerator struct {
-}
-
-func (app *IdGenerator) getNewIdentifier() string {
+func getNewIdentifier() string {
 	return uuid.NewV4().String()
 }

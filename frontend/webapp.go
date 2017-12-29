@@ -9,11 +9,11 @@ import (
 )
 
 type IndexTemplateData struct {
-	Identifier string
-	Uri string
+	Identifier   string
+	Uri          string
 	PathToStatic string
-	Port string
-	EndPoint string
+	Port         string
+	EndPoint     string
 }
 
 type WebApplication struct {
@@ -23,10 +23,9 @@ type WebApplication struct {
 func SetApplication(engine *gin.Engine, templateDir string) {
 	fe := &WebApplication{}
 	fe.SetTemplateDirPath(templateDir)
-	gen := &IdGenerator{}
 
 	engine.GET(STATIC_RELATIVE_PATH, func(context *gin.Context) {
-		fe.InitLogBookClientApplication(context, gen)
+		fe.InitLogBookClientApplication(context)
 	})
 }
 
@@ -34,10 +33,10 @@ func (a *WebApplication) SetTemplateDirPath(path string) {
 	a.templateFolder = path
 }
 
-func (a *WebApplication) InitLogBookClientApplication(c *gin.Context, gen *IdGenerator) {
+func (a *WebApplication) InitLogBookClientApplication(c *gin.Context) {
 	identifier, err := c.Cookie("logbook")
 	if nil != err {
-		identifier = gen.getNewIdentifier()
+		identifier = getNewIdentifier()
 		c.SetCookie("logbook", identifier, 0, "", "", false, false)
 	}
 
