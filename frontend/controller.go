@@ -1,9 +1,8 @@
 package frontend
 
 import (
-	"strconv"
-
 	"github.com/gin-gonic/gin"
+	"github.com/satori/go.uuid"
 )
 
 const STATIC_APP_DIR_ENV = "STATIC_APP"
@@ -17,10 +16,8 @@ func AddFrontend(engine *gin.Engine, defaultTemplateDir string) {
 
 // Generate new IDs to serve websocket requests
 type IdGenerator struct {
-	lastIdentifier int64
 }
 
 func (app *IdGenerator) getNewIdentifier() string {
-	app.lastIdentifier++
-	return strconv.FormatInt(app.lastIdentifier, 10)
+	return uuid.NewV4().String()
 }
