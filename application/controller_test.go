@@ -3,6 +3,7 @@ package application
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -48,6 +49,23 @@ func TestValidLogAccepted(t *testing.T) {
 	if nil != err {
 		t.Fatal(err)
 	}
+
+	router.ServeHTTP(recorder, request)
+	assert.Equal(t, http.StatusAccepted, recorder.Code)
+}
+
+func TestSetAlternativeRootPath(t *testing.T) {
+	os.Setenv("API_ROOT_PATH", "/alternative/root/path")
+	defer os.Setenv("API_ROOT_PATH", "")
+
+	h := GetDispatcher()
+	d := wstest.NewDialer(h, nil)
+
+	d.Dial("ws://localhost/alternative/root/path/logbook/12345/logs", nil)
+
+	router := GetDispatcher()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest("POST", "/alternative/root/path/12345/logs", strings.NewReader("{ \"message\": \"Test\" }"))
 
 	router.ServeHTTP(recorder, request)
 	assert.Equal(t, http.StatusAccepted, recorder.Code)

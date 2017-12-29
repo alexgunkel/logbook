@@ -31,7 +31,10 @@ send the log messages. Messages are sent as POST-requests in JSON to
 
     <domain>/api/v1/logbooks/<LogBook_id>/logs
 
-That is the same path as where the web frontend will request the logs.
+That is the same path as where the web frontend will request the logs. You
+can change this path by setting the ``API_ROOT_PATH``-variable:
+
+    export API_ROOT_PATH=/alternative/root/path
 
 ## Body
 Logs have to be sent as JSON-objects that contain:
