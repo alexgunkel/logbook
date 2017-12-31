@@ -1,7 +1,5 @@
 package application
 
-import "html"
-
 // This the data structure for incoming messages.
 // It consists of header data and the information
 // in the http body.
@@ -104,24 +102,4 @@ func analyzeLogLevel(input interface{}) (int, string) {
 	}
 
 	return -1, ""
-}
-
-// This function is responsible for the transition
-// from technical terminology to LogBook-ontology
-func processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
-	outbound.Timestamp = inbound.Body.Timestamp
-
-	// Our loglevels must be normalized
-	outbound.Severity, _ = analyzeLogLevel(inbound.Body.Severity)
-
-	// The message must be escaped in order to show xml content
-	outbound.Message = html.EscapeString(inbound.Body.Message)
-
-	outbound.Context = inbound.Body.Context
-	outbound.Application = inbound.Origin.Application
-	outbound.LoggerName = inbound.Origin.LoggerName
-	outbound.RequestUri = inbound.Origin.RequestUri
-	outbound.logBookId = inbound.logBookId
-
-	return
 }

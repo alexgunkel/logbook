@@ -7,12 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// This defines the default api root for incoming
-// log messages.
-const API_ROOT_PATH = "/api/v1/logbooks"
+const (
+	// This defines the default api root for incoming
+	// log messages.
+	API_ROOT_PATH = "/api/v1/logbooks"
 
-// seize of buffer for channels
-const CHANNEL_BUFFER = 20
+	// seize of buffer for channels
+	CHANNEL_BUFFER = 20
+
+	NUMBER_OF_DISPATCHERS = 1
+)
 
 // This is the main backend application
 // It contains the inbox and dispatcher
@@ -64,7 +68,7 @@ func (app *LogBookApplication) initAndStartDispatcher() {
 	app.createChannelToDispatcher()
 
 	app.dispatcher.channels = make(map[string]chan LogBookEntry)
-	go app.dispatcher.dispatch()
+	app.dispatcher.dispatch(NUMBER_OF_DISPATCHERS)
 }
 
 // This starts the POST-receiver
