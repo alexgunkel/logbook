@@ -15,5 +15,6 @@ func AddFrontend(engine *gin.Engine, defaultTemplateDir string) {
 }
 
 func getNewIdentifier() string {
-	return uuid.NewV4().String()
+	ident, _ := uuid.NewV4()
+        return ident.String()
 }
