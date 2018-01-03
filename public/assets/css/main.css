@@ -1,0 +1,222 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    padding-top: 86px;
+}
+* {
+    line-height: 120%;
+}
+
+#mainnav {
+    background: #343a40 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGYAAACICAYAAAAVkZ6QAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRJREFUeNrsnNFqwzAMRaeQ//9lDQaDEroutmXp2jkX+lBaUSfHkqVWlbn7V4Oa3oy6ZSdAJOUnQDR1AGUtMEARBAMUAZ2dUIxbF3fQ/wfGAbLG4Q8UATAOlPU8BiiCYIBSmJVFpMfeCdU7NkGLjeq6hjzGBqAo1EOq6+qqY6Iu/vV1C7gxvsm60sD85WFKu9JW85bWOqZ3t2TfDNV1lXiMvXnugTu4d9errmuqxyDRUIYAAxgEGASYB4Nx0RpBdV1TwVjw+2ZU+krrKikwIyruT9/O9tior2tqKDPRXWkre0vUGWOiF2+rQvlZpP/dVc6vlzUJCukydQwCDGAQYJ6oqAKzp02owmZWK1Jvm9RUj+lpE8qyKUt3R9d1TFrUp9czbPzl0XItPTYjr08PZVfXdTGb7G8ahteV3b6UZVMZwkLWdUzYLXcPvpk29vJouYZWm5FrIV2mjkGAAQwCDALMY8D0tAll2VTUNKUFZk+bUJZNdqUfvq6K9qUMm4pWJKn/x/S0CWXZKHiNVYH59OEmYFMJZ2hdtC/pJQ6ky9QxCDCAQYB5omYVmCZkk9WKlDZ9idR1UlWf4TEuajPjM6ImNqWHsp1U3iJFKGu7+WmQzoKdlWEzsuNnT2zCY6hjEGAAgwCDAAOYjWoaCkyRSj/ifeUFZlabUKtNViuS7PSlJ3lNanMKYO7d/PSOIdqX9JINPIZ0GQEGMAgwT1Rl+9JO05dCikoFj9lp+pKkx6i0CV1tVNuqSkLZaKW9+vSlpQ//naYvSYeyrDahVpvlZ6eRLhPKEGAAgwADGPR0MDtNX1oezE7Tl6QLzIqJRUrTl7ZqX9pp+tJ2Z8xO05fm3CDal8pF+xKhDAEGMGiZOsa5fRpgACEGBiCCZwxQBMEAhawMXWSA2Shd5ju0GHkUGIAkhbGWMwYoid5yFwxQyMoIY3fB4C14DLoLBm/BYxBgAIMAAxikAIbfY4rBkBYvGMrwGuEzBjh58isYwlmuLMJjfkniOUWhzACkE87ONy428lc6NPHw57wR8Jqj93BCdekycITrGANQje72lT1i3KFSnfMtwADuzO0L3AiJEAAAAABJRU5ErkJggg==')
+    24px 6px no-repeat;
+    background-size: 40px;
+    height: 66px;
+}
+#mainnav .navbar-brand {
+    margin-top: 8px;
+    margin-left: 60px;
+}
+
+#mainnav ul {
+    padding-top: 8px;
+    margin-right: 12px;
+}
+
+.navbar-dark {
+    color: #fff;
+}
+
+.bg-dark {
+    background-color: #343a40 !important;
+}
+
+.td {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.panel-heading h5,
+.panel-heading h6 {
+    margin-right: 60px;
+}
+
+.panel-heading {
+    position: relative;
+}
+
+.panel-heading a {
+    position: absolute;
+    top: 20px;
+    right: 12px;
+}
+
+.js-toggle .glyphicon {
+    font-size: 32px;
+}
+
+.panel-body {
+    display: none;
+}
+
+/*
+
+.card {
+    padding: 0;
+    margin-top: 3px;
+    cursor: pointer;
+}
+.card-body {
+    padding: 5px;
+}
+h5.card-title {
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+}
+h6.card-subtitle {
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+}
+div.card-text {
+    display: none;
+    font-size: 12px;
+    margin: 5px 0 0;
+    padding: 6px;
+    border: 1px solid lightgray;
+    background: white;
+}
+.card-text:target {
+    display: block;
+}
+div.card-text * {
+    font-size: 12px;
+}
+div.card-text .context {
+    margin-top: 4px;
+}
+
+*/
+
+#btn-up,
+#btn-down,
+#btn-reload {
+    font-size: 22px;
+}
+
+.loader {
+    height: 4px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+    background-color: #ddd;
+}
+.loader.active:before{
+    display: block;
+    position: absolute;
+    content: "";
+    left: -400px;
+    width: 400px;
+    height: 4px;
+    background-color: #337ab7;
+    animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+    from {left: -400px; }
+    to {left: 100%;}
+}
+
+/*
+https://getbootstrap.com/docs/3.3/components/
+*/
+
+.panel-heading {
+
+}
+.panel-title:before {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    float: left;
+    font-size: 22px;
+    margin: -4px 4px 0 0;
+}
+
+/* "debug" */
+.severity-7 .panel-title {
+}
+.severity-7 .panel-title:before {
+    content: '\e086';
+}
+ /* "informational" */
+.severity-6 .panel-heading {
+}
+.severity-6 .panel-title:before {
+    content: '\e086';
+}
+
+ /* "notice" */
+.severity-5 .panel-heading {
+    color: #856404;
+    background-color: #fff3cd;
+}
+.severity-5 .panel-title:before {
+    content: '\e086';
+}
+
+ /* "warning" */
+.severity-4 .panel-heading {
+    color: #856404;
+    background-color: #fff3cd;
+}
+.severity-4 .panel-title:before {
+    content: '\e086';
+}
+
+ /* "error" */
+.severity-3 .panel-heading {
+    color: #a94442;
+    background-color: #f2dede;
+}
+.severity-3 .panel-title:before {
+    content: '\e083';
+}
+
+ /* "critical" */
+.severity-2 .panel-heading {
+    color: #a94442;
+    background-color: #f2dede;
+}
+.severity-2 .panel-title:before {
+    content: '\e083';
+}
+
+ /* "alert" */
+.severity-1 .panel-heading {
+    color: #a94442;
+    background-color: #f2dede;
+}
+.severity-1 .panel-title:before {
+    content: '\e083';
+}
+
+ /* "emergency" */
+.severity-0 .panel-heading {
+    color: #a94442;
+    background-color: #f2dede;
+}
+.severity-0 .panel-title:before {
+    content: '\e083';
+}
