@@ -23,7 +23,7 @@ func TestLogBookRequestWithoutEnvSet(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Contains(t, recorder.Body.String(), "<body>")
+	assert.Contains(t, recorder.Body.String(), "<body")
 	assert.Contains(t, recorder.Body.String(), "LogBook")
 	assert.Contains(t, recorder.Body.String(), application.API_ROOT_PATH)
 }
@@ -102,7 +102,7 @@ func TestEnvVariables(t *testing.T) {
 			router.ServeHTTP(recorder, request)
 
 			assert.Equal(t, http.StatusOK, recorder.Code)
-			assert.Contains(t, recorder.Body.String(), "<body>")
+			assert.Contains(t, recorder.Body.String(), "<body")
 			assert.Contains(t, recorder.Body.String(), "LogBook")
 			assert.Contains(t, recorder.Body.String(), eVar.result)
 
@@ -117,9 +117,9 @@ type envVariables struct {
 }
 
 func provideEnvVariables() (data []envVariables) {
-	data = append(data, envVariables{"localhost", "80", "port = \"80\","})
-	data = append(data, envVariables{"", "", "port = \"8080\","})
-	data = append(data, envVariables{"127.0.0.1", "80", "port = \"80\","})
-	data = append(data, envVariables{"www.homepage.io", "123", "port = \"123\","})
+	data = append(data, envVariables{"localhost", "80", "port=\"80\""})
+	data = append(data, envVariables{"", "", "port=\"8080\""})
+	data = append(data, envVariables{"127.0.0.1", "80", "port=\"80\""})
+	data = append(data, envVariables{"www.homepage.io", "123", "port=\"123\""})
 	return
 }

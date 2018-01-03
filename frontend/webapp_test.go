@@ -135,7 +135,7 @@ func TestInitLogBookClientApplication(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Contains(t, recorder.Body.String(), "<body>")
+	assert.Contains(t, recorder.Body.String(), "<body")
 	assert.Contains(t, recorder.Body.String(), "1234")
 	assert.Contains(t, recorder.Body.String(), "LogBook")
 	assert.Contains(t, recorder.Body.String(), application.API_ROOT_PATH+"/1234/logs")
