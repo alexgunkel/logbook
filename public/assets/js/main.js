@@ -105,12 +105,22 @@ $(function() {
             };
 
             utility.printLog(data);
-        }
+        };
     });
 
     window.addEventListener("beforeunload", function(evt) {
         // delete the cookie
         document.cookie = "logbook=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    });
+
+    $('#btn-up').on('click', function(){
+        $('html, body').animate({scrollTop:0});
+        return false;
+    });
+
+    $('#btn-down').on('click', function(){
+        $('html, body').animate({scrollTop:$(document).height()});
+        return false;
     });
 });
 
