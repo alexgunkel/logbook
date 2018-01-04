@@ -10,7 +10,7 @@ $(function() {
         $(el).find('.js-toggle').on( "click", function(e) {
             e.preventDefault();
             e.stopPropagation();
-            $(this).closest('.panel').find('.panel-body').slideToggle();
+            $(this).closest('.panel').find('.panel-body').slideToggle(180);
         });
 
         return el;
@@ -41,7 +41,9 @@ $(function() {
         showContent = showContent || false;
         var toggleLink = '',
             panelBody = '',
-            requestUri = '',
+            requestUri = window.location.protocol + '//' + window.location.hostname + data.request_uri,
+            requestLink = '',
+            requestLinkText = '',
             row;
 
         elementCount++;
@@ -54,8 +56,16 @@ $(function() {
                         '</div>';
         }
 
+
         if(typeof data.request_uri != 'undefined' && data.request_uri.length) {
-            requestUri = '<div><a href="' + data.request_uri + '" title="' + data.request_uri + '">' + data.request_uri.substring(0,130)+'...' + '</a></div>';
+            if(data.request_uri.length > 130) {
+                requestLinkText = window.location.hostname + data.request_uri.substring(0,130) + '...';
+            } else if(data.request_uri === "/") {
+                requestLinkText = window.location.hostname;
+            } else {
+                requestLinkText = window.location.hostname + data.request_uri
+            }
+            requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
         }
 
         row = '<div class="panel panel-default">' +
@@ -63,7 +73,7 @@ $(function() {
                         '<div class="panel-title"><b>' + data.logger + '</b></div>' +
                         '<div class="data-message">' + data.message.slice(0,130) + '</div>' +
                         '<div>' + data.severity_text + '</div>' +
-                        '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + ' <br> ' + requestUri + toggleLink + '</div>' +
+                        '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + ' <br> ' + requestLink + toggleLink + '</div>' +
                     '</div>' +
                     panelBody +
               '</div>';

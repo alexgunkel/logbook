@@ -53,12 +53,12 @@ body {
 
 .panel-heading a.js-toggle {
     position: absolute;
-    top: 20px;
+    bottom: 12px;
     right: 12px;
 }
 
 .js-toggle .glyphicon {
-    font-size: 32px;
+    font-size: 24px;
 }
 
 .panel-body {
