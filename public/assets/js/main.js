@@ -16,6 +16,8 @@ $(function() {
         return el;
 
     };
+    // update page title
+    document.title = "LogBook >>> " + window.location.protocol + '//' + window.location.hostname;
 
     utility.print = function(message, severity) {
         var d =  $("<div></div>")
