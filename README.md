@@ -20,4 +20,4 @@ will provide. *LogBook* collects all those data in a server-side
 application just to provide this information to the developer in an
 JavaScript-based frontend-application.
 
-
+![LogBook: logging screen](documentation/img/logbook-screenshot.png?raw=true "LogBook: logging screen")
