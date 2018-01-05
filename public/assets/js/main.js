@@ -12,12 +12,29 @@ $(function() {
             e.stopPropagation();
             $(this).closest('.panel').find('.panel-body').slideToggle(180);
         });
+        $(el).find('.btn-copy').on( "click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $el = $(this),
+                $panel = $el.closest('.panel')
+                copyText = $panel.find('.full-message').text() + '\n\n' + $panel.find('.context').text(),
+                $temp = $("<textarea>");
+            $("body").append($temp);
+            $temp.val(copyText).select();
+            document.execCommand("copy");
+            $el.addClass('active');
+            $temp.remove();
 
+            setTimeout(function(){
+                $el.removeClass('active');
+            }, 1000);
+
+        });
         return el;
 
     };
     // update page title
-    document.title = "LogBook >>> " + window.location.protocol + '//' + window.location.hostname;
+    document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
     utility.print = function(message, severity) {
         var d =  $("<div></div>")
@@ -37,8 +54,6 @@ $(function() {
         }, 10000);
     };
 
-
-
     utility.printLog = function(data, showContent) {
         showContent = showContent || false;
         var toggleLink = '',
@@ -52,7 +67,7 @@ $(function() {
 
         if(showContent) {
             toggleLink = ' <a class="js-toggle" href="#element-' + elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
-            panelBody = '<div class="panel-body" id="element-' + elementCount + '">' +
+            panelBody = '<div class="panel-body" id="element-' + elementCount + '"><button class="btn-copy" title="Copy to clipboard">Copy</button>' +
                             '<div class="full-message">' + data.message + '</div>' +
                             '<div class="context">' + JSON.stringify(data.context) + '</div>' +
                         '</div>';
@@ -69,16 +84,24 @@ $(function() {
             }
             requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
         }
+        if(data.severity == '10') {
+            row = '<div class="panel panel-default">' +
+                '<div class="panel-heading  js-toggle">' +
+                '<div class="panel-title"><b>Ready to log</b></div>' +
+                '</div>' +
+                '</div>';
+        } else {
+            row = '<div class="panel panel-default">' +
+                '<div class="panel-heading  js-toggle">' +
+                '<div class="panel-title"><b>' + data.logger + '</b></div>' +
+                '<div class="data-message">' + data.message.slice(0,130) + '</div>' +
+                '<div>' + data.severity_text + '</div>' +
+                '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + ' <br> ' + requestLink + toggleLink + '</div>' +
+                '</div>' +
+                panelBody +
+                '</div>';
+        }
 
-        row = '<div class="panel panel-default">' +
-                    '<div class="panel-heading  js-toggle">' +
-                        '<div class="panel-title"><b>' + data.logger + '</b></div>' +
-                        '<div class="data-message">' + data.message.slice(0,130) + '</div>' +
-                        '<div>' + data.severity_text + '</div>' +
-                        '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + ' <br> ' + requestLink + toggleLink + '</div>' +
-                    '</div>' +
-                    panelBody +
-              '</div>';
         utility.print(row, data.severity);
     };
 
@@ -91,8 +114,7 @@ $(function() {
         ws = new WebSocket('ws://' + host + ':' + port + endPoint);
         ws.onopen = function(evt) {
             var data = {
-                "message" : "Ready to read",
-                "severity" : 7
+                "severity" : 10
             };
             utility.printLog(data);
         };

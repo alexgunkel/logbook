@@ -63,7 +63,36 @@ body {
 
 .panel-body {
     display: none;
+    position: relative;
+    max-height: 400px;
+    overflow: auto;
 }
+
+.panel-body .btn-copy {
+    position: absolute;
+    cursor: pointer;
+    background: transparent;
+    border: solid #ddd;
+    border-width: 0 0 1px 1px;
+    padding: 6px;
+    top: 0;
+    right: 0;
+}
+.panel-body .btn-copy:hover {
+    background: #ddd;
+}
+
+.panel-body .btn-copy.active {
+    animation: colorchange 1s normal forwards;
+}
+
+@keyframes colorchange {
+    0%   {background: transparent;}
+    15%   {background: #dff0d8;}
+    85%   {background: #dff0d8;}
+    100% {background: transparent;}
+}
+
 .js-toggle {
     cursor: pointer;
 }
@@ -189,4 +218,12 @@ https://getbootstrap.com/docs/3.3/components/
 }
 .severity-0 .panel-title:before {
     content: '\e083';
+}
+ /* "start" */
+.severity-10 .panel-heading {
+    color: #3c763d;
+    background-color: #dff0d8;
+}
+.severity-10 .panel-title:before {
+    content: '\e084';
 }
