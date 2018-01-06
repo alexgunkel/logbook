@@ -33,6 +33,7 @@ type HeaderData struct {
 	Application string
 	LoggerName  string
 	RequestUri  string
+	RequestId   string
 }
 
 // The LogBook-entry is the transformed data object
@@ -44,6 +45,7 @@ type LogBookEntry struct {
 	Application  string `json:"application"`
 	LoggerName   string `json:"logger"`
 	RequestUri   string `json:"request_uri"`
+	RequestId    string `json:"request_id"`
 	Timestamp    int    `json:"time"`
 	Message      string `json:"message"`
 	Severity     int    `json:"severity"`

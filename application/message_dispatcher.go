@@ -33,7 +33,7 @@ func (d *messageDispatcher) createWorker() {
 // This function is responsible for the transition
 // from technical terminology to LogBook-ontology
 func (dispatcher *messageDispatcher) processMessage(inbound IncomingMessage) (outbound LogBookEntry) {
-	outbound.Timestamp = inbound.Body.Timestamp
+	outbound.Timestamp   = inbound.Body.Timestamp
 
 	// Our loglevels must be normalized
 	outbound.Severity, _ = analyzeLogLevel(inbound.Body.Severity)
@@ -41,11 +41,12 @@ func (dispatcher *messageDispatcher) processMessage(inbound IncomingMessage) (ou
 	// The message must be escaped in order to show xml content
 	outbound.Message = html.EscapeString(inbound.Body.Message)
 
-	outbound.Context = inbound.Body.Context
+	outbound.Context 	 = inbound.Body.Context
 	outbound.Application = inbound.Origin.Application
-	outbound.LoggerName = inbound.Origin.LoggerName
-	outbound.RequestUri = inbound.Origin.RequestUri
-	outbound.logBookId = inbound.logBookId
+	outbound.LoggerName  = inbound.Origin.LoggerName
+	outbound.RequestUri  = inbound.Origin.RequestUri
+	outbound.RequestId   = inbound.Origin.RequestId
+	outbound.logBookId   = inbound.logBookId
 
 	return
 }
