@@ -21,7 +21,8 @@ func TestUnMarshallSeverity(t *testing.T) {
 	assert.Equal(t, "error", logEv2.Severity)
 }
 
-// Test normalizing function
+// Test normalizing function with string input
+// test that correct integer is assigned
 func TestNormalizeStartingWithText(t *testing.T) {
 	var output int
 	for input, out := range dataProviderForNormalization() {
@@ -37,10 +38,11 @@ func TestNormalizeStartingWithText(t *testing.T) {
 	}
 }
 
-// Test normalizing function
+// Test normalizing function with integer input
+// We test that the correct string is assigned
 func TestNormalizeStartingWithInt(t *testing.T) {
 	var input int
-	for output, in := range dataProviderForNormalization() {
+	for expectedString, in := range dataProviderForNormalization() {
 		if res, ok := in.(int); ok {
 			input = res
 		} else {
@@ -48,20 +50,22 @@ func TestNormalizeStartingWithInt(t *testing.T) {
 		}
 		out, outText := analyzeLogLevel(input)
 		assert.Equal(t, input, out, "Expected output value to be numerical %v, got %v from %v", input, out, input)
-		assert.Equal(t, outText, output, "Expected output value to be string %v, got %v from %v", output, outText, input)
+		assert.Equal(t, outText, expectedString, "Expected output value to be string %v, got %v from %v", expectedString, outText, input)
 	}
 }
 
-// Test normalizing function
+// Test normalizing function with float64 input
+// We test that the correct string is assigned
+// and that the float64 is transformed into int
 func TestNormalizeStartingWithFloat(t *testing.T) {
 	var input float64
-	for output, in := range dataProviderForNormalization() {
+	for expectedString, in := range dataProviderForNormalization() {
 		if res, ok := in.(int); ok {
 			input = float64(res)
 		}
 		out, outText := analyzeLogLevel(input)
 		assert.Equal(t, in, out, "Expected output value to be numerical %v, got %v from %v", in, out, input)
-		assert.Equal(t, outText, output, "Expected output value to be string %v, got %v from %v", output, outText, input)
+		assert.Equal(t, outText, expectedString, "Expected output value to be string %v, got %v from %v", expectedString, outText, input)
 	}
 }
 
