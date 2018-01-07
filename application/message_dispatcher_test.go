@@ -61,14 +61,14 @@ func TestMessageInOutgoingMessageWillBeEscaped(t *testing.T) {
 
 func TestMessageToLogbookEntryCorrectsLogLevel(t *testing.T) {
 	dispatcher := &messageDispatcher{}
-	for input, _ := range dataProviderForNormalization() {
+	for input, inputInt := range dataProviderForNormalization() {
 		i := IncomingMessage{}
 		i.Body.Severity = input
 
 		res := dispatcher.processMessage(i)
 
-		assert.NotNil(t, res.Severity)
-		assert.NotNil(t, res.SeverityText)
+		assert.Equal(t, input, res.SeverityText)
+		assert.Equal(t, inputInt, res.Severity)
 	}
 }
 
