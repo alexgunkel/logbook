@@ -7,7 +7,7 @@ import (
 
 const STATIC_APP_DIR_ENV = "STATIC_APP"
 const STATIC_RELATIVE_PATH = "/"
-const STATIC_BASE_HREF = "/public/"
+const STATIC_BASE_HREF = "/public"
 
 func AddFrontend(engine *gin.Engine, defaultTemplateDir string) {
 	SetApplication(engine, defaultTemplateDir)
@@ -16,5 +16,5 @@ func AddFrontend(engine *gin.Engine, defaultTemplateDir string) {
 
 func getNewIdentifier() string {
 	ident, _ := uuid.NewV4()
-        return ident.String()
+	return ident.String()
 }

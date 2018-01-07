@@ -33,6 +33,7 @@ func TestLogBookRequestWithoutEnvSet(t *testing.T) {
 func TestServeTemplateWithStaticAppConfigured(t *testing.T) {
 	tmp, _ := ioutil.TempDir("", "")
 	os.Setenv(STATIC_APP_DIR_ENV, tmp)
+	defer os.Setenv(STATIC_APP_DIR_ENV, "")
 
 	type contentObj struct {
 		content string
@@ -70,11 +71,12 @@ func TestServeStaticFilesWithStaticAppConfigured(t *testing.T) {
 	ioutil.WriteFile(tmp+"/test.js", []byte(js), os.ModePerm)
 
 	os.Setenv(STATIC_APP_DIR_ENV, tmp)
+	defer os.Setenv(STATIC_APP_DIR_ENV, "")
 
 	engine := gin.Default()
 	AddFrontend(engine, tmp)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", STATIC_BASE_HREF+"test.js", nil)
+	request, _ := http.NewRequest("GET", STATIC_BASE_HREF+"/test.js", nil)
 	engine.ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
