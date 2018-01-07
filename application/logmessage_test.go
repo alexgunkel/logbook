@@ -22,11 +22,46 @@ func TestUnMarshallSeverity(t *testing.T) {
 }
 
 // Test normalizing function
-func TestNormalize(t *testing.T) {
-	for input, output := range dataProviderForNormalization() {
+func TestNormalizeStartingWithText(t *testing.T) {
+	var output int
+	for input, out := range dataProviderForNormalization() {
+		if res, ok := out.(float64); ok {
+			output = int(res)
+		}
+		if res, ok := out.(int); ok {
+			output = res
+		}
+		outInt, outText := analyzeLogLevel(input)
+		assert.Equal(t, output, outInt, "Expected transformed value to be %v, got %v from %v", output, outInt, input)
+		assert.Equal(t, output, severityValues[outText], "Expected transformed value to be %v, got %v from %v", output, outInt, input)
+	}
+}
+
+// Test normalizing function
+func TestNormalizeStartingWithInt(t *testing.T) {
+	var input int
+	for output, in := range dataProviderForNormalization() {
+		if res, ok := in.(int); ok {
+			input = res
+		} else {
+			t.Error("Error in assumption that input is integer.")
+		}
 		out, outText := analyzeLogLevel(input)
-		assert.Equal(t, output, out, "Expected transformed value to be %v, got %v from %v", output, out, input)
-		assert.Equal(t, output, severityValues[outText], "Expected transformed value to be %v, got %v from %v", output, out, input)
+		assert.Equal(t, input, out, "Expected output value to be numerical %v, got %v from %v", input, out, input)
+		assert.Equal(t, outText, output, "Expected output value to be string %v, got %v from %v", output, outText, input)
+	}
+}
+
+// Test normalizing function
+func TestNormalizeStartingWithFloat(t *testing.T) {
+	var input float64
+	for output, in := range dataProviderForNormalization() {
+		if res, ok := in.(int); ok {
+			input = float64(res)
+		}
+		out, outText := analyzeLogLevel(input)
+		assert.Equal(t, in, out, "Expected output value to be numerical %v, got %v from %v", in, out, input)
+		assert.Equal(t, outText, output, "Expected output value to be string %v, got %v from %v", output, outText, input)
 	}
 }
 
@@ -53,10 +88,6 @@ func dataProviderForNormalization() (m map[interface{}]interface{}) {
 	m["critical"] = 2
 	m["alert"] = 1
 	m["emergency"] = 0
-	m[float64(1)] = 1
-	m[float64(0)] = 0
-	m[float64(5)] = 5
-	m[int(1)] = 1
 
 	return
 }
