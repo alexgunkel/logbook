@@ -27,7 +27,7 @@ $(function() {
 
             setTimeout(function(){
                 $el.removeClass('active');
-            }, 1000);
+            }, 800);
 
         });
         return el;

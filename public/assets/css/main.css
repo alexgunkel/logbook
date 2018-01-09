@@ -83,14 +83,14 @@ body {
 }
 
 .panel-body .btn-copy.active {
-    animation: colorchange 1s normal forwards;
+    animation: colorchange .8s normal forwards;
 }
 
 @keyframes colorchange {
-    0%   {background: transparent;}
-    15%   {background: #dff0d8;}
-    85%   {background: #dff0d8;}
-    100% {background: transparent;}
+    0%   {background: #ddd;}
+    25%   {background: #dff0d8;}
+    65%   {background: #dff0d8;}
+    100% {background: #ddd;}
 }
 
 .js-toggle {
