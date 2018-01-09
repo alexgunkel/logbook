@@ -67,7 +67,22 @@ $(function() {
 
         if(showContent) {
             toggleLink = ' <a class="js-toggle" href="#element-' + elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
+
+            if(typeof data.request_uri != 'undefined' && data.request_uri.length) {
+                if(data.request_uri.length > 130) {
+                    requestLinkText = window.location.hostname + data.request_uri.substring(0,130) + '...';
+                } else if(data.request_uri === "/") {
+                    requestLinkText = window.location.hostname;
+                } else {
+                    requestLinkText = window.location.hostname + data.request_uri
+                }
+                requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
+            }
+
             panelBody = '<div class="panel-body" id="element-' + elementCount + '"><button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+                            '<div>' + data.severity_text + '</div>' +
+                            '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' </div>' +
+                            '<div> ' + requestLink + '</div>' +
                             '<div class="full-message">' + data.message + '</div>' +
                             '<div class="context">' + JSON.stringify(data.context) + '</div>' +
                         '</div>';
@@ -95,8 +110,7 @@ $(function() {
                 '<div class="panel-heading  js-toggle">' +
                 '<div class="panel-title"><b>' + data.logger + '</b></div>' +
                 '<div class="data-message">' + data.message.slice(0,130) + '</div>' +
-                '<div>' + data.severity_text + '</div>' +
-                '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' - ' + ' <br> ' + requestLink + toggleLink + '</div>' +
+                '<div>' + toggleLink + '</div>' +
                 '</div>' +
                 panelBody +
                 '</div>';
