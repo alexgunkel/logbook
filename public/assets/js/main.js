@@ -3,7 +3,8 @@ $(function() {
         elementCount = 0,
         port = $('body').data('port'),
         endPoint = $('body').data('endpoint'),
-        $loader = $('.loader');
+        $loader = $('.loader'),
+        timer = null;
 
     var handleOutput = function (el) {
 
@@ -33,6 +34,7 @@ $(function() {
         return el;
 
     };
+
     // update page title
     document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
@@ -43,15 +45,18 @@ $(function() {
         d = handleOutput($(d));
 
         $(output).append(d);
+        // scroll to bottom after request
+        //window.scrollTo(0,document.body.scrollHeight);
+        $("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
 
-        var timer = null;
+        // timer to set actions after request
         if (timer) {
             clearTimeout(timer); //cancel the previous timer.
             timer = null;
         }
         timer = setTimeout(function() {
             $loader.removeClass('active');
-        }, 10000);
+        }, 800);
     };
 
     utility.printLog = function(data, showContent) {
@@ -65,9 +70,11 @@ $(function() {
 
         elementCount++;
 
+        // render panel body content
         if(showContent) {
             toggleLink = ' <a class="js-toggle" href="#element-' + elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
 
+            // add base url to request link
             if(typeof data.request_uri != 'undefined' && data.request_uri.length) {
                 if(data.request_uri.length > 130) {
                     requestLinkText = window.location.hostname + data.request_uri.substring(0,130) + '...';
@@ -79,6 +86,7 @@ $(function() {
                 requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
             }
 
+            // panel body template
             panelBody = '<div class="panel-body" id="element-' + elementCount + '"><button class="btn-copy" title="Copy to clipboard">Copy</button>' +
                             '<div>' + data.severity_text + '</div>' +
                             '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' </div>' +
@@ -99,6 +107,8 @@ $(function() {
             }
             requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
         }
+
+        // default startmessage (onopen) OR logmessage with panel body
         if(data.severity == '10') {
             row = '<div class="panel panel-default">' +
                 '<div class="panel-heading  js-toggle">' +

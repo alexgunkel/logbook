@@ -15,6 +15,14 @@ body {
     background-size: 40px;
     height: 66px;
 }
+#mainnav:after {
+    content: '';
+    height: 2px;
+    width: 100%;
+    background: #ccc;
+}
+
+
 #mainnav .navbar-brand {
     margin-top: 8px;
     margin-left: 60px;
