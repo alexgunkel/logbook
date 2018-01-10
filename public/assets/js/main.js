@@ -35,6 +35,32 @@ $(function() {
 
     };
 
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function checkAutoscroll() {
+        return getCookie("autoscroll");
+    }
+
     // update page title
     document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
@@ -45,9 +71,10 @@ $(function() {
         d = handleOutput($(d));
 
         $(output).append(d);
-        // scroll to bottom after request
-        //window.scrollTo(0,document.body.scrollHeight);
-        $("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
+
+        if(checkAutoscroll() === 'true') {
+            $("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
+        }
 
         // timer to set actions after request
         if (timer) {
@@ -178,6 +205,24 @@ $(function() {
 
     $('#btn-down').on('click', function(){
         $('html, body').animate({scrollTop:$(document).height()});
+        return false;
+    });
+
+
+    if(checkAutoscroll() === 'true') {
+        $('.js-toggle-autoscroll').addClass('active');
+    } else {
+        $('.js-toggle-autoscroll').removeClass('active');
+    }
+
+    $('.js-toggle-autoscroll').on('click', function() {
+        if($(this).hasClass('active')) {
+            setCookie("autoscroll", false);
+            $(this).removeClass('active');
+        } else {
+            setCookie("autoscroll", true);
+            $(this).addClass('active');
+        }
         return false;
     });
 });

@@ -145,10 +145,35 @@ body {
 https://getbootstrap.com/docs/3.3/components/
 */
 
-.panel-heading {
-
+#mainnav .nav-pills a {
+    height: 46px;
+    margin-top: 2px;
 }
-.panel-title:before {
+
+    /* toggle button */
+.js-toggle-autoscroll {
+    opacity: .6;
+    transition: opacity 0.25s;
+}
+.js-toggle-autoscroll span {
+    opacity: .6;
+    transition: opacity 0.25s;
+}
+
+.js-toggle-autoscroll span {
+    font-size: 22px;
+}
+
+.js-toggle-autoscroll.active {
+    opacity: 1;
+}
+
+.js-toggle-autoscroll.active span {
+    opacity: 1;
+}
+
+.panel-title:before,
+.btn-toggle:before {
     position: relative;
     top: 1px;
     display: inline-block;
