@@ -64,17 +64,29 @@ $(function() {
     // update page title
     document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
-    utility.print = function(message, severity) {
+    utility.print = function(message, severity, logger) {
         var d =  $("<div></div>")
             .addClass((severity) ? 'severity-' + severity : 'severity-7')
-            .append(message);
+            .append(message),
+            lastMessage = $('.panel').last(),
+            lastLogger = false;
         d = handleOutput($(d));
 
-        $(output).append(d);
+        if (lastMessage.length) {
+            lastLogger = lastMessage.find('.panel-title b').text();
+        }
+
+        if (lastLogger.length && logger.length && lastLogger == logger) {
+            var newContent = '<br>' + $(d).find('.panel-body').html();
+            lastMessage.find('.panel-body').append(newContent);
+        } else {
+            $(output).append(d);
+        }
 
         if(checkAutoscroll() === 'true') {
             $("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
         }
+
 
         // timer to set actions after request
         if (timer) {
@@ -114,12 +126,15 @@ $(function() {
             }
 
             // panel body template
-            panelBody = '<div class="panel-body" id="element-' + elementCount + '"><button class="btn-copy" title="Copy to clipboard">Copy</button>' +
-                            '<div>' + data.severity_text + '</div>' +
-                            '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' </div>' +
-                            '<div> ' + requestLink + '</div>' +
-                            '<div class="full-message">' + data.message + '</div>' +
-                            '<div class="context">' + JSON.stringify(data.context) + '</div>' +
+            panelBody = '<div class="panel-body" id="element-' + elementCount + '">' +
+                            '<div class="panel-boddy-inner">' +
+                                '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+                                '<div>' + data.severity_text + '</div>' +
+                                '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' </div>' +
+                                '<div> ' + requestLink + '</div>' +
+                                '<div class="full-message">' + data.message + '</div>' +
+                                '<div class="context">' + JSON.stringify(data.context) + '</div>' +
+                            '</div>' +
                         '</div>';
         }
 
@@ -153,7 +168,7 @@ $(function() {
                 '</div>';
         }
 
-        utility.print(row, data.severity);
+        utility.print(row, data.severity, data.logger);
     };
 
     window.addEventListener("load", function(evt) {
