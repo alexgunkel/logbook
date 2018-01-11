@@ -1,39 +1,11 @@
 $(function() {
     var utility = {},
         elementCount = 0,
-        port = $('body').data('port'),
-        endPoint = $('body').data('endpoint'),
+        $body = $('body'),
+        port = $body.data('port'),
+        endPoint = $body.data('endpoint'),
         $loader = $('.loader'),
         timer = null;
-
-    var handleOutput = function (el) {
-
-        $(el).find('.js-toggle').on( "click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).closest('.panel').find('.panel-body').slideToggle(180);
-        });
-        $(el).find('.btn-copy').on( "click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var $el = $(this),
-                $panel = $el.closest('.panel')
-                copyText = $panel.find('.full-message').text() + '\n\n' + $panel.find('.context').text(),
-                $temp = $("<textarea>");
-            $("body").append($temp);
-            $temp.val(copyText).select();
-            document.execCommand("copy");
-            $el.addClass('active');
-            $temp.remove();
-
-            setTimeout(function(){
-                $el.removeClass('active');
-            }, 800);
-
-        });
-        return el;
-
-    };
 
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
@@ -61,24 +33,75 @@ $(function() {
         return getCookie("autoscroll");
     }
 
+    function activateCopyButton(el) {
+        $(el).on( "click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $el = $(this),
+                $panel = $el.closest('.panel-body-inner'),
+                copyText = $panel.find('.full-message').text() + '\n\n' + $panel.find('.context').text(),
+                $temp = $("<textarea>");
+            $("body").append($temp);
+            $temp.val(copyText).select();
+            document.execCommand("copy");
+            $el.addClass('active');
+            $temp.remove();
+
+            setTimeout(function(){
+                $el.removeClass('active');
+            }, 800);
+        });
+    }
+
+    var handleOutput = function (el) {
+
+        $(el).find('.js-toggle').on( "click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).closest('.panel').find('.panel-body').slideToggle(180);
+        });
+        activateCopyButton($(el).find('.btn-copy'));
+        return el;
+
+    };
+
     // update page title
     document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
-    utility.print = function(message, severity, logger) {
-        var d =  $("<div></div>")
-            .addClass((severity) ? 'severity-' + severity : 'severity-7')
-            .append(message),
-            lastMessage = $('.panel').last(),
-            lastLogger = false;
+    utility.print = function(message, logger) {
+        var d = $('<div class="panel-wrapper"></div>')
+                    .append(message),
+                lastPanel = $('.panel').last(),
+                lastLogger = false;
+
         d = handleOutput($(d));
 
-        if (lastMessage.length) {
-            lastLogger = lastMessage.find('.panel-title b').text();
+        if (lastPanel.length) {
+            lastLogger = lastPanel.find('.panel-title b').text();
         }
 
+        // if new logger is similar to last one, group within one panel
         if (lastLogger.length && logger.length && lastLogger == logger) {
-            var newContent = '<br>' + $(d).find('.panel-body').html();
-            lastMessage.find('.panel-body').append(newContent);
+            var newPanel = $(d).find('.panel'),
+                newContent = '<br>' + newPanel.find('.panel-body').html(),
+                lastLogLevel = lastPanel.data('loglevel'),
+                newLogLevel = newPanel.data('loglevel');
+
+            lastPanel.find('.panel-body').append(newContent);
+            console.log(lastPanel.find('.btn-copy').last());
+            activateCopyButton(lastPanel.find('.btn-copy').last());
+
+            // Update main Loglevel for panel (set to most serious one)
+            if (typeof lastLogLevel != 'undefined' && typeof newLogLevel != 'undefined' && lastLogLevel > newLogLevel) {
+
+                lastPanel.data('loglevel', newLogLevel);
+                lastPanel.find('.panel-heading')
+                    .removeClass('severity-' + lastLogLevel)
+                    .addClass('severity-' + newLogLevel);
+
+                lastPanel.find('.panel-heading').addClass('my-severity-XXXX');
+                lastPanel.data('loglevel', '4');
+            }
         } else {
             $(output).append(d);
         }
@@ -105,6 +128,7 @@ $(function() {
             requestUri = window.location.protocol + '//' + window.location.hostname + data.request_uri,
             requestLink = '',
             requestLinkText = '',
+            severity = (data.severity) ? data.severity : '7',
             row;
 
         elementCount++;
@@ -127,7 +151,7 @@ $(function() {
 
             // panel body template
             panelBody = '<div class="panel-body" id="element-' + elementCount + '">' +
-                            '<div class="panel-boddy-inner">' +
+                            '<div class="panel-body-inner severity-' + severity + '"><span class="loglevel"></span>' +
                                 '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
                                 '<div>' + data.severity_text + '</div>' +
                                 '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' </div>' +
@@ -153,14 +177,14 @@ $(function() {
         // default startmessage (onopen) OR logmessage with panel body
         if(data.severity == '10') {
             row = '<div class="panel panel-default">' +
-                '<div class="panel-heading  js-toggle">' +
-                '<div class="panel-title"><b>Ready to log</b></div>' +
+                '<div class="panel-heading  js-toggle severity-10">' +
+                '<div class="panel-title"><span class="loglevel"></span><b>Ready to log</b></div>' +
                 '</div>' +
                 '</div>';
         } else {
-            row = '<div class="panel panel-default">' +
-                '<div class="panel-heading  js-toggle">' +
-                '<div class="panel-title"><b>' + data.logger + '</b></div>' +
+            row = '<div class="panel panel-default" data-loglevel="' + severity + '">' +
+                '<div class="panel-heading  js-toggle severity-' + severity + '">' +
+                '<div class="panel-title"><span class="loglevel"></span><b>' + data.logger + '</b></div>' +
                 '<div class="data-message">' + data.message.slice(0,130) + '</div>' +
                 '<div>' + toggleLink + '</div>' +
                 '</div>' +
@@ -168,7 +192,7 @@ $(function() {
                 '</div>';
         }
 
-        utility.print(row, data.severity, data.logger);
+        utility.print(row, data.logger);
     };
 
     window.addEventListener("load", function(evt) {

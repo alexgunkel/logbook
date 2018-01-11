@@ -81,15 +81,19 @@ body {
     margin-bottom: 4px;
 }
 
+.panel-body-inner {
+    position: relative;
+}
+
 .panel-body .btn-copy {
     position: absolute;
     cursor: pointer;
     background: transparent;
     border: solid #ddd;
-    border-width: 0 0 1px 1px;
+    border-width: 1px;
     padding: 6px;
-    top: 0;
-    right: 0;
+    top: -6px;
+    right: -12px;
 }
 .panel-body .btn-copy:hover {
     background: #ddd;
@@ -172,7 +176,7 @@ https://getbootstrap.com/docs/3.3/components/
     opacity: 1;
 }
 
-.panel-title:before,
+.loglevel:before,
 .btn-toggle:before {
     position: relative;
     top: 1px;
@@ -192,76 +196,84 @@ https://getbootstrap.com/docs/3.3/components/
 /* "debug" */
 .severity-7 .panel-title {
 }
-.severity-7 .panel-title:before {
+.severity-7 .loglevel:before {
 
 }
  /* "informational" */
-.severity-6 .panel-heading {
+.severity-6 .loglevel,
+.severity-6.panel-heading {
     color: #31708f;
     background-color: #d9edf7;
 }
-.severity-6 .panel-title:before {
+.severity-6 .loglevel:before {
     content: '\e086';
 }
 
  /* "notice" */
-.severity-5 .panel-heading {
+.severity-5 .loglevel,
+.severity-5.panel-heading {
     color: #856404;
     background-color: #fff3cd;
 }
-.severity-5 .panel-title:before {
+.severity-5 .loglevel:before {
     content: '\e085';
 }
 
  /* "warning" */
-.severity-4 .panel-heading {
+.severity-4 .loglevel,
+.severity-4.panel-heading {
     color: #856404;
     background-color: #fff3cd;
 }
-.severity-4 .panel-title:before {
+.severity-4 .loglevel:before {
     content: '\e107';
 }
 
  /* "error" */
-.severity-3 .panel-heading {
+.severity-3 .loglevel,
+.severity-3.panel-heading {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-3 .panel-title:before {
+.severity-3 .loglevel:before {
     content: '\e083';
 }
 
  /* "critical" */
-.severity-2 .panel-heading {
+.severity-2 .loglevel,
+.severity-2.panel-heading {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-2 .panel-title:before {
+.severity-2 .loglevel:before {
     content: '\e083';
 }
 
  /* "alert" */
-.severity-1 .panel-heading {
+.severity-1 .loglevel,
+.severity-1.panel-heading {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-1 .panel-title:before {
+.severity-1 .loglevel:before {
     content: '\e083';
 }
 
  /* "emergency" */
-.severity-0 .panel-heading {
+.severity-0 .loglevel,
+.severity-0.panel-heading {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-0 .panel-title:before {
+.severity-0 .loglevel:before {
     content: '\e083';
 }
  /* "start" */
-.severity-10 .panel-heading {
+.severity-10.loglevel,
+.severity-10.panel-heading {
     color: #3c763d;
     background-color: #dff0d8;
 }
-.severity-10 .panel-title:before {
+.severity-10 .loglevel:before {
     content: '\e084';
 }
