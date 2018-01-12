@@ -176,9 +176,24 @@ $(function() {
 
         // default startmessage (onopen) OR logmessage with panel body
         if(data.severity == '10') {
+
+            function getStartText() {
+                var values = [
+                        "Ready to log",
+                        "Jauchzet frohlogget!",
+                        "Let's lock 'n' lol",
+                        "Let’s log, dudes!",
+                        "Let’s log the house, dudes!",
+                        "Oh my log!",
+                        "Log Me Amadeus!",
+                        "Ready to log"
+                ];
+                return values[Math.floor(Math.random() * values.length)];
+            }
+
             row = '<div class="panel panel-default">' +
                 '<div class="panel-heading  js-toggle severity-10">' +
-                '<div class="panel-title"><span class="loglevel"></span><b>Ready to log</b></div>' +
+                '<div class="panel-title"><span class="loglevel"></span><b>' + getStartText() + '</b></div>' +
                 '</div>' +
                 '</div>';
         } else {
