@@ -1,6 +1,7 @@
 $(function() {
     var utility = {},
         elementCount = 0,
+        lastLogger = "",
         $body = $('body'),
         port = $body.data('port'),
         endPoint = $body.data('endpoint'),
@@ -71,14 +72,9 @@ $(function() {
     utility.print = function(message, logger) {
         var d = $('<div class="panel-wrapper"></div>')
                     .append(message),
-                lastPanel = $('.panel').last(),
-                lastLogger = false;
+                lastPanel = $('.panel').last();
 
         d = handleOutput($(d));
-
-        if (lastPanel.length) {
-            lastLogger = lastPanel.find('.panel-title b').text();
-        }
 
         // if new logger is similar to last one, group within one panel
         if (lastLogger.length && logger.length && lastLogger == logger) {
@@ -88,7 +84,6 @@ $(function() {
                 newLogLevel = newPanel.data('loglevel');
 
             lastPanel.find('.panel-body').append(newContent);
-            console.log(lastPanel.find('.btn-copy').last());
             activateCopyButton(lastPanel.find('.btn-copy').last());
 
             // Update main Loglevel for panel (set to most serious one)
@@ -105,6 +100,7 @@ $(function() {
         } else {
             $(output).append(d);
         }
+        lastLogger = logger;
 
         if(checkAutoscroll() === 'true') {
             $("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
@@ -219,7 +215,8 @@ $(function() {
         ws = new WebSocket('ws://' + host + ':' + port + endPoint);
         ws.onopen = function(evt) {
             var data = {
-                "severity" : 10
+                "severity" : 10,
+                "logger": ""
             };
             utility.printLog(data);
         };
