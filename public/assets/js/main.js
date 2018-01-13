@@ -1,12 +1,58 @@
 $(function() {
     var utility = {},
         elementCount = 0,
+        elementCounter = 0,
         lastLogger = "",
         $body = $('body'),
         port = $body.data('port'),
         endPoint = $body.data('endpoint'),
         $loader = $('.loader'),
         timer = null;
+
+    function Entry(logger, severity, message, time, application, request_uri) {
+        this.logger = logger
+        this.severity = severity;
+        this.message = message;
+        this.time = time;
+        this.application = application;
+        this.request_uri = request_uri;
+        this.elementCount = ++elementCounter;
+        this.getRequestUri = function () {
+            if(typeof this.request_uri != 'undefined' && this.request_uri.length) {
+                if(this.request_uri.length > 130) {
+                    requestLinkText = window.location.hostname + this.request_uri.substring(0,130) + '...';
+                } else if(this.request_uri === "/") {
+                    requestLinkText = window.location.hostname;
+                } else {
+                    requestLinkText = window.location.hostname + this.request_uri
+                }
+                return '<div><a href="' + this.requestUri + '" title="' + this.requestUri + '">' + requestLinkText + '</a></div>';
+            }
+        }
+        this.getRowAsHtml = function () {
+            // panel body template
+            this.panelBody = '<div class="panel-body" id="entry-' + this.elementCount + '">' +
+                '<div class="panel-body-inner severity-' + this.severity + '"><span class="loglevel"></span>' +
+                '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+                '<div class="card-subtitle text-muted">' + this.time + ' - ' + this.application + ' </div>' +
+                '<div> ' + this.getRequestUri() + '</div>' +
+                '<div class="full-message">' + this.message + '</div>' +
+                '</div>' +
+                '</div>';
+
+            this.toggleLink = ' <a class="js-toggle" href="#entry-' + this.elementCount +
+                '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
+
+            return '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
+                '<div class="panel-heading  js-toggle severity-' + this.severity + '">' +
+                '<div class="panel-title"><span class="loglevel"></span><b>' + this.logger + '</b></div>' +
+                '<div class="data-message">' + this.message.slice(0,130) + '</div>' +
+                '<div>' + this.toggleLink + '</div>' +
+                '</div>' +
+                this.panelBody +
+                '</div>';
+        }
+    }
 
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
@@ -120,55 +166,10 @@ $(function() {
     utility.printLog = function(data, showContent) {
         showContent = showContent || false;
         var toggleLink = '',
-            panelBody = '',
             requestUri = window.location.protocol + '//' + window.location.hostname + data.request_uri,
-            requestLink = '',
-            requestLinkText = '',
             severity = (data.severity) ? data.severity : '7',
+            entry = null,
             row;
-
-        elementCount++;
-
-        // render panel body content
-        if(showContent) {
-            toggleLink = ' <a class="js-toggle" href="#element-' + elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
-
-            // add base url to request link
-            if(typeof data.request_uri != 'undefined' && data.request_uri.length) {
-                if(data.request_uri.length > 130) {
-                    requestLinkText = window.location.hostname + data.request_uri.substring(0,130) + '...';
-                } else if(data.request_uri === "/") {
-                    requestLinkText = window.location.hostname;
-                } else {
-                    requestLinkText = window.location.hostname + data.request_uri
-                }
-                requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
-            }
-
-            // panel body template
-            panelBody = '<div class="panel-body" id="element-' + elementCount + '">' +
-                            '<div class="panel-body-inner severity-' + severity + '"><span class="loglevel"></span>' +
-                                '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
-                                '<div>' + data.severity_text + '</div>' +
-                                '<div class="card-subtitle text-muted">' + data.time + ' - ' + data.application + ' </div>' +
-                                '<div> ' + requestLink + '</div>' +
-                                '<div class="full-message">' + data.message + '</div>' +
-                                '<div class="context">' + JSON.stringify(data.context) + '</div>' +
-                            '</div>' +
-                        '</div>';
-        }
-
-
-        if(typeof data.request_uri != 'undefined' && data.request_uri.length) {
-            if(data.request_uri.length > 130) {
-                requestLinkText = window.location.hostname + data.request_uri.substring(0,130) + '...';
-            } else if(data.request_uri === "/") {
-                requestLinkText = window.location.hostname;
-            } else {
-                requestLinkText = window.location.hostname + data.request_uri
-            }
-            requestLink = '<div><a href="' + requestUri + '" title="' + requestUri + '">' + requestLinkText + '</a></div>';
-        }
 
         // default startmessage (onopen) OR logmessage with panel body
         if(data.severity == '10') {
@@ -192,18 +193,12 @@ $(function() {
                 '<div class="panel-title"><span class="loglevel"></span><b>' + getStartText() + '</b></div>' +
                 '</div>' +
                 '</div>';
-        } else {
-            row = '<div class="panel panel-default" data-loglevel="' + severity + '">' +
-                '<div class="panel-heading  js-toggle severity-' + severity + '">' +
-                '<div class="panel-title"><span class="loglevel"></span><b>' + data.logger + '</b></div>' +
-                '<div class="data-message">' + data.message.slice(0,130) + '</div>' +
-                '<div>' + toggleLink + '</div>' +
-                '</div>' +
-                panelBody +
-                '</div>';
-        }
 
-        utility.print(row, data.logger);
+            utility.print(row, data.logger);
+        } else {
+            entry = new Entry(data.logger, severity, data.message, data.time, data.application, data.request_uri);
+            utility.print(entry.getRowAsHtml(), data.logger);
+        }
     };
 
     window.addEventListener("load", function(evt) {
