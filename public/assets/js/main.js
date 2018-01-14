@@ -147,14 +147,14 @@ $(function() {
         // if new logger is similar to last one, group within one panel
         if (this.lastLogger.length && logEntry.logger.length && this.lastLogger == logEntry.logger) {
             var newPanel = $(d).find('.panel');
-
-            this.lastLogLevel = lastPanel.data('loglevel');
+            console.log(newPanel);
 
             lastPanel.find('.panel-body').append('<br>' + logEntry.getBody());
             activateCopyButton(lastPanel.find('.btn-copy').last());
 
             // Update main Loglevel for panel (set to most serious one)
             if (typeof this.lastLogLevel != 'undefined' && typeof logEntry.severity != 'undefined' && this.lastLogLevel > logEntry.severity) {
+                this.lastLogLevel = logEntry.severity;
 
                 lastPanel.data('loglevel', logEntry.severity);
                 lastPanel.find('.panel-heading')
@@ -165,6 +165,7 @@ $(function() {
                 lastPanel.data('loglevel', '4');
             }
         } else {
+            this.lastLogLevel = logEntry.severity;
             $(output).append(d);
         }
         this.lastLogger = logEntry.logger;
@@ -185,38 +186,29 @@ $(function() {
         this.showSlider()
     };
 
-    utility.printLog = function(data, showContent) {
-        var entry = null,
-            row;
-
-        // default startmessage (onopen) OR logmessage with panel body
-        if(data.severity == '10') {
-
-            function getStartText() {
-                var values = [
-                        "Ready to log",
-                        "Jauchzet frohlogget!",
-                        "Let's lock 'n' lol",
-                        "Let’s log, dudes!",
-                        "Let’s log the house, dudes!",
-                        "Oh my log!",
-                        "Log Me Amadeus!",
-                        "Ready to log"
-                ];
-                return values[Math.floor(Math.random() * values.length)];
-            }
-
-            row = '<div class="panel panel-default">' +
-                '<div class="panel-heading  js-toggle severity-10">' +
-                '<div class="panel-title"><span class="loglevel"></span><b>' + getStartText() + '</b></div>' +
-                '</div>' +
-                '</div>';
-
-            utility.print(row, data.logger);
-        } else {
-            entry = new LogEntry(data);
-            utility.print(entry.getRowAsHtml(), data.logger);
+    utility.printStartMessage = function() {
+        // default startmessage (onopen)
+        function getStartText() {
+            var values = [
+                "Ready to log",
+                "Jauchzet frohlogget!",
+                "Let's lock 'n' lol",
+                "Let’s log, dudes!",
+                "Let’s log the house, dudes!",
+                "Oh my log!",
+                "Log Me Amadeus!",
+                "Ready to log"
+            ];
+            return values[Math.floor(Math.random() * values.length)];
         }
+
+        var row = '<div class="panel panel-default">' +
+            '<div class="panel-heading  js-toggle severity-10">' +
+            '<div class="panel-title"><span class="loglevel"></span><b>' + getStartText() + '</b></div>' +
+            '</div>' +
+            '</div>';
+
+        utility.print(row, "");
     };
 
     window.addEventListener("load", function(evt) {
@@ -227,11 +219,7 @@ $(function() {
 
         ws = new WebSocket('ws://' + host + ':' + port + endPoint);
         ws.onopen = function(evt) {
-            var data = {
-                "severity" : 10,
-                "logger": ""
-            };
-            utility.printLog(data);
+            utility.printStartMessage();
         };
         ws.onclose = function(evt) {
             var data = {
@@ -239,7 +227,8 @@ $(function() {
                 "severity" : 7
             };
 
-            utility.printLog(data);
+            var entry = new LogEntry(data);
+            utility.printEntry(entry, data.logger);
             ws = null;
         };
         ws.onmessage = function(evt) {
@@ -254,7 +243,8 @@ $(function() {
                 "severity" : 2
             };
 
-            utility.printLog(data);
+            var entry = new LogEntry(data);
+            utility.printEntry(entry, data.logger);
         };
     });
 
