@@ -2,18 +2,19 @@ $(function() {
     var utility = {},
         elementCount = 0,
         elementCounter = 0,
+        timer = null,
         $body = $('body'),
-        port = $body.data('port'),
-        endPoint = $body.data('endpoint'),
         $loader = $('.loader'),
-        timer = null;
-
+        $toggleAutoscroll = $body.find('.js-toggle-autoscroll'),
+        port = $body.data('port'),
+        endPoint = $body.data('endpoint');
     utility.lastLogger = "";
     utility.lastLogLevel = 0;
 
     function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var d = new Date(),
+            days = (exdays) ? exdays : 7;
+        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
         var expires = "expires="+d.toUTCString();
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
@@ -73,7 +74,7 @@ $(function() {
     document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
     function LogEntry(data) {
-        this.logger = data.logger
+        this.logger = data.logger;
         this.severity = (data.severity) ? data.severity : '7';
         this.message = data.message;
         this.time = data.time;
@@ -147,7 +148,7 @@ $(function() {
         // if new logger is similar to last one, group within one panel
         if (this.lastLogger.length && logEntry.logger.length && this.lastLogger == logEntry.logger) {
             var newPanel = $(d).find('.panel');
-            console.log(newPanel);
+            //console.log(newPanel);
 
             lastPanel.find('.panel-body').append('<br>' + logEntry.getBody());
             activateCopyButton(lastPanel.find('.btn-copy').last());
@@ -160,9 +161,6 @@ $(function() {
                 lastPanel.find('.panel-heading')
                     .removeClass('severity-' + this.lastLogLevel)
                     .addClass('severity-' + logEntry.severity);
-
-                lastPanel.find('.panel-heading').addClass('my-severity-XXXX');
-                lastPanel.data('loglevel', '4');
             }
         } else {
             this.lastLogLevel = logEntry.severity;
@@ -190,14 +188,26 @@ $(function() {
         // default startmessage (onopen)
         function getStartText() {
             var values = [
-                "Ready to log",
+                "Ready to log!",
                 "Jauchzet frohlogget!",
-                "Let's lock 'n' lol",
-                "Let’s log, dudes!",
-                "Let’s log the house, dudes!",
+                "Let's log 'n' lol!",
+                "Let’s log!",
+                "Log the house, dudes!",
+                "Log it out!",
                 "Oh my log!",
-                "Log Me Amadeus!",
-                "Ready to log"
+                "Log me Amadeus!",
+                "Ready to log!",
+                "Log log login' on heaven's door...",
+                "Log at that:",
+                "You log nice today!",
+                "Log out now!",
+                "Log n’feel.",
+                "Log it up!",
+                "Get your log post!",
+                "Log’a’rhythm.",
+                "To be logged!",
+                "Die or log!",
+                "Fifty Shades of Log"
             ];
             return values[Math.floor(Math.random() * values.length)];
         }
@@ -223,18 +233,17 @@ $(function() {
         };
         ws.onclose = function(evt) {
             var data = {
-                "message" : "Connection closed",
-                "severity" : 7
-            };
-
-            var entry = new LogEntry(data);
+                    "message" : "Connection closed",
+                    "severity" : 7
+                },
+                entry = new LogEntry(data);
             utility.printEntry(entry, data.logger);
             ws = null;
         };
         ws.onmessage = function(evt) {
+            var data = JSON.parse(evt.data),
+                entry = new LogEntry(data);
             $loader.addClass('active');
-            var data = JSON.parse(evt.data);
-            var entry = new LogEntry(data);
             utility.printEntry(entry, data.logger);
         };
         ws.onerror = function(evt) {
@@ -253,24 +262,24 @@ $(function() {
         document.cookie = "logbook=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     });
 
-    $('#btn-up').on('click', function(){
+    $body.find('#btn-up').on('click', function(){
         $('html, body').animate({scrollTop:0});
         return false;
     });
 
-    $('#btn-down').on('click', function(){
+    $body.find('#btn-down').on('click', function(){
         $('html, body').animate({scrollTop:$(document).height()});
         return false;
     });
 
 
     if(checkAutoscroll() === 'true') {
-        $('.js-toggle-autoscroll').addClass('active');
+        $toggleAutoscroll.addClass('active');
     } else {
-        $('.js-toggle-autoscroll').removeClass('active');
+        $toggleAutoscroll.removeClass('active');
     }
 
-    $('.js-toggle-autoscroll').on('click', function() {
+    $toggleAutoscroll.on('click', function() {
         if($(this).hasClass('active')) {
             setCookie("autoscroll", false);
             $(this).removeClass('active');
