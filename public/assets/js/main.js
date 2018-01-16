@@ -98,22 +98,45 @@ $(function() {
         this.getToggleLink = function () {
             return '<a class="js-toggle" href="#entry-' + this.elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
         }
-        this.getBody = function () {
-            return  '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
-                       '<span class="loglevel"></span>' +
-                       '<div class="loglevel-text">' + data.severity_text + ':</div>' +
-                       '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
-                       '<div class="full-message">' + this.message + '</div>' +
-                   '</div>';
-        }
         this.getHeader = function () {
             return '<div class="panel-title"><b>' + this.logger + '</b></div>' +
-                '<div class="data-message"><span class="loglevel"></span>' + this.message.slice(0,130) + '</div>' +
-                '<div class="app-info text-muted">' + this.time + ' - ' + this.application + ' - ' + this.getRequestLink() + '</div>' +
-                '<div>' + this.getToggleLink() + '</div>';
+                   '<div class="data-message"><span class="loglevel"></span>' + this.message.slice(0,130) + '</div>' +
+                   '<div class="app-info text-muted">' + this.getRequestLink() + '</div>' +
+                   '<div>' +
+                   '</div>';
+        }
+        this.getBody = function () {
+            return '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
+                       '<div class="panel-heading js-toggle severity-' + this.severity + '">' +
+                this.getHeader() +
+                '</div>' +
+                '<div class="panel-body">' +
+                '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
+                '<span class="loglevel"></span>' +
+                '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+                '<div class="app-info text-muted">' + this.time + ' - ' + this.application + '</div>' +
+                '<div class="full-message">' + this.message + '</div>' +
+                '</div>';
+                '</div>' +
+                '</div>';
+
+/*
+            '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
+                       '<span class="loglevel"></span>' +
+                       '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+                       '<div class="app-info text-muted">' + this.time + ' - ' + this.application + '</div>' +
+                       '<div class="full-message">' + this.message + '</div>' +
+                   '</div>';
+*/
         }
         this.getRowAsHtml = function () {
-            return '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
+            return '<div class="panel panel-default">' +
+                       '<div class="panel-heading">' + this.getHeader() + '</div>' +
+                       '<div class="panel-body">' + this.getBody() + '</div>' +
+                   '</div>';
+
+/*
+            '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
                        '<div class="panel-heading js-toggle severity-' + this.severity + '">' +
                            this.getHeader() +
                        '</div>' +
@@ -121,6 +144,7 @@ $(function() {
                            this.getBody() +
                        '</div>' +
                    '</div>';
+*/
         }
     }
 
@@ -216,7 +240,7 @@ $(function() {
         }
 
         var row = '<div class="panel panel-default">' +
-            '<div class="panel-heading  js-toggle severity-10">' +
+            '<div class="panel-heading severity-10">' +
             '<div class="panel-title"><span class="loglevel"></span><b>' + getStartText() + '</b></div>' +
             '</div>' +
             '</div>';
