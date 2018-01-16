@@ -81,12 +81,14 @@ $(function() {
         this.application = data.application;
         this.request_uri = data.request_uri;
         this.elementCount = ++elementCounter;
-        this.getRequestUri = function () {
+        this.getRequestLink = function () {
             if(typeof this.request_uri != 'undefined' && this.request_uri.length) {
-                if(this.request_uri.length > 130) {
-                    requestLinkText = window.location.hostname + this.request_uri.substring(0,130) + '...';
-                } else if(this.request_uri === "/") {
+
+                // cut long request linktexts
+                if(this.request_uri === "/") {
                     requestLinkText = window.location.hostname;
+                } else if(this.request_uri.length > 130) {
+                    requestLinkText = window.location.hostname + this.request_uri.substring(0,130) + '...';
                 } else {
                     requestLinkText = window.location.hostname + this.request_uri
                 }
@@ -94,19 +96,20 @@ $(function() {
             }
         }
         this.getToggleLink = function () {
-            return ' <a class="js-toggle" href="#entry-' + this.elementCount +
-                '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
+            return '<a class="js-toggle" href="#entry-' + this.elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
         }
         this.getBody = function () {
-            return '<div class="panel-body-inner severity-' + this.severity + '" id="entry-\' + this.elementCount + \'">' +
-                       '<div class="full-message">' + this.message + '</div>' +
+            return  '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
+                       '<span class="loglevel"></span>' +
+                       '<div class="loglevel-text">' + data.severity_text + ':</div>' +
                        '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
-                       '<div class="card-subtitle text-muted">' + this.time + ' - ' + this.application + ' - ' + this.getRequestUri() + '</div>' +
-                    '</div>';
+                       '<div class="full-message">' + this.message + '</div>' +
+                   '</div>';
         }
         this.getHeader = function () {
             return '<div class="panel-title"><b>' + this.logger + '</b></div>' +
                 '<div class="data-message"><span class="loglevel"></span>' + this.message.slice(0,130) + '</div>' +
+                '<div class="app-info text-muted">' + this.time + ' - ' + this.application + ' - ' + this.getRequestLink() + '</div>' +
                 '<div>' + this.getToggleLink() + '</div>';
         }
         this.getRowAsHtml = function () {
@@ -150,7 +153,7 @@ $(function() {
             var newPanel = $(d).find('.panel');
             //console.log(newPanel);
 
-            lastPanel.find('.panel-body').append('<br>' + logEntry.getBody());
+            lastPanel.find('.panel-body').append(logEntry.getBody());
             activateCopyButton(lastPanel.find('.btn-copy').last());
 
             // Update main Loglevel for panel (set to most serious one)

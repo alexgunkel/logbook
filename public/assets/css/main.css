@@ -85,6 +85,10 @@ body {
     position: relative;
 }
 
+.panel-body-inner ~ .panel-body-inner {
+    margin-top: 8px;
+}
+
 .panel-body .btn-copy {
     position: absolute;
     cursor: pointer;
@@ -101,6 +105,10 @@ body {
 
 .panel-body .btn-copy.active {
     animation: colorchange .8s normal forwards;
+}
+
+.panel-body .loglevel-text {
+    margin-bottom: 4px
 }
 
 @keyframes colorchange {
