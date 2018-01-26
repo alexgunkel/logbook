@@ -70,7 +70,7 @@ body {
 }
 
 .panel-body .panel-body {
-    display: none;
+    /* display: none; */
     position: relative;
     max-height: 400px;
     overflow: auto;
