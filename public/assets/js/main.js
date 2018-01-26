@@ -255,23 +255,9 @@ $(function() {
 
     // test native js print to document without function
     utility.printToDocument = function (message) {
-        var text =
-                '<div class="panel-inner">' +
-                    '<div class="panel-heading severity-' + message.severity + '"><span class="loglevel"></span>' +
-                        message.logger + '<br>' +
-                        message.application + '<br>' +
-                    '</div><div class="panel-body">' +
-                        'request_uri: ' + message.request_uri + '<br>' +
-                        'request_id: ' + message.request_id + '<br>' +
-                        'time: ' + message.time + '<br>' +
-                        'severity: ' + message.severity + '<br>' +
-                        'severity_text: ' + message.severity_text + '<br>' +
-                        'context: ' +  JSON.stringify(message.context) +
-                        '<br><br>' + message.message +
-                    '</div>' +
-                '</div>',
+        var text = '<br><br>' + JSON.stringify(message) + '<br><br>',
             item = document.createElement("div");
-        item.className = 'panel panel-default';
+        item.className = 'severity-' + message.severity;
         item.innerHTML = text;
         document.getElementById("output").appendChild(item);
     };
