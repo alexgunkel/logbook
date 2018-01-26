@@ -7,7 +7,10 @@ $(function() {
         $loader = $('.loader'),
         $toggleAutoscroll = $body.find('.js-toggle-autoscroll'),
         port = $body.data('port'),
-        endPoint = $body.data('endpoint');
+        endPoint = $body.data('endpoint'),
+        output = document.getElementById("output"),
+        ws,
+        host = window.location.hostname;
     utility.lastLogger = "";
     utility.lastLogLevel = 0;
 
@@ -150,7 +153,7 @@ $(function() {
 //         }
 //     }
 
-    utility.showLoader = function () {
+    utility.triggerLoader = function () {
         // timer to set actions after request
         if (timer) {
             clearTimeout(timer); //cancel the previous timer.
@@ -199,7 +202,7 @@ $(function() {
     //     this.lastLogger = logEntry.logger;
     //
     //     this.handleScrolling();
-    //     this.showLoader();
+    //     this.triggerLoader();
     // };
 
     // utility.print = function(message, logger) {
@@ -211,7 +214,7 @@ $(function() {
     //     lastLogger = logger;
     //
     //     this.handleScrolling();
-    //     this.showLoader()
+    //     this.triggerLoader()
     // };
 
     utility.printStartMessage = function() {
@@ -278,22 +281,17 @@ $(function() {
         document.getElementById("output").appendChild(item);
     };
 
-    window.addEventListener("load", function(evt) {
-        var output = document.getElementById("output"),
-            ws,
-            host = window.location.hostname;
-
-
+    utility.runWebsocket = function () {
         ws = new WebSocket('ws://' + host + ':' + port + endPoint);
         ws.onopen = function(evt) {
             utility.printStartMessage();
         };
         ws.onclose = function(evt) {
             var data = {
-                    "message" : "Connection closed",
-                    "severity" : 7
-                };
-                //entry = new LogEntry(data);
+                "message" : "Connection closed",
+                "severity" : 7
+            };
+            //entry = new LogEntry(data);
             //utility.printEntry(entry, data.logger);
             utility.printToDocument(data);
             utility.handleScrolling();
@@ -301,11 +299,11 @@ $(function() {
         };
         ws.onmessage = function(evt) {
             var data = JSON.parse(evt.data);
-                //entry = new LogEntry(data);
+            //entry = new LogEntry(data);
             $loader.addClass('active');
             //utility.printEntry(entry, data.logger);
             utility.printToDocument(data);
-            utility.showLoader();
+            utility.triggerLoader();
             utility.handleScrolling();
         };
         ws.onerror = function(evt) {
@@ -320,7 +318,10 @@ $(function() {
             utility.handleScrolling();
 
         };
-    });
+
+    };
+
+    utility.runWebsocket();
 
     window.addEventListener("beforeunload", function(evt) {
         // delete the cookie
@@ -336,7 +337,6 @@ $(function() {
         $('html, body').animate({scrollTop:$(document).height()});
         return false;
     });
-
 
     if(checkAutoscroll() === 'true') {
         $toggleAutoscroll.addClass('active');
