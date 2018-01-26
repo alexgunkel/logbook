@@ -70,7 +70,7 @@ body {
 }
 
 .panel-body .panel-body {
-    display: none;
+    /* display: none; */
     position: relative;
     max-height: 400px;
     overflow: auto;
@@ -285,3 +285,17 @@ https://getbootstrap.com/docs/3.3/components/
 .severity-10 .loglevel:before {
     content: '\e084';
 }
+
+
+/* testing */
+.panel-heading {
+    cursor: pointer;
+}
+.panel-body {
+    display: none;
+}
+.active + .panel-body {
+    display: block;
+}
+
+

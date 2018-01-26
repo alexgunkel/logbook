@@ -11,6 +11,8 @@ $(function() {
     utility.lastLogger = "";
     utility.lastLogLevel = 0;
 
+
+
     function setCookie(cname, cvalue, exdays) {
         var d = new Date(),
             days = (exdays) ? exdays : 7;
@@ -60,12 +62,12 @@ $(function() {
 
     var handleOutput = function (el) {
 
-        $(el).find('.js-toggle').on( "click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).closest('.panel').find('.panel-body').slideToggle(180);
-        });
-        activateCopyButton($(el).find('.btn-copy'));
+        // $(el).find('.js-toggle').on( "click", function(e) {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     $(this).closest('.panel').find('.panel-body').slideToggle(180);
+        // });
+        // activateCopyButton($(el).find('.btn-copy'));
         return el;
 
     };
@@ -73,82 +75,82 @@ $(function() {
     // update page title
     document.title = "LogBook » " + window.location.protocol + '//' + window.location.hostname;
 
-    function LogEntry(data) {
-        this.logger = data.logger;
-        this.severity = (data.severity) ? data.severity : '7';
-        this.message = data.message;
-        this.time = data.time;
-        this.application = data.application;
-        this.request_uri = data.request_uri;
-        this.elementCount = ++elementCounter;
-        this.getRequestLink = function () {
-            if(typeof this.request_uri != 'undefined' && this.request_uri.length) {
+//     function LogEntry(data) {
+//         this.logger = data.logger;
+//         this.severity = (data.severity) ? data.severity : '7';
+//         this.message = data.message;
+//         this.time = data.time;
+//         this.application = data.application;
+//         this.request_uri = data.request_uri;
+//         this.elementCount = ++elementCounter;
+//         this.getRequestLink = function () {
+//             if(typeof this.request_uri != 'undefined' && this.request_uri.length) {
+//
+//                 // cut long request linktexts
+//                 if(this.request_uri === "/") {
+//                     requestLinkText = window.location.hostname;
+//                 } else if(this.request_uri.length > 130) {
+//                     requestLinkText = window.location.hostname + this.request_uri.substring(0,130) + '...';
+//                 } else {
+//                     requestLinkText = window.location.hostname + this.request_uri
+//                 }
+//                 return '<a href="' + this.request_uri + '" title="' + this.request_uri + '">' + requestLinkText + '</a>';
+//             }
+//         }
+//         this.getToggleLink = function () {
+//             return '<a class="js-toggle" href="#entry-' + this.elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
+//         }
+//         this.getHeader = function () {
+//             return '<div class="panel-title"><b>' + this.logger + '</b></div>' +
+//                    '<div class="data-message"><span class="loglevel"></span>' + this.message.slice(0,130) + '</div>' +
+//                    '<div class="app-info text-muted">' + this.getRequestLink() + '</div>' +
+//                    '<div>' +
+//                    '</div>';
+//         }
+//         this.getBody = function () {
+//             return '<div class="panel panel-sub panel-default" data-loglevel="' + this.severity + '">' +
+//                        '<div class="panel-heading js-toggle severity-' + this.severity + '">' +
+//                 this.getHeader() +
+//                 '</div>' +
+//                 '<div class="panel-body">' +
+//                 '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
+//                 '<span class="loglevel"></span>' +
+//                 '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+//                 '<div class="app-info text-muted">' + this.time + ' - ' + this.application + '</div>' +
+//                 '<div class="full-message">' + this.message + '</div>' +
+//                 '</div>';
+//                 '</div>' +
+//                 '</div>';
+//
+// /*
+//             '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
+//                        '<span class="loglevel"></span>' +
+//                        '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
+//                        '<div class="app-info text-muted">' + this.time + ' - ' + this.application + '</div>' +
+//                        '<div class="full-message">' + this.message + '</div>' +
+//                    '</div>';
+// */
+//         }
+//         this.getRowAsHtml = function () {
+//             return '<div class="panel panel-top panel-default">' +
+//                        '<div class="panel-heading">' + this.getHeader() + '</div>' +
+//                        '<div class="panel-body">' + this.getBody() + '</div>' +
+//                    '</div>';
+//
+// /*
+//             '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
+//                        '<div class="panel-heading js-toggle severity-' + this.severity + '">' +
+//                            this.getHeader() +
+//                        '</div>' +
+//                        '<div class="panel-body">' +
+//                            this.getBody() +
+//                        '</div>' +
+//                    '</div>';
+// */
+//         }
+//     }
 
-                // cut long request linktexts
-                if(this.request_uri === "/") {
-                    requestLinkText = window.location.hostname;
-                } else if(this.request_uri.length > 130) {
-                    requestLinkText = window.location.hostname + this.request_uri.substring(0,130) + '...';
-                } else {
-                    requestLinkText = window.location.hostname + this.request_uri
-                }
-                return '<a href="' + this.request_uri + '" title="' + this.request_uri + '">' + requestLinkText + '</a>';
-            }
-        }
-        this.getToggleLink = function () {
-            return '<a class="js-toggle" href="#entry-' + this.elementCount + '"><span class="glyphicon glyphicon-zoom-in" title="show more"></span></a>';
-        }
-        this.getHeader = function () {
-            return '<div class="panel-title"><b>' + this.logger + '</b></div>' +
-                   '<div class="data-message"><span class="loglevel"></span>' + this.message.slice(0,130) + '</div>' +
-                   '<div class="app-info text-muted">' + this.getRequestLink() + '</div>' +
-                   '<div>' +
-                   '</div>';
-        }
-        this.getBody = function () {
-            return '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
-                       '<div class="panel-heading js-toggle severity-' + this.severity + '">' +
-                this.getHeader() +
-                '</div>' +
-                '<div class="panel-body">' +
-                '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
-                '<span class="loglevel"></span>' +
-                '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
-                '<div class="app-info text-muted">' + this.time + ' - ' + this.application + '</div>' +
-                '<div class="full-message">' + this.message + '</div>' +
-                '</div>';
-                '</div>' +
-                '</div>';
-
-/*
-            '<div class="panel-body-inner severity-' + this.severity + '" id="entry-' + this.elementCount + '">' +
-                       '<span class="loglevel"></span>' +
-                       '<button class="btn-copy" title="Copy to clipboard">Copy</button>' +
-                       '<div class="app-info text-muted">' + this.time + ' - ' + this.application + '</div>' +
-                       '<div class="full-message">' + this.message + '</div>' +
-                   '</div>';
-*/
-        }
-        this.getRowAsHtml = function () {
-            return '<div class="panel panel-default">' +
-                       '<div class="panel-heading">' + this.getHeader() + '</div>' +
-                       '<div class="panel-body">' + this.getBody() + '</div>' +
-                   '</div>';
-
-/*
-            '<div class="panel panel-default" data-loglevel="' + this.severity + '">' +
-                       '<div class="panel-heading js-toggle severity-' + this.severity + '">' +
-                           this.getHeader() +
-                       '</div>' +
-                       '<div class="panel-body">' +
-                           this.getBody() +
-                       '</div>' +
-                   '</div>';
-*/
-        }
-    }
-
-    utility.showSlider = function () {
+    utility.showLoader = function () {
         // timer to set actions after request
         if (timer) {
             clearTimeout(timer); //cancel the previous timer.
@@ -157,59 +159,60 @@ $(function() {
         timer = setTimeout(function() {
             $loader.removeClass('active');
         }, 800);
-    }
+    };
 
     utility.handleScrolling = function () {
         if(checkAutoscroll() === 'true') {
-            $("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
+            //$("html, body").stop().animate({ scrollTop: $(document).height() }, 20);
+            window.scrollTo(0,document.body.scrollHeight);
         }
-    }
-    
-    utility.printEntry = function (logEntry) {
-        var d = $('<div class="panel-wrapper"></div>')
-                .append(logEntry.getRowAsHtml()),
-            lastPanel = $('.panel').last();
-
-        d = handleOutput($(d));
-
-        // if new logger is similar to last one, group within one panel
-        if (this.lastLogger.length && logEntry.logger.length && this.lastLogger == logEntry.logger) {
-            var newPanel = $(d).find('.panel');
-            //console.log(newPanel);
-
-            lastPanel.find('.panel-body').append(logEntry.getBody());
-            activateCopyButton(lastPanel.find('.btn-copy').last());
-
-            // Update main Loglevel for panel (set to most serious one)
-            if (typeof this.lastLogLevel != 'undefined' && typeof logEntry.severity != 'undefined' && this.lastLogLevel > logEntry.severity) {
-                this.lastLogLevel = logEntry.severity;
-
-                lastPanel.data('loglevel', logEntry.severity);
-                lastPanel.find('.panel-heading')
-                    .removeClass('severity-' + this.lastLogLevel)
-                    .addClass('severity-' + logEntry.severity);
-            }
-        } else {
-            this.lastLogLevel = logEntry.severity;
-            $(output).append(d);
-        }
-        this.lastLogger = logEntry.logger;
-
-        this.handleScrolling();
-        this.showSlider();
-    }
-
-    utility.print = function(message, logger) {
-        var d = $('<div class="panel-wrapper"></div>')
-                    .append(message);
-
-        d = handleOutput($(d));
-        $(output).append(d);
-        lastLogger = logger;
-
-        this.handleScrolling();
-        this.showSlider()
     };
+    
+    // utility.printEntry = function (logEntry) {
+    //     var d = $('<div class="panel-wrapper"></div>')
+    //             .append(logEntry.getRowAsHtml()),
+    //         lastPanel = $('.panel-top').last();
+    //
+    //     d = handleOutput($(d));
+    //
+    //     // if new logger is similar to last one, group within one panel
+    //     if (this.lastLogger.length && logEntry.logger.length && this.lastLogger == logEntry.logger) {
+    //         var newPanel = $(d).find('.panel');
+    //         //console.log(newPanel);
+    //
+    //         lastPanel.find('.panel-body').append(logEntry.getBody());
+    //         activateCopyButton(lastPanel.find('.btn-copy').last());
+    //
+    //         // Update main Loglevel for panel (set to most serious one)
+    //         if (typeof this.lastLogLevel != 'undefined' && typeof logEntry.severity != 'undefined' && this.lastLogLevel > logEntry.severity) {
+    //             this.lastLogLevel = logEntry.severity;
+    //
+    //             lastPanel.data('loglevel', logEntry.severity);
+    //             lastPanel.find('.panel-heading')
+    //                 .removeClass('severity-' + this.lastLogLevel)
+    //                 .addClass('severity-' + logEntry.severity);
+    //         }
+    //     } else {
+    //         this.lastLogLevel = logEntry.severity;
+    //         $(output).append(d);
+    //     }
+    //     this.lastLogger = logEntry.logger;
+    //
+    //     this.handleScrolling();
+    //     this.showLoader();
+    // };
+
+    // utility.print = function(message, logger) {
+    //     var d = $('<div class="panel-wrapper"></div>')
+    //                 .append(message);
+    //
+    //     d = handleOutput($(d));
+    //     $(output).append(d);
+    //     lastLogger = logger;
+    //
+    //     this.handleScrolling();
+    //     this.showLoader()
+    // };
 
     utility.printStartMessage = function() {
         // default startmessage (onopen)
@@ -228,10 +231,10 @@ $(function() {
                 "Log at that:",
                 "You log nice today!",
                 "Log out now!",
-                "Log n’feel.",
+                "Log n'feel.",
                 "Log it up!",
                 "Get your log post!",
-                "Log’a’rhythm.",
+                "Log a'rhythm.",
                 "To be logged!",
                 "Die or log!",
                 "Fifty Shades of Log"
@@ -239,13 +242,40 @@ $(function() {
             return values[Math.floor(Math.random() * values.length)];
         }
 
-        var row = '<div class="panel panel-default">' +
-            '<div class="panel-heading severity-10">' +
+        var row = '<div class="panel-heading severity-10">' +
             '<div class="panel-title"><span class="loglevel"></span><b>' + getStartText() + '</b></div>' +
-            '</div>' +
             '</div>';
 
-        utility.print(row, "");
+        //utility.print(row, "");
+
+        var item = document.createElement("div");
+        item.className = 'panel panel-default';
+        item.innerHTML = row;
+        document.getElementById("output").appendChild(item);
+    };
+
+
+    // test native js print to document without function
+    utility.printToDocument = function (message) {
+        var text =
+                '<div class="panel-inner">' +
+                    '<div class="panel-heading severity-' + message.severity + '" onclick="toggleItem(this)"><span class="loglevel"></span>' +
+                        message.logger + '<br>' +
+                        message.application + '<br>' +
+                    '</div><div class="panel-body">' +
+                        'request_uri: ' + message.request_uri + '<br>' +
+                        'request_id: ' + message.request_id + '<br>' +
+                        'time: ' + message.time + '<br>' +
+                        'severity: ' + message.severity + '<br>' +
+                        'severity_text: ' + message.severity_text + '<br>' +
+                        'context: ' +  JSON.stringify(message.context) +
+                        '<br><br>' + message.message +
+                    '</div>' +
+                '</div>',
+            item = document.createElement("div");
+        item.className = 'panel panel-default';
+        item.innerHTML = text;
+        document.getElementById("output").appendChild(item);
     };
 
     window.addEventListener("load", function(evt) {
@@ -262,16 +292,21 @@ $(function() {
             var data = {
                     "message" : "Connection closed",
                     "severity" : 7
-                },
-                entry = new LogEntry(data);
-            utility.printEntry(entry, data.logger);
+                };
+                //entry = new LogEntry(data);
+            //utility.printEntry(entry, data.logger);
+            utility.printToDocument(data);
+            utility.handleScrolling();
             ws = null;
         };
         ws.onmessage = function(evt) {
-            var data = JSON.parse(evt.data),
-                entry = new LogEntry(data);
+            var data = JSON.parse(evt.data);
+                //entry = new LogEntry(data);
             $loader.addClass('active');
-            utility.printEntry(entry, data.logger);
+            //utility.printEntry(entry, data.logger);
+            utility.printToDocument(data);
+            utility.showLoader();
+            utility.handleScrolling();
         };
         ws.onerror = function(evt) {
             var data = {
@@ -279,8 +314,11 @@ $(function() {
                 "severity" : 2
             };
 
-            var entry = new LogEntry(data);
-            utility.printEntry(entry, data.logger);
+            //var entry = new LogEntry(data);
+            //utility.printEntry(entry, data.logger);
+            utility.printToDocument(data);
+            utility.handleScrolling();
+
         };
     });
 
