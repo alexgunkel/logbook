@@ -6,6 +6,7 @@ $(function() {
         $body = $('body'),
         $loader = $('.loader'),
         $toggleAutoScroll = $body.find('.js-toggle-autoscroll'),
+        $toggleDetails = $body.find('.js-toggle-details'),
         $toggleSeverityFilter = $body.find('#nav-filter .js-toggleSeverityFilter'),
         port = $body.data('port'),
         endPoint = $body.data('endpoint');
@@ -17,6 +18,7 @@ $(function() {
     utility.requestGroups = [];
     utility.lastLogger = "";
     utility.lastLogLevel = 100;
+    utility.showDetails = true;
 
     function setCookie(cname, cvalue, exdays) {
         var d = new Date(),
@@ -51,6 +53,18 @@ $(function() {
         $toggleAutoScroll.removeClass('active');
     }
 
+    function checkShowDetails() {
+        return getCookie("showDetails");
+    }
+
+    if(checkShowDetails() === 'true') {
+        $toggleDetails.addClass('active');
+        utility.showDetails = true;
+    } else {
+        $toggleDetails.removeClass('active');
+        utility.showDetails = false;
+    }
+
     function initSeverityFilters($levels) {
         $.each($levels , function(index, hideLogLevel) {
 
@@ -72,6 +86,23 @@ $(function() {
         } else {
             setCookie("autoscroll", true);
             $(this).addClass('active');
+        }
+        return false;
+    });
+
+    $toggleDetails.on('click', function() {
+        if($(this).hasClass('active')) {
+            var $openPanelButtons = $('.panel-default .glyphicon-zoom-out');
+            setCookie("showDetails", false);
+            $(this).removeClass('active');
+            $openPanelButtons.toggleClass('glyphicon-zoom-out glyphicon-zoom-in');
+            $openPanelButtons.closest('.panel-heading').next('.panel-body').addClass('hidden');
+        } else {
+            var $closedPanelButtons = $('.panel-default .glyphicon-zoom-in');
+            setCookie("showDetails", true);
+            $(this).addClass('active');
+            $closedPanelButtons.toggleClass('glyphicon-zoom-out glyphicon-zoom-in');
+            $closedPanelButtons.closest('.panel-heading').next('.panel-body').removeClass('hidden');
         }
         return false;
     });
@@ -227,6 +258,12 @@ $(function() {
         }
     };
 
+    utility.handleShowDetails = function () {
+        if(checkShowDetails() === 'true') {
+console.log('to do handleShowDetails');
+        }
+    };
+
     utility.updateLogLevel = function (currentLogLevel, lastPanel) {
         // Update main Loglevel for panel (set to most serious one)
         if (typeof this.lastLogLevel != 'undefined' && typeof currentLogLevel != 'undefined' && this.lastLogLevel > currentLogLevel) {
@@ -254,6 +291,7 @@ $(function() {
         this.updateLogLevel(data.severity, $lastPanel);
         this.lastLogger = data.logger;
         this.handleScrolling();
+        this.handleShowDetails();
         this.showSlider();
     };
 
@@ -274,14 +312,17 @@ $(function() {
             var requestLink = '<a href="' + data.request_uri + '" title="' + data.request_uri + '">' + requestLinkText + '</a>';
         }
 
+        var toggleIcon = this.showDetails ? '<span class="glyphicon glyphicon-zoom-out" title="show more"></span>' : '<span class="glyphicon glyphicon-zoom-in" title="show less"></span>',
+            toggleClass = this.showDetails ? '' : ' hidden';
+
         this.requestGroups[data.request_id] = $('<div class="panel-wrapper"><div class="panel panel-default" id="' + data.request_id + '">' +
             '<div class="panel-heading js-toggle"><b>' + requestLink + '</b><br>' +
                 '<span class="small">' + data.request_id + '</span>' +
                 '<a class="js-toggle" href="#entry-' + data.request_id + '">' +
-                    '<span class="glyphicon glyphicon-zoom-out" title="show more"></span>' +
+                    toggleIcon +
                 '</a>' +
             '</div>' +
-            '<div class="panel-body" id="#entry-' + data.request_id + '"></div> ' +
+            '<div class="panel-body' + toggleClass + '" id="#entry-' + data.request_id + '"></div> ' +
             '</div></div>');
 
         this.requestGroups[data.request_id].startTime = data.time;
@@ -300,6 +341,7 @@ $(function() {
         utility.lastLogger = logger;
 
         this.handleScrolling();
+        this.handleShowDetails();
         this.showSlider();
     };
 

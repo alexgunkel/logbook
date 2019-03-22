@@ -50,6 +50,10 @@ body {
     overflow: hidden;
 }
 
+.panel {
+    margin-bottom: 14px;
+}
+
 .panel-heading h5,
 .panel-heading h6 {
     margin-right: 60px;
@@ -71,6 +75,10 @@ body {
 
 .js-toggle .glyphicon {
     font-size: 24px;
+}
+
+.panel-body-wrap {
+    margin: 0 4px 4px 0;
 }
 
 .panel-body {
@@ -164,25 +172,23 @@ https://getbootstrap.com/docs/3.3/components/
 }
 
     /* toggle button */
+.js-toggle-details,
 .js-toggle-autoscroll,
+.js-toggle-details span,
+.js-toggle-autoscroll span,
 .js-toggleSeverityFilter {
     opacity: .6;
     transition: opacity 0.25s;
 }
-.js-toggle-autoscroll span {
-    opacity: .6;
-    transition: opacity 0.25s;
-}
-
+.js-toggle-details span,
 .js-toggle-autoscroll span {
     font-size: 22px;
 }
 
+.js-toggleSeverityFilter.active,
+.js-toggle-details.active,
 .js-toggle-autoscroll.active,
-.js-toggleSeverityFilter.active {
-    opacity: 1;
-}
-
+.js-toggle-details.active span,
 .js-toggle-autoscroll.active span {
     opacity: 1;
 }
