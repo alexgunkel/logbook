@@ -1,3 +1,7 @@
+/* https://getbootstrap.com/docs/3.3/ */
+/* https://getbootstrap.com/docs/3.3/components/#glyphicons */
+
+
 html {
     overflow-y: scroll;
 }
@@ -70,34 +74,28 @@ body {
 }
 
 .panel-body {
-    display: none;
+    display: block;
     position: relative;
-    max-height: 400px;
     overflow: auto;
-    padding: 10px 15px;
+    padding: 0;
 }
-
-.panel-body > div {
-    margin-bottom: 4px;
-}
-
 .panel-body-inner {
     position: relative;
-}
-
-.panel-body-inner ~ .panel-body-inner {
-    margin-top: 8px;
+    margin: 0;
+    padding: 5px;
+    border-bottom: 1px solid lightgrey;
 }
 
 .panel-body .btn-copy {
     position: absolute;
     cursor: pointer;
     background: transparent;
+    color: #31708f;
     border: solid #ddd;
     border-width: 1px;
     padding: 6px;
-    top: -6px;
-    right: -12px;
+    top: 5px;
+    right: 5px;
 }
 .panel-body .btn-copy:hover {
     background: #ddd;
@@ -156,14 +154,18 @@ body {
 /*
 https://getbootstrap.com/docs/3.3/components/
 */
-
 #mainnav .nav-pills a {
     height: 46px;
     margin-top: 2px;
 }
 
+#mainnav .nav-filter {
+    padding-top: 22px;
+}
+
     /* toggle button */
-.js-toggle-autoscroll {
+.js-toggle-autoscroll,
+.js-toggleSeverityFilter {
     opacity: .6;
     transition: opacity 0.25s;
 }
@@ -176,7 +178,8 @@ https://getbootstrap.com/docs/3.3/components/
     font-size: 22px;
 }
 
-.js-toggle-autoscroll.active {
+.js-toggle-autoscroll.active,
+.js-toggleSeverityFilter.active {
     opacity: 1;
 }
 
@@ -185,7 +188,8 @@ https://getbootstrap.com/docs/3.3/components/
 }
 
 .loglevel:before,
-.btn-toggle:before {
+.btn-toggle:before,
+.panel-body-wrap[data-loglevel]:before {
     position: relative;
     top: 1px;
     display: inline-block;
@@ -201,79 +205,100 @@ https://getbootstrap.com/docs/3.3/components/
     margin: -4px 6px 0 0;
 }
 
+.panel-body-wrap[data-loglevel]:before {
+    top: 7px;
+    font-size: 18px;
+    float: right
+}
+
+
 /* "debug" */
 .severity-7 .panel-title {
 }
 .severity-7 .loglevel:before {
-
 }
+
  /* "informational" */
 .severity-6 .loglevel,
-.severity-6.panel-heading {
+.severity-6.panel-body-inner {
     color: #31708f;
     background-color: #d9edf7;
 }
-.severity-6 .loglevel:before {
+.severity-6 .loglevel:before,
+.panel-body-wrap[data-loglevel="6"]:before {
+    color: #31708f;
     content: '\e086';
 }
 
  /* "notice" */
 .severity-5 .loglevel,
-.severity-5.panel-heading {
+.severity-5.panel-body-inner {
     color: #856404;
-    background-color: #fff3cd;
+    background-color: #d9edf7;
 }
-.severity-5 .loglevel:before {
+.severity-5 .loglevel:before,
+.panel-body-wrap[data-loglevel="5"]:before {
+    color: #856404;
     content: '\e085';
 }
 
  /* "warning" */
 .severity-4 .loglevel,
-.severity-4.panel-heading {
+.severity-4.panel-body-inner {
     color: #856404;
     background-color: #fff3cd;
 }
-.severity-4 .loglevel:before {
+.severity-4 .loglevel:before,
+.panel-body-wrap[data-loglevel="4"]:before {
+    color: #856404;
     content: '\e107';
 }
 
  /* "error" */
 .severity-3 .loglevel,
-.severity-3.panel-heading {
+.severity-3.panel-body-inner {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-3 .loglevel:before {
+.severity-3 .loglevel:before,
+.panel-body-wrap[data-loglevel="3"]:before {
+    color: #a94442;
     content: '\e083';
 }
 
  /* "critical" */
 .severity-2 .loglevel,
-.severity-2.panel-heading {
+.severity-2.panel-body-inner {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-2 .loglevel:before {
+.severity-2 .loglevel:before,
+.panel-body-wrap[data-loglevel="2"]:before {
+    color: #a94442;
     content: '\e083';
 }
 
  /* "alert" */
 .severity-1 .loglevel,
-.severity-1.panel-heading {
+.severity-1.panel-body-inner {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-1 .loglevel:before {
+.severity-1 .loglevel:before,
+.panel-body-wrap[data-loglevel="1"]:before {
+    color: #a94442;
     content: '\e083';
 }
 
  /* "emergency" */
 .severity-0 .loglevel,
-.severity-0.panel-heading {
+.severity-0.panel-body-inner {
     color: #a94442;
     background-color: #f2dede;
 }
-.severity-0 .loglevel:before {
+.severity-0 .loglevel:before,
+.panel-body-wrap[data-loglevel="0"]:before {
+    color: #a94442;
     content: '\e083';
 }
  /* "start" */
@@ -284,4 +309,99 @@ https://getbootstrap.com/docs/3.3/components/
 }
 .severity-10 .loglevel:before {
     content: '\e084';
+}
+
+/* filtered messages */
+
+/* errors */
+.hide-log-level-error .logentry.severity-0,
+.hide-log-level-error .logentry.severity-1,
+.hide-log-level-error .logentry.severity-2,
+.hide-log-level-error .logentry.severity-3,
+.hide-log-level-error .panel-body-wrap[data-loglevel="0"],
+.hide-log-level-error .panel-body-wrap[data-loglevel="1"],
+.hide-log-level-error .panel-body-wrap[data-loglevel="2"],
+.hide-log-level-error .panel-body-wrap[data-loglevel="3"],
+/* warnings */
+.hide-log-level-warning .logentry.severity-4,
+.hide-log-level-warning .panel-body-wrap[data-loglevel="4"],
+/* info */
+.hide-log-level-info .logentry.severity-5,
+.hide-log-level-info .logentry.severity-6,
+.hide-log-level-info .logentry.severity-7,
+.hide-log-level-info .panel-body-wrap[data-loglevel="5"],
+.hide-log-level-info .panel-body-wrap[data-loglevel="6"],
+.hide-log-level-info .panel-body-wrap[data-loglevel="7"] {
+    display: none;
+}
+
+.logentry {
+    margin-left: 20px;
+}
+
+.loggername {
+    font-weight: bold;
+    border: 0 none;
+    background: #b4b4b4;
+    color: white;
+    padding: 4px 4px 4px 10px;
+    margin: 6px 0 6px 10px;
+}
+
+.context {
+    background: white;
+    margin: 15px;
+    clear: both;
+}
+
+.context table {
+    border: 1px solid lightgrey;
+    width: 100%;
+}
+.context tr {
+    margin: 0;
+    padding: 0;
+}
+.context td {
+    border: 1px solid lightgrey;
+    padding: 5px;
+    margin: 0;
+    vertical-align: top;
+}
+
+.context .table-label {
+    max-width: 250px;
+}
+
+.js-toggle-context {
+    cursor: pointer;
+    color: #31708f;
+    margin: 6px 0;
+}
+
+.js-toggle-context span {
+    margin: 4px;
+    color: #31708f;
+}
+
+.js-toggle-body {
+    margin: 20px 0 0 0;
+    border: 1px solid;
+    padding: 5px;
+    color: #31708f;
+    cursor: pointer;
+}
+
+.full-message {
+    margin-right: 64px;
+    word-break: break-all;
+}
+
+.full-message.content-hidden {
+    overflow: hidden;
+    position: relative;
+    line-height: 1.2em;
+    max-height: 3.6em;
+    text-align: justify;
+    transition: all 0.25s;
 }
