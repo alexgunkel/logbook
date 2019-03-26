@@ -317,6 +317,24 @@ https://getbootstrap.com/docs/3.3/components/
     content: '\e084';
 }
 
+.panel-wrapper[data-group-level="0"] .panel-heading,
+.panel-wrapper[data-group-level="1"] .panel-heading,
+.panel-wrapper[data-group-level="2"] .panel-heading,
+.panel-wrapper[data-group-level="3"] .panel-heading {
+    background: #f2dede;
+}
+
+.panel-wrapper[data-group-level="4"] .panel-heading {
+    background: #fff3cd;
+}
+
+.panel-wrapper[data-group-level="5"] .panel-heading,
+.panel-wrapper[data-group-level="6"] .panel-heading,
+.panel-wrapper[data-group-level="7"] .panel-heading {
+    background: #d9edf7;
+}
+
+
 /* filtered messages */
 
 /* errors */

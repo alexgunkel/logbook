@@ -258,12 +258,6 @@ $(function() {
         }
     };
 
-    utility.handleShowDetails = function () {
-        if(checkShowDetails() === 'true') {
-console.log('to do handleShowDetails');
-        }
-    };
-
     utility.updateLogLevel = function (currentLogLevel, lastPanel) {
         // Update main Loglevel for panel (set to most serious one)
         if (typeof this.lastLogLevel != 'undefined' && typeof currentLogLevel != 'undefined' && this.lastLogLevel > currentLogLevel) {
@@ -274,7 +268,7 @@ console.log('to do handleShowDetails');
 
     utility.printLogLevel = function ($lastPanel) {
         // Update main Loglevel for panel (set to most serious one)
-        console.log('panel updated', $lastPanel);
+        // console.log('panel updated', $lastPanel);
         $lastPanel.attr('data-loglevel', this.lastLogLevel);
     };
 
@@ -288,10 +282,23 @@ console.log('to do handleShowDetails');
         $lastPanel = requestGroup.find('.panel-body .panel-body-wrap').last();
         $lastPanel.append(logEntry.getBody());
 
+
+        var $levels = requestGroup.find(".panel-body-wrap"),
+            lastGroupLevel = 99;
+
+        $levels.each(function () {
+            var currentGroupLevel = $(this).attr('data-loglevel');
+            if (typeof currentGroupLevel != 'undefined'  && currentGroupLevel != '' && lastGroupLevel > currentGroupLevel) {
+                lastGroupLevel = currentGroupLevel;
+            }
+        });
+
+        requestGroup.attr('data-group-level', lastGroupLevel);
+
+
         this.updateLogLevel(data.severity, $lastPanel);
         this.lastLogger = data.logger;
         this.handleScrolling();
-        this.handleShowDetails();
         this.showSlider();
     };
 
@@ -341,7 +348,6 @@ console.log('to do handleShowDetails');
         utility.lastLogger = logger;
 
         this.handleScrolling();
-        this.handleShowDetails();
         this.showSlider();
     };
 
