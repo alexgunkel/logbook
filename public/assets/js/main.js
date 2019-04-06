@@ -175,7 +175,7 @@ $(function() {
 
         if(Object.keys(data).length > 0) {
             this.logger = data.logger;
-            this.severity = (data.severity) ? data.severity : '7';
+            this.severity = (typeof data.severity === 'number') ? data.severity : '7';
             this.message = data.message;
             this.time = data.time;
             this.application = data.application;
